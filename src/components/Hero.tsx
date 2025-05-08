@@ -8,17 +8,118 @@ import {
   Check,
 } from 'lucide-react';
 import IconWithLabel from './ui/IconWithLabel';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+import { useRef } from 'react';
 
 const Hero = () => {
+  const titleRef1 = useRef<HTMLDivElement>(null);
+  const titleRef2 = useRef<HTMLSpanElement>(null);
+  const titleRef3 = useRef<HTMLParagraphElement>(null);
+  const btnRefs1 = useRef<HTMLDivElement>(null);
+  const iconRef1 = useRef<HTMLDivElement>(null);
+  const imgRef1 = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    if (titleRef1.current?.children) {
+      gsap.fromTo(
+        titleRef1.current.children,
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: 'power1.out',
+          stagger: 0.2,
+        }
+      );
+    }
+  }, []);
+
+  useGSAP(() => {
+    gsap.fromTo(
+      titleRef2.current,
+      { opacity: 0, y: 15 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        ease: 'power1.out',
+      }
+    );
+    gsap.fromTo(
+      titleRef3.current,
+      { opacity: 0, y: 20 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        ease: 'power1.out',
+        delay: 0.2,
+      }
+    );
+  }, []);
+
+  useGSAP(() => {
+    if (btnRefs1.current?.children) {
+      gsap.fromTo(
+        btnRefs1.current.children,
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: 'power1.out',
+          stagger: 0.2,
+        }
+      );
+    }
+  }, []);
+
+  useGSAP(() => {
+    if (iconRef1.current?.children) {
+      gsap.fromTo(
+        iconRef1.current.children,
+        { opacity: 0, y: -100 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: 'power1.out',
+          stagger: 0.2,
+        }
+      );
+    }
+  }, []);
+
+  useGSAP(() => {
+    gsap.fromTo(
+      imgRef1.current,
+      { opacity: 0, scale: 0.95 },
+      {
+        opacity: 1,
+        scale: 1,
+        duration: 0.9,
+        ease: 'power1.out',
+      }
+    );
+  }, []);
+
   return (
-    <div className='w-full max-w-[1128px] mx-auto px-4 py-10 flex flex-col lg:flex-row mt-10 gap-10'>
+    <div className='w-full max-w-[1128px] mx-auto px-5 py-10 flex flex-col lg:flex-row justify-center items-center mt-10 gap-10'>
       {/* Left section */}
-      <section className='w-full lg:w-[55%] flex flex-col gap-3'>
-        <span className='bg-[var(--secondary)] text-[var(--primary-foreground)] p-1 rounded-2xl px-2 text-sm font-medium w-fit'>
+      <section className='w-full lg:w-[60%] md:w-[55%] flex flex-col justify-center items-center lg:items-start gap-3'>
+        <span
+          ref={titleRef2}
+          className='bg-[var(--secondary)] text-[var(--primary-foreground)] p-1 rounded-2xl px-2 text-sm font-medium w-fit'
+        >
           Introduction Track Flow
         </span>
 
-        <div className='flex flex-col gap-1'>
+        <div
+          ref={titleRef1}
+          className='flex flex-col gap-1 text-center lg:text-left'
+        >
           <span className='text-4xl sm:text-5xl font-bold flex gap-2 flex-wrap'>
             <span className='text-[var(--primary)]'>Smart logistics</span>
             <span className='text-[var(--primary-foreground)]'>for</span>
@@ -28,7 +129,10 @@ const Hero = () => {
           </span>
         </div>
 
-        <p className='text-[var(--text-muted-soft)] font-medium mt-2 text-sm sm:text-base'>
+        <p
+          ref={titleRef3}
+          className='text-[var(--text-muted-soft)] font-medium mt-2 text-sm text-center lg:text-left'
+        >
           Optimize deliveries, reduce costs, and make better decisions with our
           AI-powered logistics platform. Real-time tracking, intelligent route
           planning, and powerful analytics in one place.
@@ -36,7 +140,7 @@ const Hero = () => {
 
         {/* Buttons + features */}
         <section className='mt-4'>
-          <div className='flex flex-col sm:flex-row gap-3'>
+          <div ref={btnRefs1} className='flex flex-col sm:flex-row gap-3'>
             <Button className='text-[var(--card)] w-full sm:w-[200px]'>
               Get Started Free <ArrowRight />
             </Button>
@@ -48,7 +152,7 @@ const Hero = () => {
             </Button>
           </div>
 
-          <div className='flex flex-wrap gap-6 sm:gap-10 mt-6'>
+          <div ref={iconRef1} className='flex flex-wrap gap-1 sm:gap-10 mt-8'>
             <IconWithLabel
               icon={<Truck className='w-5 h-5' />}
               color='blue'
@@ -69,14 +173,17 @@ const Hero = () => {
       </section>
 
       {/* Right section - image */}
-      <section className='w-full lg:w-[45%] flex justify-center items-center relative'>
+      <section
+        ref={imgRef1}
+        className='w-full max-w-[450px] flex justify-center items-center relative'
+      >
         <img
           className='rounded-lg w-full max-w-[500px]'
           src='/assets/images/image.jpg'
           alt='Logistics'
         />
 
-        <div className='h-fit sm:w-[300px] absolute bottom-[-30px] sm:top-[300px] right-0 sm:right-[-10px] shadow-lg bg-[var(--card)] px-4 py-6 rounded-md flex items-center gap-3'>
+        <div className='h-fit sm:w-[300px] absolute bottom-[-30px] sm:top-[280px] right-0 sm:right-[-15px] shadow-lg bg-[var(--card)] px-4 py-6 rounded-md flex items-center gap-3'>
           <div className='bg-green-400 rounded-full p-1'>
             <Check className='w-4 h-4 stroke-2 text-[var(--accent)]' />
           </div>

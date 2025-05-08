@@ -44,7 +44,6 @@ html,
 body,
 #root {
   min-height: 100vh;
-  margin-bottom: 10vh;
 }
 :root {
   --text-muted: oklch(0.5 0 0 / 1); /* cinza claro com 80% opacidade */

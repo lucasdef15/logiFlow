@@ -1,7 +1,93 @@
-import React from 'react';
-import { Button } from './ui/button';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+import { useRef } from 'react';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const FreeTrial = () => {
+  const titleRef1 = useRef<HTMLDivElement>(null);
+  const titleRef2 = useRef<HTMLDivElement>(null);
+  const listRef = useRef<(HTMLLIElement | null)[]>([]);
+  const ulRef = useRef<HTMLUListElement>(null);
+  const formRef = useRef<HTMLUListElement>(null);
+
+  useGSAP(() => {
+    gsap.fromTo(
+      titleRef1?.current,
+      { opacity: 0, x: -500 },
+      {
+        opacity: 1,
+        x: 0,
+        duration: 1,
+        ease: 'power1.out',
+        stagger: 0.2,
+        scrollTrigger: {
+          trigger: titleRef1?.current,
+          start: 'top 80%',
+          end: 'bottom 5%',
+        },
+      }
+    );
+    gsap.fromTo(
+      titleRef2?.current,
+      { opacity: 0, x: -500 },
+      {
+        opacity: 1,
+        x: 0,
+        duration: 1,
+        ease: 'power1.out',
+        stagger: 0.2,
+        scrollTrigger: {
+          trigger: titleRef1?.current,
+          start: 'top 80%',
+          end: 'bottom 5%',
+        },
+      }
+    );
+    gsap.fromTo(
+      formRef?.current,
+      { opacity: 0, x: 50, scale: 0 },
+      {
+        opacity: 1,
+        x: 0,
+        scale: 1,
+        duration: 1,
+        ease: 'power1.out',
+        stagger: 0.2,
+        scrollTrigger: {
+          trigger: titleRef1?.current,
+          start: 'top 80%',
+          end: 'bottom 5%',
+        },
+      }
+    );
+  }, []);
+
+  useGSAP(() => {
+    const elements = listRef.current;
+
+    if (!elements.length) return;
+
+    gsap.fromTo(
+      elements,
+      { scale: 0, x: -500, opacity: 0 },
+      {
+        scale: 1,
+        x: 0,
+        opacity: 1,
+        duration: 1,
+        stagger: 0.35,
+        ease: 'power2.inOut',
+        scrollTrigger: {
+          trigger: ulRef.current,
+          start: 'top 80%',
+          end: 'bottom 5%',
+        },
+      }
+    );
+  }, []);
+
   return (
     <div className='bg-[#0EA5E9] relative my-25 min-h-[80vh]'>
       <div className='w-full  max-w-[1128px] mx-auto pt-10 p-4'>
@@ -18,24 +104,34 @@ const FreeTrial = () => {
           />
         </svg>
 
-        <div className='w-full z-[9999] relative p-5 flex items-start gap-4'>
-          <section className='w-[55%] max-w-[600px] flex flex-col gap-5 justify-center'>
-            <h2 className='text-[var(--muted)] text-3xl font-bold'>
+        <div className='w-full z-[9999] relative p-5 flex flex-col  md:flex-row md:justify-center md:item-center  items-start gap-10 md:gap-4 '>
+          <section className='w-[100%] md:w-[55%] md:text-left text-center max-w-[600px] flex flex-col gap-5 justify-center'>
+            <h2
+              ref={titleRef1}
+              className='text-[var(--muted)] text-3xl font-bold'
+            >
               Try FastFlow for Free
             </h2>
-            <p className='text-[var(--muted)] opacity'>
+
+            <p ref={titleRef2} className='text-[var(--muted)] opacity'>
               Testing FastFlow is easy and commitment-free. Get started now and
               see the difference in your company's logistics.
             </p>
 
-            <ul className='text-white space-y-3'>
+            <ul ref={ulRef} className='text-white space-y-3'>
               {[
                 '14-day free trial period',
                 'Access to all features of the basic plan',
                 'No credit card required',
                 'Support throughout the entire trial period',
               ].map((text, index) => (
-                <li key={index} className='flex items-center gap-2'>
+                <li
+                  key={index}
+                  ref={(el) => {
+                    listRef.current[index] = el;
+                  }}
+                  className='flex items-center gap-2'
+                >
                   <span className='w-5 h-5 flex items-center justify-center bg-white/20 rounded-full'>
                     <svg
                       xmlns='http://www.w3.org/2000/svg'
@@ -58,7 +154,10 @@ const FreeTrial = () => {
             </ul>
           </section>
 
-          <section className='w-[40%] py-16 px-4 bg-[#ffffff]/10 rounded-2xl shadow-xl mx-auto backdrop-blur-md'>
+          <section
+            ref={formRef}
+            className='w-[100%] md:w-[40%] py-16 px-4 bg-[#ffffff]/10 rounded-2xl shadow-xl mx-auto backdrop-blur-md'
+          >
             <h3 className='text-white text-3xl font-bold mb-6 text-center'>
               Start Your Free Trial
             </h3>

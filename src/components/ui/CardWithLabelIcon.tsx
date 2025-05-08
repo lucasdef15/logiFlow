@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useRef } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 
 type CardWithLabelIconProps = {
   icon: React.ReactElement<{ className?: string }>;
@@ -24,9 +26,50 @@ const CardWithLabelIcon: React.FC<CardWithLabelIconProps> = ({
   description,
 }) => {
   const colorClasses = bgColors[color];
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    const el = cardRef.current;
+    if (!el) return;
+
+    const handleEnter = () => {
+      gsap.to(el, {
+        scale: 1.05,
+        skewY: 2,
+        skewX: 1,
+        rotateZ: 1.5,
+        boxShadow: '0 12px 24px rgba(0,0,0,0.12)',
+        duration: 0.35,
+        ease: 'power3.out',
+      });
+    };
+
+    const handleLeave = () => {
+      gsap.to(el, {
+        scale: 1,
+        skewY: 0,
+        skewX: 0,
+        rotateZ: 0,
+        boxShadow: '4px 4px 8px -2px rgba(0,0,0,0.1)',
+        duration: 0.4,
+        ease: 'power2.inOut',
+      });
+    };
+
+    el.addEventListener('mouseenter', handleEnter);
+    el.addEventListener('mouseleave', handleLeave);
+
+    return () => {
+      el.removeEventListener('mouseenter', handleEnter);
+      el.removeEventListener('mouseleave', handleLeave);
+    };
+  }, []);
 
   return (
-    <div className='flex flex-col gap-2 bg-[#ffff/3] w-[325px] p-4 rounded-sm shadow-[4px_4px_8px_-2px_rgba(0,0,0,0.1)]'>
+    <div
+      ref={cardRef}
+      className='flex flex-col gap-2 bg-[#ffff/3] w-[325px] p-4 rounded-sm shadow-[4px_4px_8px_-2px_rgba(0,0,0,0.1)] transition-transform duration-200 ease-out will-change-transform'
+    >
       <div
         className={`w-12 h-12 flex items-center justify-center rounded-full ${colorClasses}`}
       >

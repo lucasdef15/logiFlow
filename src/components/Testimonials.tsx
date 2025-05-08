@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react'; // Ensure this import is here
-import { Card, CardContent } from '@/components/ui/card';
+import { CardContent } from '@/components/ui/card';
 import {
   Carousel,
   CarouselContent,
@@ -9,6 +9,12 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel';
 import SectionNames from './ui/SectionNames';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+import { useRef } from 'react';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const testimonials = [
   {
@@ -59,10 +65,56 @@ const testimonials = [
 ];
 
 const Testimonials = () => {
-  const [api, setApi] = useState<any>(null); // Adjust the type based on your carousel library
+  const [api, setApi] = useState<any>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  // Update activeIndex when the carousel changes
+  const titleRef1 = useRef<HTMLDivElement>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    if (titleRef1.current?.children) {
+      gsap.fromTo(
+        titleRef1.current.children,
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: 'power1.out',
+          stagger: 0.2,
+          scrollTrigger: {
+            trigger: titleRef1?.current,
+            start: 'top 80%',
+            end: 'bottom 5%',
+            toggleActions: 'play reverse play stop',
+            once: false,
+          },
+        }
+      );
+    }
+  }, []);
+
+  useGSAP(() => {
+    gsap.fromTo(
+      carouselRef?.current,
+      { opacity: 0, x: -200 },
+      {
+        opacity: 1,
+        x: 0,
+        duration: 1,
+        ease: 'power1.out',
+        stagger: 0.25,
+        scrollTrigger: {
+          trigger: carouselRef?.current,
+          start: 'top 80%',
+          end: 'bottom 5%',
+          toggleActions: 'play reverse play stop',
+          once: false,
+        },
+      }
+    );
+  }, []);
+
   React.useEffect(() => {
     if (!api) return;
     const onSelect = () => {
@@ -82,7 +134,10 @@ const Testimonials = () => {
 
   return (
     <div className='w-full max-w-[1128px] mx-auto mt-20 p-4'>
-      <section className='flex flex-col items-center justify-center text-center gap-1 mb-14'>
+      <section
+        ref={titleRef1}
+        className='flex flex-col items-center justify-center text-center gap-1 mb-14'
+      >
         <SectionNames sectionName='Testimonials' />
         <h2 className='font-bold text-3xl mb-3'>
           Trusted by logistics professionals
@@ -92,16 +147,16 @@ const Testimonials = () => {
         </p>
       </section>
 
-      <section className='w-full flex items-center justify-center'>
-        <Carousel
-          className='w-full max-w-[650px] rounded-lg shadow-md h-53'
-          setApi={setApi}
-        >
+      <section
+        ref={carouselRef}
+        className='w-full flex items-center justify-center'
+      >
+        <Carousel className='w-full max-w-[650px]' setApi={setApi}>
           <CarouselContent>
             {testimonials.map((t, index) => (
-              <CarouselItem key={index} className=' border-none'>
-                <Card className=' p-6 border-none bg-[#ffff/9]'>
-                  <CardContent className='flex flex-col gap-4 items-start border-none'>
+              <CarouselItem key={index}>
+                <div className=' p-6  border-none bg-[#ffff/9] '>
+                  <CardContent className='flex flex-col p-6 gap-4 items-start rounded-lg shadow-md'>
                     <p className='italic text-[1.05rem] text-slate-700 relative pl-4'>
                       <span className='text-cyan-300 text-5xl font-serif absolute left-[-10px] top-[-20px] leading-none'>
                         “
@@ -132,12 +187,11 @@ const Testimonials = () => {
                       </div>
                     </div>
                   </CardContent>
-                </Card>
+                </div>
               </CarouselItem>
             ))}
           </CarouselContent>
 
-          {/* Container for dots and navigation buttons */}
           <div className='relative flex justify-center items-center mt-5'>
             {/* Previous button */}
             <CarouselPrevious
@@ -146,7 +200,7 @@ const Testimonials = () => {
                   (activeIndex - 1 + testimonials.length) % testimonials.length
                 )
               }
-              className='absolute left-60 text-gray-600 hover:text-cyan-500'
+              className='absolute md:left-60 sm:left-50  left:-900000  text-gray-600 hover:text-cyan-500'
             />
 
             {/* Dots */}
@@ -170,7 +224,7 @@ const Testimonials = () => {
             {/* Next button */}
             <CarouselNext
               onClick={() => goToSlide((activeIndex + 1) % testimonials.length)}
-              className='absolute right-60 text-gray-600 hover:text-cyan-500'
+              className='absolute md:right-60 sm:right-50 hidden sm:flex  text-gray-600 hover:text-cyan-500'
             />
           </div>
         </Carousel>
