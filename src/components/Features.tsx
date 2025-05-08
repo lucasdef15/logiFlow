@@ -66,7 +66,10 @@ const Features = () => {
   }, []);
 
   return (
-    <div className='w-full max-w-[1128px] mx-auto mt-20 p-4 bg-[#Fefefe]'>
+    <div
+      id='features'
+      className='w-full max-w-[1128px] mx-auto mt-20 p-4 bg-[#Fefefe]'
+    >
       <section
         ref={titleRef1}
         className='flex flex-col items-center justify-center text-center gap-1 mb-15'

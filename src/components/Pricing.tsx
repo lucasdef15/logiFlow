@@ -79,7 +79,7 @@ const Pricing = () => {
   }, []);
 
   return (
-    <div className='w-full mb-20'>
+    <div id='pricing' className='w-full mb-20'>
       <section
         ref={titleRef1}
         className='flex flex-col items-center justify-center text-center gap-1 mb-15'

@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import DesktopNav from './DesktopNav';
 import MobileNav from './MobileNav';
+import gsap from 'gsap';
 
 type Notification = {
   id: number;
@@ -13,6 +14,8 @@ type Notification = {
 
 const Header = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const headerRef = useRef<HTMLElement>(null);
+  const lastScroll = useRef(0);
 
   useEffect(() => {
     fetch('/data/notifications.json')
@@ -23,9 +26,44 @@ const Header = () => {
 
   const hasNotifications = notifications.length > 0;
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScroll = window.scrollY;
+
+      if (!headerRef.current) return;
+
+      if (currentScroll > lastScroll.current && currentScroll > 100) {
+        // Scroll down - hide
+        gsap.to(headerRef.current, {
+          y: '-100%',
+          duration: 0.4,
+          ease: 'power2.out',
+        });
+      } else {
+        // Scroll up - show
+        gsap.to(headerRef.current, {
+          y: '0%',
+          duration: 0.4,
+          ease: 'power2.out',
+        });
+      }
+
+      lastScroll.current = currentScroll;
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   return (
-    <header className='bg-[var(--card)] w-full shadow-lg'>
-      <nav className='bg-[var(--card)]  w-full max-w-[1128px] mx-auto flex  flex-row justify-between p-4'>
+    <header
+      ref={headerRef}
+      className='bg-[var(--card)] w-full shadow-lg sticky top-0 z-1'
+    >
+      <nav className='bg-[var(--card)] w-full max-w-[1128px] mx-auto flex flex-row justify-between p-4 transition-all duration-300'>
         <section className='flex items-center justify-center gap-2 '>
           <img
             className='max-w-[30px]'

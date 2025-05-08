@@ -92,7 +92,7 @@ const FreeTrial = () => {
     <div className='bg-[#0EA5E9] relative my-25 min-h-[80vh]'>
       <div className='w-full  max-w-[1128px] mx-auto pt-10 p-4'>
         <svg
-          className='absolute top-[20px] right-10 z-[1]'
+          className='absolute top-[20px] right-10 z-[0]'
           width='250'
           height='300'
           viewBox='0 0 200 250'
@@ -104,7 +104,7 @@ const FreeTrial = () => {
           />
         </svg>
 
-        <div className='w-full z-[9999] relative p-5 flex flex-col  md:flex-row md:justify-center md:item-center  items-start gap-10 md:gap-4 '>
+        <div className='w-full p-5 flex flex-col  md:flex-row md:justify-center md:item-center  items-start gap-10 md:gap-4 '>
           <section className='w-[100%] md:w-[55%] md:text-left text-center max-w-[600px] flex flex-col gap-5 justify-center'>
             <h2
               ref={titleRef1}
@@ -221,7 +221,7 @@ const FreeTrial = () => {
         </div>
 
         <svg
-          className='absolute bottom-[20px] left-10 z-[1]'
+          className='absolute bottom-[20px] left-10 z-[0]'
           width='250'
           height='250'
           viewBox='0 0 200 200'

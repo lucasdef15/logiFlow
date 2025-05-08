@@ -26,11 +26,30 @@ const DesktopNav = ({ hasNotifications, notifications }: DesktopNavProps) => {
     <>
       <nav className='hidden sm:flex flex-row'>
         <ul className='flex flex-row justify-center items-center gap-4 text-[.9rem] text-[var(--muted-foreground)] font-medium'>
-          <li>Home</li>
-          <li>Features</li>
-          <li>Pricing</li>
-          <li>Contact</li>
-          <li>Dashboard</li>
+          <li className='relative group cursor-pointer transition-colors duration-300 hover:text-[var(--primary)]'>
+            Home
+            <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-[var(--primary)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
+          </li>
+          <a href='#features'>
+            <li className='relative group cursor-pointer transition-colors duration-300 hover:text-[var(--primary)]'>
+              Features
+              <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-[var(--primary)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
+            </li>
+          </a>
+          <a href='#pricing'>
+            <li className='relative group cursor-pointer transition-colors duration-300 hover:text-[var(--primary)]'>
+              Pricing
+              <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-[var(--primary)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
+            </li>
+          </a>
+          <li className='relative group cursor-pointer transition-colors duration-300 hover:text-[var(--primary)]'>
+            Contact
+            <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-[var(--primary)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
+          </li>
+          <li className='relative group cursor-pointer transition-colors duration-300 hover:text-[var(--primary)]'>
+            Dashboard
+            <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-[var(--primary)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
+          </li>
         </ul>
       </nav>
 
@@ -44,7 +63,7 @@ const DesktopNav = ({ hasNotifications, notifications }: DesktopNavProps) => {
             <Bell />
           </PopoverTrigger>
 
-          <PopoverContent className='w-full min-w-[250px]'>
+          <PopoverContent className='w-full min-w-[250px] z-max'>
             {hasNotifications ? (
               <>
                 <section className='mb-4 pb-4 border-b border-[var(--sidebar-border)]'>

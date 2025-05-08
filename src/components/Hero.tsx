@@ -64,16 +64,46 @@ const Hero = () => {
     if (btnRefs1.current?.children) {
       gsap.fromTo(
         btnRefs1.current.children,
-        { opacity: 0, y: 20 },
+        { opacity: 0, y: 20, scale: 0.95 },
         {
           opacity: 1,
           y: 0,
+          scale: 1,
           duration: 1,
-          ease: 'power1.out',
+          ease: 'power2.out',
           stagger: 0.2,
         }
       );
     }
+  }, []);
+
+  // Hover effects nos botões
+  useGSAP(() => {
+    const ctx = gsap.context(() => {
+      gsap.utils.toArray('.hero-btn').forEach((btn) => {
+        const el = btn as HTMLButtonElement;
+
+        el.addEventListener('mouseenter', () => {
+          gsap.to(el, {
+            scale: 1.04,
+            boxShadow: '0px 8px 20px rgba(0, 132, 255, 0.15)',
+            duration: 0.3,
+            ease: 'power2.out',
+          });
+        });
+
+        el.addEventListener('mouseleave', () => {
+          gsap.to(el, {
+            scale: 1,
+            boxShadow: '0px 0px 0px rgba(0,0,0,0)',
+            duration: 0.3,
+            ease: 'power2.out',
+          });
+        });
+      });
+    }, btnRefs1);
+
+    return () => ctx.revert();
   }, []);
 
   useGSAP(() => {
@@ -141,12 +171,12 @@ const Hero = () => {
         {/* Buttons + features */}
         <section className='mt-4'>
           <div ref={btnRefs1} className='flex flex-col sm:flex-row gap-3'>
-            <Button className='text-[var(--card)] w-full sm:w-[200px]'>
+            <Button className='hero-btn text-[var(--card)] w-full cursor-pointer sm:w-[200px]'>
               Get Started Free <ArrowRight />
             </Button>
             <Button
               variant='outline'
-              className='w-full sm:w-[180px] border-[var(--primary-foreground)] text-[var(--primary-foreground)]'
+              className='hero-btn w-full sm:w-[180px] cursor-pointer  border-[var(--primary-foreground)] hover:text-cyan-400 text-[var(--primary-foreground)]'
             >
               Book a Demo <ChevronRight />
             </Button>
