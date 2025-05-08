@@ -15,7 +15,7 @@ const Pricing = () => {
     if (titleRef1.current?.children) {
       return gsap.fromTo(
         titleRef1.current.children,
-        { opacity: 0, y: -500, scale: 0 },
+        { opacity: 0, y: -50, scale: 0 },
         {
           opacity: 1,
           y: 0,
