@@ -221,7 +221,7 @@ const FreeTrial = () => {
         </div>
 
         <svg
-          className='absolute bottom-[20px] left-10 z-[0]'
+          className='absolute bottom-[20px] left-10 z-[-1]  sm:z-[-1] md:z-[1]'
           width='250'
           height='250'
           viewBox='0 0 200 200'
