@@ -83,7 +83,7 @@ const Testimonials = () => {
   return (
     <div className='w-full max-w-[1128px] mx-auto mt-20 p-4'>
       <section className='flex flex-col items-center justify-center text-center gap-1 mb-14'>
-        <SectionNames sectionName='Features' />
+        <SectionNames sectionName='Testimonials' />
         <h2 className='font-bold text-3xl mb-3'>
           Trusted by logistics professionals
         </h2>

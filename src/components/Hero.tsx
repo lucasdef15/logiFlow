@@ -76,7 +76,7 @@ const Hero = () => {
           alt='Logistics'
         />
 
-        <div className='h-fit sm:w-[300px] absolute bottom-[-30px] sm:top-[300px] right-0 sm:right-[-20px] shadow-lg bg-[var(--card)] px-4 py-6 rounded-md flex items-center gap-3'>
+        <div className='h-fit sm:w-[300px] absolute bottom-[-30px] sm:top-[300px] right-0 sm:right-[-10px] shadow-lg bg-[var(--card)] px-4 py-6 rounded-md flex items-center gap-3'>
           <div className='bg-green-400 rounded-full p-1'>
             <Check className='w-4 h-4 stroke-2 text-[var(--accent)]' />
           </div>

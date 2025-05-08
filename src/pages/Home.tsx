@@ -1,4 +1,5 @@
 import Features from '@/components/Features';
+import FreeTrial from '@/components/FreeTrial';
 import Hero from '@/components/Hero';
 import Testimonials from '@/components/Testimonials';
 
@@ -9,8 +10,8 @@ const Home = () => {
       <div className='bg-[#fefefe] pt-1 pb-20'>
         <Features />
       </div>
-
       <Testimonials />
+      <FreeTrial />
     </>
   );
 };
