@@ -1,11 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
-import { Bell, LogIn } from 'lucide-react';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { LogIn } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import {
   Dialog,
@@ -29,7 +24,7 @@ interface DesktopNavProps {
 }
 
 const DesktopNav = ({ hasNotifications, notifications }: DesktopNavProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [_isOpen, setIsOpen] = useState(false);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [selectedNotification, setSelectedNotification] =
     useState<Notification | null>(null);

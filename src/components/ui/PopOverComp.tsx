@@ -11,11 +11,6 @@ interface Notification {
   timestamp: Date;
 }
 
-interface MobileNavProps {
-  hasNotifications: boolean;
-  notifications: Notification[];
-}
-
 interface PopOverCompProps {
   notifications: Notification[];
   isDialogOpen: boolean;
