@@ -10,11 +10,6 @@ interface Notification {
   timestamp: Date;
 }
 
-interface DesktopNavProps {
-  hasNotifications: boolean;
-  notifications: Notification[];
-}
-
 const Header = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const headerRef = useRef<HTMLElement>(null);
