@@ -1,0 +1,42 @@
+[
+  {
+    "quote": "Track Flow has completely transformed our delivery operations. We've cut costs by 25% and improved our on-time delivery rate to 98%.",
+    "name": "Maria Rodriguez",
+    "role": "Operations Manager",
+    "company": "Express Logistics",
+    "companyUrl": "https://expresslogistics.example.com",
+    "avatarUrl": "/assets/avatars/maria.jpg"
+  },
+  {
+    "quote": "The real-time tracking and route optimization features have saved us countless hours every week. It's an absolute game-changer.",
+    "name": "David Chen",
+    "role": "Logistics Director",
+    "company": "Swift Freight Co.",
+    "companyUrl": "https://swiftfreight.example.com",
+    "avatarUrl": "/assets/avatars/david.jpg"
+  },
+  {
+    "quote": "We’ve seen a 40% drop in delivery delays since using Track Flow. The analytics dashboard is intuitive and incredibly insightful.",
+    "name": "Lena Hart",
+    "role": "Delivery Lead",
+    "company": "Greenmile Couriers",
+    "companyUrl": "https://greenmile.example.com",
+    "avatarUrl": "/assets/avatars/lena.jpg"
+  },
+  {
+    "quote": "Setup was seamless and support has been excellent. It helped streamline our fleet management overnight.",
+    "name": "James Parker",
+    "role": "Fleet Manager",
+    "company": "TransMove Solutions",
+    "companyUrl": "https://transmove.example.com",
+    "avatarUrl": "/assets/avatars/james.jpg"
+  },
+  {
+    "quote": "Track Flow lets us scale without the usual headaches. The mobile compatibility is perfect for our field teams.",
+    "name": "Priya Nair",
+    "role": "Chief Operations Officer",
+    "company": "UrbanDrop",
+    "companyUrl": "https://urbandrop.example.com",
+    "avatarUrl": "/assets/avatars/priya.jpg"
+  }
+]
