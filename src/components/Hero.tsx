@@ -136,7 +136,10 @@ const Hero = () => {
   }, []);
 
   return (
-    <div className='w-full max-w-[1128px] mx-auto px-5 py-10 flex flex-col lg:flex-row justify-center items-center mt-10 gap-10'>
+    <div
+      id='top'
+      className='w-full max-w-[1128px] mx-auto px-5 py-10 flex flex-col lg:flex-row justify-center items-center mt-10 gap-10'
+    >
       {/* Left section */}
       <section className='w-full lg:w-[60%] md:w-[55%] flex flex-col justify-center items-center lg:items-start gap-3'>
         <span

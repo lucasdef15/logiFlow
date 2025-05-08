@@ -55,10 +55,12 @@ const DesktopNav = ({ hasNotifications, notifications }: DesktopNavProps) => {
     <>
       <nav className='hidden sm:flex flex-row'>
         <ul className='flex flex-row justify-center items-center gap-4 text-[.9rem] text-[var(--muted-foreground)] font-medium'>
-          <li className='relative group cursor-pointer transition-colors duration-300 hover:text-[var(--primary)]'>
-            Home
-            <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-[var(--primary)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
-          </li>
+          <a href='#top'>
+            <li className='relative group cursor-pointer transition-colors duration-300 hover:text-[var(--primary)]'>
+              Home
+              <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-[var(--primary)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
+            </li>
+          </a>
           <a href='#features'>
             <li className='relative group cursor-pointer transition-colors duration-300 hover:text-[var(--primary)]'>
               Features
