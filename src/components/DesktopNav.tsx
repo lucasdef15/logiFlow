@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Bell, LogIn } from 'lucide-react';
 import {
@@ -6,14 +7,20 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { formatDistanceToNow } from 'date-fns';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import PopOverComp from './ui/PopOverComp';
 
 type Notification = {
-  id: number;
+  id: React.Key | null | undefined;
   title: string;
   message: string;
-  type?: string;
-  read?: boolean;
-  timestamp?: string;
+  timestamp: Date;
 };
 
 interface DesktopNavProps {
@@ -22,6 +29,33 @@ interface DesktopNavProps {
 }
 
 const DesktopNav = ({ hasNotifications, notifications }: DesktopNavProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [selectedNotification, setSelectedNotification] =
+    useState<Notification | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        setIsOpen(false);
+        setIsPopoverOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  const handleNotificationClick = (notification: Notification) => {
+    setSelectedNotification(notification);
+    setIsPopoverOpen(false);
+    setIsDialogOpen(true);
+  };
   return (
     <>
       <nav className='hidden sm:flex flex-row'>
@@ -53,60 +87,36 @@ const DesktopNav = ({ hasNotifications, notifications }: DesktopNavProps) => {
         </ul>
       </nav>
 
-      <section className='hidden sm:flex gap-2 mt-4 sm:mt-0'>
-        <Popover>
-          <PopoverTrigger
-            className={`mx-2 cursor-pointer flex shrink-0 justify-center items-center relative ${
-              hasNotifications ? 'noti_dot' : ''
-            }`}
-          >
-            <Bell />
-          </PopoverTrigger>
+      <section className='hidden sm:flex items-center justify-center gap-5 mt-4 sm:mt-0'>
+        {/* Notification Popover */}
+        <PopOverComp
+          notifications={notifications}
+          isDialogOpen={isDialogOpen}
+          setIsDialogOpen={setIsDialogOpen}
+          hasNotifications={hasNotifications}
+          isPopoverOpen={isPopoverOpen}
+          setIsPopoverOpen={setIsPopoverOpen}
+          handleNotificationClick={handleNotificationClick}
+        />
 
-          <PopoverContent className='w-full min-w-[250px] z-max'>
-            {hasNotifications ? (
-              <>
-                <section className='mb-4 pb-4 border-b border-[var(--sidebar-border)]'>
-                  <h3 className='font-medium'>Notifications</h3>
-                  <p className='text-[var(--text-muted)]'>
-                    You have {notifications.length} unread notification
-                    {notifications.length > 1 ? 's' : ''}
-                  </p>
-                </section>
-
-                <ul>
-                  {notifications.map((n: Notification) => (
-                    <li
-                      key={n.id}
-                      className='text-[var(--text-muted)] cursor-pointer p-2 rounded-[5px] flex flex-col gap-.5 mb-[.2rem] hover:bg-blue-400 hover:text-white transition-all duration-300 ease-in-out'
-                    >
-                      <strong className='font-medium transition-colors duration-300 ease-in-out hover:text-white'>
-                        {n.title}
-                      </strong>
-                      <span className='text-[var(--text-muted)] text-[.9rem]'>
-                        {n.message}
-                      </span>
-                      <span className='text-[var(--text-muted)] text-[.8rem]'>
-                        {formatDistanceToNow(n.timestamp as string, {
-                          addSuffix: true,
-                        })}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-
-                <a href='#' className='text-sm text-[var(--text-muted)] ml-2'>
-                  View all notifications
-                </a>
-              </>
-            ) : (
-              <section className='flex flex-col items-center justify-center py-6 text-[var(--text-muted)] text-sm'>
-                <Bell className='w-6 h-6 mb-2 opacity-40' />
-                <p>No new notifications</p>
-              </section>
-            )}
-          </PopoverContent>
-        </Popover>
+        {/* Notification Dialog */}
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{selectedNotification?.title}</DialogTitle>
+              <DialogDescription>
+                {selectedNotification?.message}
+                <br />
+                <span className='text-xs text-muted-foreground block mt-2'>
+                  {selectedNotification?.timestamp &&
+                    formatDistanceToNow(selectedNotification.timestamp, {
+                      addSuffix: true,
+                    })}
+                </span>
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
 
         <Button className='cursor-pointer bg-blue-600 text-[var(--card)] hover:bg-blue-400 transition-colors duration-300 ease-in-out'>
           <LogIn /> Login
