@@ -301,7 +301,7 @@ const Contact = () => {
         {/* Informações de Contato */}
         <section
           ref={contactInfoRef}
-          className='flex-1 bg-gradient-to-b from-blue-50 to-white p-8 rounded-xl shadow-sm transition-shadow duration-300 hover:shadow-md'
+          className='  flex flex-col items-center justify-center bg-gradient-to-bm from-blue-50 to-white p-8 rounded-xl shadow-sm transition-shadow duration-300 hover:shadow-md'
         >
           <h3 className='text-xl font-semibold text-gray-800 mb-6'>
             Informações de Contato
