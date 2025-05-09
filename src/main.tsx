@@ -6,6 +6,7 @@ import App from './App.tsx';
 import Home from './pages/Home.tsx';
 import Contact from './pages/Contact.tsx';
 import About from './pages/About.tsx';
+import FreeTrialPage from './pages/FreeTrialPage.tsx';
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
       {
         path: 'about',
         Component: About,
+      },
+      {
+        path: 'free-trial',
+        Component: FreeTrialPage,
       },
     ],
   },

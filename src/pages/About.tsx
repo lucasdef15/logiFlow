@@ -44,7 +44,7 @@ const About = () => {
   }, []);
 
   return (
-    <div className='flex flex-col w-full max-w-6xl mx-auto px-4 py-12 gap-10 bg-white'>
+    <div className='flex flex-col w-full max-w-6xl min-h-screen mx-auto px-4 py-12 gap-10 bg-white'>
       <section
         ref={sectionRefs[0]}
         className='bg-gray-50 rounded-xl p-6 shadow-sm transition-shadow duration-300 hover:shadow-md'

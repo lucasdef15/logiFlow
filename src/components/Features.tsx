@@ -1,13 +1,15 @@
 import { ChartColumnIncreasing } from 'lucide-react';
 import CardWithLabelIcon from './ui/CardWithLabelIcon';
-import { Bell } from 'lucide-react';
-import { CloudOff } from 'lucide-react';
-import { Code } from 'lucide-react';
-import { ClockArrowUp } from 'lucide-react';
-import { Map } from 'lucide-react';
-import { Compass } from 'lucide-react';
-import { CloudCog } from 'lucide-react';
-import { Users } from 'lucide-react';
+import {
+  Bell,
+  CloudOff,
+  Code,
+  ClockArrowUp,
+  Map,
+  Compass,
+  CloudCog,
+  Users,
+} from 'lucide-react';
 import SectionNames from './ui/SectionNames';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
@@ -17,61 +19,90 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 
 const Features = () => {
-  const titleRef1 = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
 
-  useGSAP(() => {
-    if (titleRef1.current?.children) {
-      gsap.fromTo(
-        titleRef1.current.children,
-        { opacity: 0, y: 20 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1,
-          ease: 'power1.out',
-          stagger: 0.2,
-          scrollTrigger: {
-            trigger: titleRef1?.current,
-            start: 'top 80%',
-            end: 'bottom 5%',
-            toggleActions: 'play reverse play stop',
-            once: false,
-          },
-        }
-      );
-    }
-  }, []);
+  useGSAP(
+    () => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: 'top 80%',
+          end: 'bottom 20%',
+          toggleActions: 'play none none reverse',
+        },
+      });
 
-  useGSAP(() => {
-    if (cardsRef.current?.children) {
-      gsap.fromTo(
-        cardsRef.current.children,
+      // Title section animation (staggered entrance with subtle lift)
+      tl.fromTo(
+        titleRef.current?.children ? Array.from(titleRef.current.children) : [],
         { opacity: 0, y: 30 },
         {
           opacity: 1,
           y: 0,
           duration: 0.8,
-          ease: 'power2.out',
+          ease: 'expo.inOut',
           stagger: 0.15,
-          scrollTrigger: {
-            trigger: cardsRef.current,
-            start: 'top 85%',
-            end: 'bottom 20%',
-            toggleActions: 'play reverse play reverse',
-          },
         }
       );
-    }
-  }, []);
+
+      // Cards animation (staggered entrance with scale and slight rotation)
+      tl.fromTo(
+        Array.from(cardsRef.current?.children || []),
+        { opacity: 0, y: 40, scale: 0.95, rotationX: 5 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          rotationX: 0,
+          duration: 0.9,
+          ease: 'power3.inOut',
+          stagger: 0.1,
+        },
+        '-=0.4'
+      );
+
+      // Card hover effects
+      const ctx = gsap.context(() => {
+        gsap.utils
+          .toArray<HTMLElement>(cardsRef.current?.children || [])
+          .forEach((card) => {
+            card.addEventListener('mouseenter', () => {
+              gsap.to(card, {
+                scale: 1.03,
+                y: -5,
+                boxShadow: '0px 12px 24px rgba(0, 0, 0, 0.1)',
+                duration: 0.3,
+                ease: 'power2.out',
+              });
+            });
+
+            card.addEventListener('mouseleave', () => {
+              gsap.to(card, {
+                scale: 1,
+                y: 0,
+                boxShadow: '0px 0px 0px rgba(0, 0, 0, 0)',
+                duration: 0.3,
+                ease: 'power2.out',
+              });
+            });
+          });
+      }, cardsRef);
+
+      return () => ctx.revert();
+    },
+    { scope: containerRef }
+  );
 
   return (
     <div
+      ref={containerRef}
       id='features'
       className='w-full max-w-[1128px] mx-auto mt-20 p-4 bg-[#Fefefe]'
     >
       <section
-        ref={titleRef1}
+        ref={titleRef}
         className='flex flex-col items-center justify-center text-center gap-1 mb-15'
       >
         <SectionNames sectionName='Features' />
@@ -86,7 +117,7 @@ const Features = () => {
 
       <section
         ref={cardsRef}
-        className=' flex flex-wrap gap-7 justify-center items-center'
+        className='flex flex-wrap gap-7 justify-center items-center'
       >
         <CardWithLabelIcon
           icon={<ChartColumnIncreasing />}
@@ -106,7 +137,6 @@ const Features = () => {
           title='Offline Mode'
           description='Delivery drivers can continue working without interruption even when connectivity is lost.'
         />
-
         <CardWithLabelIcon
           icon={<Code />}
           color='blue'
@@ -125,7 +155,6 @@ const Features = () => {
           title='Real-time Visualization'
           description='Interactive maps showing vehicle locations, delivery status, and traffic conditions.'
         />
-
         <CardWithLabelIcon
           icon={<Compass />}
           color='blue'

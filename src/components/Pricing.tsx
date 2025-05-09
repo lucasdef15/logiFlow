@@ -7,81 +7,197 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 
 const Pricing = () => {
-  const titleRef1 = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<(HTMLDivElement | null)[]>([]);
-  const sectionRef = useRef<HTMLDivElement>(null);
+  const svgBgRef = useRef<SVGSVGElement>(null);
 
-  useGSAP(() => {
-    if (titleRef1.current?.children) {
-      return gsap.fromTo(
-        titleRef1.current.children,
-        { opacity: 0, y: -50, scale: 0 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 1,
-          ease: 'power1.out',
-          stagger: 0.2,
-          scrollTrigger: {
-            trigger: titleRef1?.current,
-            start: 'top 80%',
-            end: 'bottom 5%',
-          },
-        }
-      );
-    }
-  }, []);
-
-  useGSAP(() => {
-    if (titleRef1.current?.children) {
-      return gsap.fromTo(
-        titleRef1.current.children,
-        { opacity: 0, y: -500, scale: 0 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 1,
-          ease: 'power1.out',
-          stagger: 0.2,
-          scrollTrigger: {
-            trigger: titleRef1?.current,
-            start: 'top 80%',
-            end: 'bottom 5%',
-          },
-        }
-      );
-    }
-  }, []);
-
-  useGSAP(() => {
-    const elements = cardRef.current;
-
-    if (!elements.length) return;
-
-    gsap.fromTo(
-      elements,
-      { y: -50, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.8,
-        stagger: 0.35,
-        ease: 'power2.inOut',
+  useGSAP(
+    () => {
+      const tl = gsap.timeline({
         scrollTrigger: {
-          trigger: sectionRef.current,
+          trigger: containerRef.current,
           start: 'top 80%',
-          end: 'bottom 5%',
+          end: 'bottom 20%',
+          toggleActions: 'play none none reverse',
         },
-      }
-    );
-  }, []);
+      });
+
+      // Background SVG animation (morphing and scaling)
+      tl.fromTo(
+        svgBgRef.current,
+        { scale: 0.8, opacity: 0, rotation: 15 },
+        {
+          scale: 1,
+          opacity: 0.3,
+          rotation: 0,
+          duration: 1.5,
+          ease: 'expo.inOut',
+        }
+      ).fromTo(
+        svgBgRef.current?.querySelector('path')
+          ? svgBgRef.current.querySelector('path')
+          : null,
+        {
+          attr: {
+            d: 'M50,20 C80,-10 150,10 170,80 C190,150 130,170 90,190 C50,210 20,180 10,120 C0,60 20,40 50,20 Z',
+          },
+        },
+        {
+          attr: {
+            d: 'M40,30 C90,0 160,20 180,90 C200,160 140,180 100,200 C60,220 20,170 10,110 C0,50 10,40 40,30 Z',
+          },
+          duration: 2,
+          ease: 'power4.inOut',
+        },
+        0
+      );
+
+      // Title section animation (staggered entrance with rotation)
+      tl.fromTo(
+        Array.from(titleRef.current?.children || []),
+        { opacity: 0, y: 30, rotationY: 10 },
+        {
+          opacity: 1,
+          y: 0,
+          rotationY: 0,
+          duration: 0.8,
+          ease: 'expo.inOut',
+          stagger: 0.15,
+        },
+        0.4
+      );
+
+      // Card animation (3D flip and lift)
+      tl.fromTo(
+        cardRef.current,
+        { opacity: 0, y: 60, scale: 0.85, rotationX: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          rotationX: 0,
+          duration: 1,
+          ease: 'power4.inOut',
+          stagger: 0.2,
+        },
+        0.6
+      );
+
+      // Checkmark SVG animation (drawing effect)
+      tl.fromTo(
+        cardRef.current.flatMap((card) =>
+          Array.from(card?.querySelectorAll('svg path') || [])
+        ),
+        { strokeDasharray: 100, strokeDashoffset: 100 },
+        {
+          strokeDashoffset: 0,
+          duration: 0.7,
+          stagger: 0.1,
+          ease: 'power2.inOut',
+        },
+        0.8
+      );
+
+      // Card and button hover effects
+      const ctx = gsap.context(() => {
+        cardRef.current.forEach((card) => {
+          if (!card) return;
+
+          // Card hover
+          card.addEventListener('mouseenter', () => {
+            gsap.to(card, {
+              scale: 1.05,
+              y: -15,
+              boxShadow: '0px 16px 32px rgba(0, 0, 0, 0.2)',
+              background: card.classList.contains('bg-blue-50')
+                ? 'linear-gradient(135deg, #e0f7fa, #b3e5fc)'
+                : card.classList.contains('bg-teal-50/60')
+                ? 'linear-gradient(135deg, #ccfbf1, #99f6e4)'
+                : 'linear-gradient(135deg, #ffedd5, #fed7aa)',
+              duration: 0.4,
+              ease: 'power2.out',
+            });
+          });
+          card.addEventListener('mouseleave', () => {
+            gsap.to(card, {
+              scale: 1,
+              y: 0,
+              boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+              background: card.classList.contains('bg-blue-50')
+                ? '#eff6ff'
+                : card.classList.contains('bg-teal-50/60')
+                ? 'rgba(204, 251, 241, 0.6)'
+                : 'rgba(255, 237, 213, 0.6)',
+              duration: 0.4,
+              ease: 'power2.out',
+            });
+          });
+
+          // Button hover
+          const button = card.querySelector('button');
+          if (button) {
+            button.addEventListener('mouseenter', () => {
+              gsap.to(button, {
+                scale: 1.1,
+                boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.2)',
+                backgroundColor: button.classList.contains('bg-sky-500')
+                  ? '#0284c7'
+                  : undefined,
+                borderColor: button.classList.contains('text-cyan-500')
+                  ? '#06b6d4'
+                  : button.classList.contains('text-orange-500')
+                  ? '#f97316'
+                  : undefined,
+                duration: 0.3,
+                ease: 'power2.out',
+              });
+            });
+            button.addEventListener('mouseleave', () => {
+              gsap.to(button, {
+                scale: 1,
+                boxShadow: '0px 0px 0px rgba(0, 0, 0, 0)',
+                backgroundColor: button.classList.contains('bg-sky-500')
+                  ? '#0ea5e9'
+                  : undefined,
+                borderColor: button.classList.contains('text-cyan-500')
+                  ? '#22d3ee'
+                  : button.classList.contains('text-orange-500')
+                  ? '#fb923c'
+                  : undefined,
+                duration: 0.3,
+                ease: 'power2.out',
+              });
+            });
+          }
+        });
+      }, containerRef);
+
+      return () => ctx.revert();
+    },
+    { scope: containerRef }
+  );
 
   return (
-    <div id='pricing' className='w-full mb-20'>
+    <div
+      ref={containerRef}
+      id='pricing'
+      className='w-full mb-20 relative overflow-hidden'
+    >
+      <svg
+        ref={svgBgRef}
+        className='absolute top-0 left-0 w-full h-full opacity-30 z-[-1]'
+        viewBox='0 0 200 250'
+        xmlns='http://www.w3.org/2000/svg'
+      >
+        <path
+          fill='#bae6fd'
+          d='M40,30 C90,0 160,20 180,90 C200,160 140,180 100,200 C60,220 20,170 10,110 C0,50 10,40 40,30 Z'
+        />
+      </svg>
+
       <section
-        ref={titleRef1}
+        ref={titleRef}
         className='flex flex-col items-center justify-center text-center gap-1 mb-15'
       >
         <SectionNames sectionName='Pricing' />
@@ -89,15 +205,12 @@ const Pricing = () => {
           Escolha o Plano Ideal para Sua Empresa
         </h2>
         <p className='w-full max-w-[550px] mx-auto text-[.9rem] text-[var(--text-muted-soft)] font-medium leading-[1.2]'>
-          Temos opções Flexiceis para atender ás necessidades do seu negócio,
-          desde startups até empressas estabelecidas.
+          Temos opções flexíveis para atender às necessidades do seu negócio,
+          desde startups até empresas estabelecidas.
         </p>
       </section>
 
-      <section
-        ref={sectionRef}
-        className='flex flex-wrap gap-6 w-full p-8 justify-center items-stretch rounded-xl'
-      >
+      <section className='flex flex-wrap gap-6 w-full p-8 justify-center items-stretch rounded-xl'>
         {[
           {
             title: 'Plano Gratuito',
@@ -163,7 +276,7 @@ const Pricing = () => {
             ref={(el) => {
               cardRef.current[idx] = el;
             }}
-            className={`${plan.bg} border rounded-2xl shadow-md p-6 flex flex-col justify-between w-full max-w-sm transition-transform hover:-translate-y-1`}
+            className={`${plan.bg} border rounded-2xl shadow-md p-6 flex flex-col justify-between w-full max-w-sm transition-transform`}
           >
             <div>
               <h4 className='text-xl font-bold text-gray-800 mb-1'>
@@ -207,7 +320,7 @@ const Pricing = () => {
               </ul>
             </div>
             <button
-              className={`w-full px-4 py-2 rounded-xl font-semibold border ${plan.button.className} transition`}
+              className={`w-full px-4 py-2 rounded-xl cursor-pointer font-semibold border ${plan.button.className} transition`}
             >
               {plan.button.text}
             </button>

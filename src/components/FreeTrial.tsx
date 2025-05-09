@@ -6,92 +6,177 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 
 const FreeTrial = () => {
-  const titleRef1 = useRef<HTMLDivElement>(null);
-  const titleRef2 = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLDivElement>(null);
+  const subtitleRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<(HTMLLIElement | null)[]>([]);
   const ulRef = useRef<HTMLUListElement>(null);
-  const formRef = useRef<HTMLUListElement>(null);
+  const formRef = useRef<HTMLElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const svgTopRef = useRef<SVGSVGElement>(null);
+  const svgBottomRef = useRef<SVGSVGElement>(null);
 
-  useGSAP(() => {
-    gsap.fromTo(
-      titleRef1?.current,
-      { opacity: 0, x: -500 },
-      {
-        opacity: 1,
-        x: 0,
-        duration: 1,
-        ease: 'power1.out',
-        stagger: 0.2,
+  useGSAP(
+    () => {
+      const tl = gsap.timeline({
         scrollTrigger: {
-          trigger: titleRef1?.current,
+          trigger: containerRef.current,
           start: 'top 80%',
-          end: 'bottom 5%',
+          end: 'bottom 20%',
+          toggleActions: 'play none none reverse',
         },
-      }
-    );
-    gsap.fromTo(
-      titleRef2?.current,
-      { opacity: 0, x: -500 },
-      {
-        opacity: 1,
-        x: 0,
-        duration: 1,
-        ease: 'power1.out',
-        stagger: 0.2,
-        scrollTrigger: {
-          trigger: titleRef1?.current,
-          start: 'top 80%',
-          end: 'bottom 5%',
-        },
-      }
-    );
-    gsap.fromTo(
-      formRef?.current,
-      { opacity: 0, x: 50, scale: 0 },
-      {
-        opacity: 1,
-        x: 0,
-        scale: 1,
-        duration: 1,
-        ease: 'power1.out',
-        stagger: 0.2,
-        scrollTrigger: {
-          trigger: titleRef1?.current,
-          start: 'top 80%',
-          end: 'bottom 5%',
-        },
-      }
-    );
-  }, []);
+      });
 
-  useGSAP(() => {
-    const elements = listRef.current;
+      // SVG animations (morphing and scaling)
+      tl.fromTo(
+        svgTopRef.current,
+        { scale: 0.8, opacity: 0, rotation: 10 },
+        {
+          scale: 1,
+          opacity: 1,
+          rotation: 0,
+          duration: 1.2,
+          ease: 'expo.inOut',
+        }
+      )
+        .fromTo(
+          (svgTopRef.current?.querySelector('path') as SVGPathElement) ?? null,
+          {
+            attr: {
+              d: 'M50,20 C80,-10 150,10 170,80 C190,150 130,170 90,190 C50,210 20,180 10,120 C0,60 20,40 50,20 Z',
+            },
+          },
+          {
+            attr: {
+              d: 'M40,30 C90,0 160,20 180,90 C200,160 140,180 100,200 C60,220 20,170 10,110 C0,50 10,40 40,30 Z',
+            },
+            duration: 1.5,
+            ease: 'power4.inOut',
+          },
+          0
+        )
+        .fromTo(
+          svgBottomRef.current,
+          { scale: 0.8, opacity: 0, rotation: -10 },
+          {
+            scale: 1,
+            opacity: 1,
+            rotation: 0,
+            duration: 1.2,
+            ease: 'expo.inOut',
+          },
+          0.2
+        )
+        .fromTo(
+          svgBottomRef.current?.querySelector('path') as SVGPathElement,
+          {
+            attr: {
+              d: 'M60,20 C100,-10 160,30 170,90 C180,150 130,170 80,170 C30,170 10,120 20,70 C30,40 40,30 60,20 Z',
+            },
+          },
+          {
+            attr: {
+              d: 'M50,30 C110,0 170,40 180,100 C190,160 130,180 90,180 C50,180 10,130 20,80 C30,50 40,40 50,30 Z',
+            },
+            duration: 1.5,
+            ease: 'power4.inOut',
+          },
+          0.2
+        );
 
-    if (!elements.length) return;
+      // Title animation (slides in with slight rotation)
+      tl.fromTo(
+        titleRef.current,
+        { opacity: 0, x: -100, rotationY: 10 },
+        { opacity: 1, x: 0, rotationY: 0, duration: 0.8, ease: 'expo.inOut' },
+        0.4
+      );
 
-    gsap.fromTo(
-      elements,
-      { scale: 0, x: -500, opacity: 0 },
-      {
-        scale: 1,
-        x: 0,
-        opacity: 1,
-        duration: 1,
-        stagger: 0.35,
-        ease: 'power2.inOut',
-        scrollTrigger: {
-          trigger: ulRef.current,
-          start: 'top 80%',
-          end: 'bottom 5%',
+      // Subtitle animation (fades in with slight lift)
+      tl.fromTo(
+        subtitleRef.current,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.7, ease: 'power3.inOut' },
+        0.6
+      );
+
+      // List items animation (staggered bounce-in with checkmark draw)
+      tl.fromTo(
+        listRef.current,
+        { opacity: 0, x: -50, scale: 0.95 },
+        {
+          opacity: 1,
+          x: 0,
+          scale: 1,
+          duration: 0.8,
+          stagger: 0.2,
+          ease: 'back.out(1.4)',
         },
-      }
-    );
-  }, []);
+        0.8
+      ).fromTo(
+        listRef.current.map((el) => el?.querySelector('svg path')),
+        { strokeDasharray: 100, strokeDashoffset: 100 },
+        {
+          strokeDashoffset: 0,
+          duration: 0.6,
+          stagger: 0.2,
+          ease: 'power2.inOut',
+        },
+        0.8
+      );
+
+      // Form animation (scales in with shadow)
+      tl.fromTo(
+        formRef.current,
+        { opacity: 0, scale: 0.9, y: 50 },
+        {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          duration: 0.9,
+          ease: 'expo.inOut',
+        },
+        1
+      );
+
+      // Button hover effect
+      const ctx = gsap.context(() => {
+        const button = buttonRef.current;
+        if (button) {
+          button.addEventListener('mouseenter', () => {
+            gsap.to(button, {
+              scale: 1.05,
+              boxShadow: '0px 8px 24px rgba(14, 165, 233, 0.4)',
+              backgroundColor: '#0284c7',
+              duration: 0.3,
+              ease: 'power2.out',
+            });
+          });
+          button.addEventListener('mouseleave', () => {
+            gsap.to(button, {
+              scale: 1,
+              boxShadow: '0px 0px 0px rgba(0, 0, 0, 0)',
+              backgroundColor: '#0ea5e9',
+              duration: 0.3,
+              ease: 'power2.out',
+            });
+          });
+        }
+      }, formRef);
+
+      return () => ctx.revert();
+    },
+    { scope: containerRef }
+  );
 
   return (
-    <div className='bg-[#0EA5E9] relative my-25 min-h-[80vh]'>
-      <div className='w-full  max-w-[1128px] mx-auto pt-10 p-4'>
+    <div
+      ref={containerRef}
+      className='bg-[#0EA5E9] relative my-25 min-h-[80vh]'
+    >
+      <div className='w-full max-w-[1128px] mx-auto pt-10 p-4'>
         <svg
+          ref={svgTopRef}
           className='absolute top-[20px] right-10 z-[0]'
           width='250'
           height='300'
@@ -100,20 +185,20 @@ const FreeTrial = () => {
         >
           <path
             fill='#27AEEB'
-            d='M50,20 C80,-10 150,10 170,80 C190,150 130,170 90,190 C50,210 20,180 10,120 C0,60 20,40 50,20 Z'
+            d='M40,30 C90,0 160,20 180,90 C200,160 140,180 100,200 C60,220 20,170 10,110 C0,50 10,40 40,30 Z'
           />
         </svg>
 
-        <div className='w-full p-5 flex flex-col  md:flex-row md:justify-center md:item-center  items-start gap-10 md:gap-4 '>
+        <div className='w-full p-5 flex flex-col md:flex-row md:justify-center md:items-center items-start gap-10 md:gap-4'>
           <section className='w-[100%] md:w-[55%] md:text-left text-center max-w-[600px] flex flex-col gap-5 justify-center'>
             <h2
-              ref={titleRef1}
+              ref={titleRef}
               className='text-[var(--muted)] text-3xl font-bold'
             >
               Try FastFlow for Free
             </h2>
 
-            <p ref={titleRef2} className='text-[var(--muted)] opacity'>
+            <p ref={subtitleRef} className='text-[var(--muted)] opacity-90'>
               Testing FastFlow is easy and commitment-free. Get started now and
               see the difference in your company's logistics.
             </p>
@@ -211,6 +296,7 @@ const FreeTrial = () => {
               </div>
 
               <button
+                ref={buttonRef}
                 type='submit'
                 className='w-full mt-6 bg-sky-500 cursor-pointer hover:bg-sky-600 text-white font-bold py-3 rounded-xl transition duration-300'
               >
@@ -221,7 +307,8 @@ const FreeTrial = () => {
         </div>
 
         <svg
-          className='absolute bottom-[20px] left-10 z-[-1]  sm:z-[-1] md:z-[1]'
+          ref={svgBottomRef}
+          className='absolute bottom-[20px] left-10 z-[-1] sm:z-[-1] md:z-[1]'
           width='250'
           height='250'
           viewBox='0 0 200 200'
@@ -229,7 +316,7 @@ const FreeTrial = () => {
         >
           <path
             fill='#27AEEB'
-            d='M60,20 C100,-10 160,30 170,90 C180,150 130,170 80,170 C30,170 10,120 20,70 C30,40 40,30 60,20 Z'
+            d='M50,30 C110,0 170,40 180,100 C190,160 130,180 90,180 C50,180 10,130 20,80 C30,50 40,40 50,30 Z'
           />
         </svg>
       </div>
