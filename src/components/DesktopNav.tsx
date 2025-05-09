@@ -10,6 +10,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import PopOverComp from './ui/PopOverComp';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 type Notification = {
   id: React.Key | null | undefined;
@@ -51,16 +52,35 @@ const DesktopNav = ({ hasNotifications, notifications }: DesktopNavProps) => {
     setIsPopoverOpen(false);
     setIsDialogOpen(true);
   };
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+
+    if (location.pathname === '/') {
+      const hero = document.getElementById('top');
+      if (hero) {
+        hero.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      navigate('/');
+    }
+  };
+
   return (
     <>
       <nav className='hidden sm:flex flex-row'>
         <ul className='flex flex-row justify-center items-center gap-4 text-[.9rem] text-[var(--muted-foreground)] font-medium'>
-          <a href='#top'>
-            <li className='relative group cursor-pointer transition-colors duration-300 hover:text-[var(--primary)]'>
-              Home
-              <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-[var(--primary)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
-            </li>
-          </a>
+          <li
+            onClick={handleClick}
+            className='relative group cursor-pointer transition-colors duration-300 hover:text-[var(--primary)]'
+          >
+            Home
+            <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-[var(--primary)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
+          </li>
+
           <a href='#features'>
             <li className='relative group cursor-pointer transition-colors duration-300 hover:text-[var(--primary)]'>
               Features
@@ -73,10 +93,18 @@ const DesktopNav = ({ hasNotifications, notifications }: DesktopNavProps) => {
               <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-[var(--primary)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
             </li>
           </a>
-          <li className='relative group cursor-pointer transition-colors duration-300 hover:text-[var(--primary)]'>
-            Contact
-            <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-[var(--primary)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
-          </li>
+          <Link to={'contact'}>
+            <li className='relative group cursor-pointer transition-colors duration-300 hover:text-[var(--primary)]'>
+              Contact
+              <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-[var(--primary)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
+            </li>
+          </Link>
+          <Link to={'about'}>
+            <li className='relative group cursor-pointer transition-colors duration-300 hover:text-[var(--primary)]'>
+              About
+              <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-[var(--primary)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
+            </li>
+          </Link>
           <li className='relative group cursor-pointer transition-colors duration-300 hover:text-[var(--primary)]'>
             Dashboard
             <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-[var(--primary)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
