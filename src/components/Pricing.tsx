@@ -237,7 +237,7 @@ const Pricing = () => {
             ref={(el) => {
               cardRef.current[idx] = el;
             }}
-            className={`${plan.bg} border border-gray-200/50 dark:border-gray-700/50 rounded-3xl shadow-lg p-6 sm:p-8 flex flex-col justify-between w-full max-w-[360px] sm:max-w-md transition-all duration-200 backdrop-blur-sm`}
+            className={`${plan.bg} border border-gray-200/50 dark:border-gray-700/50 rounded-3xl shadow-[4px_4px_20px_rgba(0,0,0,0.2)] p-6 sm:p-8 flex flex-col justify-between w-full max-w-[360px] sm:max-w-md transition-all duration-200 backdrop-blur-sm`}
           >
             <div>
               <h4 className='text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2'>

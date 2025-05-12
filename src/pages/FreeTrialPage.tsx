@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Card } from '@/components/ui/card';
+import { Truck, MapPin, Users, Clock } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -20,13 +21,29 @@ const FreeTrialPage = () => {
 
   const formRef = useRef<HTMLDivElement>(null);
   const leftSideRef = useRef<HTMLDivElement>(null);
+  const backgroundRef = useRef<HTMLDivElement>(null);
 
   const features = [
-    'Real-time tracking and analytics',
-    'Smart route optimization',
-    'Team collaboration tools',
-    'Customer notification system',
-    'Mobile app for drivers',
+    {
+      text: 'Real-time tracking and analytics',
+      icon: <MapPin className='text-[#00b7eb]' />,
+    },
+    {
+      text: 'Smart route optimization',
+      icon: <Truck className='text-[#00b7eb]' />,
+    },
+    {
+      text: 'Team collaboration tools',
+      icon: <Users className='text-[#00b7eb]' />,
+    },
+    {
+      text: 'Customer notification system',
+      icon: <Clock className='text-[#00b7eb]' />,
+    },
+    {
+      text: 'Mobile app for drivers',
+      icon: <Truck className='text-[#00b7eb]' />,
+    },
   ];
 
   useEffect(() => {
@@ -66,6 +83,22 @@ const FreeTrialPage = () => {
         }
       );
     }
+    if (backgroundRef.current) {
+      gsap.fromTo(
+        backgroundRef.current,
+        { opacity: 0 },
+        {
+          opacity: 1,
+          duration: 1,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: backgroundRef.current,
+            start: 'top 100%',
+            end: 'bottom 20%',
+          },
+        }
+      );
+    }
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -97,60 +130,61 @@ const FreeTrialPage = () => {
   };
 
   return (
-    <div className='min-h-screen bg-gray-100 flex items-center justify-center px-4 py-16'>
-      <div className='max-w-7xl w-full grid grid-cols-1 lg:grid-cols-2 gap-10'>
+    <div className='relative w-full min-h-screen bg-[#0d111c] text-white py-20 px-4 overflow-hidden'>
+      {/* WebGL Background Placeholder */}
+      <div
+        ref={backgroundRef}
+        className='absolute inset-0 w-full h-full z-0 opacity-50 bg-gradient-to-r from-[#00b7eb]/20 to-transparent'
+      />
+
+      {/* Gradient Transition */}
+      <div className='absolute bottom-0 left-0 w-full h-32 bg-gradient-to-b from-transparent to-[#0d111c] z-10 pointer-events-none' />
+
+      {/* Main Content */}
+      <div className='relative max-w-7xl mx-auto z-10 grid grid-cols-1 lg:grid-cols-2 gap-10'>
         {/* Left Side */}
         <section
           ref={leftSideRef}
-          className='bg-gradient-to-br from-blue-50 to-gray-50 text-gray-800 rounded-3xl p-10 flex flex-col justify-center shadow-xl transition-shadow duration-300 hover:shadow-2xl'
+          className='bg-[#1a1f2b]/80 rounded-3xl p-10 shadow-lg transition-all duration-300 hover:shadow-cyan-500/50 flex flex-col justify-center'
         >
-          <h2 className='text-4xl font-bold mb-5 tracking-tight'>
+          <h2 className='text-4xl font-bold text-[#00b7eb] mb-5 tracking-tight'>
             Transform Your Logistics
           </h2>
-          <p className='text-lg leading-relaxed mb-8 text-gray-600'>
+          <p className='text-white/80 text-lg leading-relaxed mb-8'>
             Experience the power of TrackFlow with a 14-day free trial.
             Streamline operations, cut costs, and boost efficiency with our
             cutting-edge platform.
           </p>
           <ul className='space-y-5 mb-8'>
             {features.map((feature, index) => (
-              <li key={index} className='flex items-center gap-4'>
-                <span className='w-8 h-8 flex items-center justify-center bg-blue-100 rounded-full'>
-                  <svg
-                    className='w-5 h-5 text-blue-500'
-                    fill='none'
-                    stroke='currentColor'
-                    viewBox='0 0 24 24'
-                  >
-                    <path
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      strokeWidth='2'
-                      d='M5 13l4 4L19 7'
-                    />
-                  </svg>
+              <li
+                key={index}
+                className='flex items-center gap-4 group hover:scale-105 transition-transform duration-300'
+              >
+                <span className='p-2 bg-[#00b7eb]/20 text-[#00b7eb] rounded-full group-hover:bg-[#00b7eb]/40'>
+                  {feature.icon}
                 </span>
-                <span className='text-gray-700'>{feature}</span>
+                <span className='text-white/70'>{feature.text}</span>
               </li>
             ))}
           </ul>
-          <Card className='p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300'>
+          <Card className='p-6 bg-[#2a2f3b]/80 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300'>
             <div className='flex items-start gap-4'>
-              <div className='w-full aspect-[1/1] rounded-full overflow-hidden max-w-[60px]'>
+              <div className='w-40 aspect-square rounded-full overflow-hidden'>
                 <img
                   className='w-full h-full object-cover object-center'
                   src={'/assets/avatars/maria.webp'}
-                  alt={'tita'}
+                  alt={'Sarah Johnson'}
                 />
               </div>
               <div>
-                <p className='text-lg font-semibold text-gray-800'>
+                <p className='text-lg font-semibold text-white'>
                   Sarah Johnson
                 </p>
-                <p className='text-sm text-gray-500'>
+                <p className='text-sm text-white/60'>
                   Logistics Manager, XYZ Logistics
                 </p>
-                <p className='text-gray-600 mt-2 leading-relaxed'>
+                <p className='text-white/70 mt-2 leading-relaxed'>
                   "TrackFlow has completely transformed how we manage our
                   deliveries. We've seen a 25% reduction in fuel costs and our
                   customers love real-time tracking."
@@ -158,7 +192,7 @@ const FreeTrialPage = () => {
               </div>
             </div>
           </Card>
-          <div className='bg-blue-200 p-5 rounded-xl mt-6 text-gray-700'>
+          <div className='bg-[#00b7eb]/20 p-5 rounded-xl mt-6 text-white/80'>
             <p>
               <strong>No credit card required</strong> to start your 14-day
               trial. Cancel anytime during the trial period.
@@ -169,12 +203,12 @@ const FreeTrialPage = () => {
         {/* Right Side */}
         <section
           ref={formRef}
-          className='bg-white rounded-3xl p-10 shadow-xl flex flex-col justify-center transition-shadow duration-300 hover:shadow-2xl'
+          className='bg-[#1a1f2b]/80 rounded-3xl p-10 shadow-lg transition-all duration-300 hover:shadow-cyan-500/50 flex flex-col justify-center'
         >
-          <h1 className='text-3xl font-bold text-gray-800 mb-4 tracking-tight'>
+          <h1 className='text-3xl font-bold text-[#00b7eb] mb-4 tracking-tight'>
             Start Your 14-Day Free Trial
           </h1>
-          <p className='text-gray-600 mb-8 leading-relaxed'>
+          <p className='text-white/80 mb-8 leading-relaxed'>
             Join TrackFlow today and discover how our platform can revolutionize
             your logistics operations.
           </p>
@@ -182,7 +216,7 @@ const FreeTrialPage = () => {
             <div>
               <label
                 htmlFor='email'
-                className='block text-sm font-medium text-gray-700 mb-2'
+                className='block text-sm font-medium text-white/80 mb-2'
               >
                 Email
               </label>
@@ -193,7 +227,7 @@ const FreeTrialPage = () => {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder='you@company.com'
-                className='w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-colors bg-gray-50'
+                className='w-full bg-[#2a2f3b] border border-[#00b7eb]/30 rounded-lg px-4 py-3 text-sm text-white focus:ring-2 focus:ring-[#00b7eb] focus:border-[#00b7eb] transition-colors'
                 required
               />
               {errors.email && (
@@ -205,7 +239,7 @@ const FreeTrialPage = () => {
             <div>
               <label
                 htmlFor='password'
-                className='block text-sm font-medium text-gray-700 mb-2'
+                className='block text-sm font-medium text-white/80 mb-2'
               >
                 Password
               </label>
@@ -216,7 +250,7 @@ const FreeTrialPage = () => {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder='Create a secure password'
-                className='w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-colors bg-gray-50'
+                className='w-full bg-[#2a2f3b] border border-[#00b7eb]/30 rounded-lg px-4 py-3 text-sm text-white focus:ring-2 focus:ring-[#00b7eb] focus:border-[#00b7eb] transition-colors'
                 required
               />
               {errors.password && (
@@ -232,12 +266,12 @@ const FreeTrialPage = () => {
                 name='terms'
                 checked={formData.terms}
                 onChange={handleChange}
-                className='h-5 w-5 text-blue-500 focus:ring-blue-400 border-gray-300 rounded'
+                className='h-5 w-5 text-[#00b7eb] focus:ring-[#00b7eb] border-[#00b7eb]/30 rounded'
                 required
               />
-              <label htmlFor='terms' className='text-sm text-gray-600'>
+              <label htmlFor='terms' className='text-sm text-white/80'>
                 I agree to the{' '}
-                <a href='/terms' className='text-blue-500 hover:underline'>
+                <a href='/terms' className='text-[#00b7eb] hover:underline'>
                   terms and conditions
                 </a>
               </label>
@@ -247,14 +281,14 @@ const FreeTrialPage = () => {
             )}
             <button
               type='submit'
-              className='w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 rounded-lg transition-colors shadow-sm hover:shadow-md'
+              className='w-full bg-[#00b7eb] hover:bg-[#0084ff] text-white font-medium py-3 rounded-lg transition-all duration-300 shadow-sm hover:shadow-md'
             >
               Start Free Trial
             </button>
           </form>
-          <p className='text-center text-sm text-gray-600 mt-6'>
+          <p className='text-center text-sm text-white/60 mt-6'>
             Already have an account?{' '}
-            <Link to='/login' className='text-blue-500 hover:underline'>
+            <Link to='/login' className='text-[#00b7eb] hover:underline'>
               Login
             </Link>
           </p>

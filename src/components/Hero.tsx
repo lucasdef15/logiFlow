@@ -20,12 +20,12 @@ const fragmentShader = `
   uniform float time;
   varying vec2 vUv;
   void main() {
-    vec3 color1 = vec3(0.04, 0.02, 0.10);
-    vec3 color2 = vec3(0.10, 0.05, 0.25);
-    vec3 color3 = vec3(0.18, 0.0, 0.38);
-    vec3 color4 = vec3(0.0, 0.22, 0.45);
-    float mixFactor1 = sin(time * 0.3 + vUv.x * 3.0) * 0.5 + 0.5;
-    float mixFactor2 = cos(time * 0.3 + vUv.y * 3.0) * 0.5 + 0.5;
+    vec3 color1 = vec3(0.02, 0.03, 0.05);       // Very dark blue, near black
+    vec3 color2 = vec3(0.051, 0.067, 0.110);   // Dark blue #0d111c
+    vec3 color3 = vec3(0.0, 0.3, 0.5);         // Dark cyan
+    vec3 color4 = vec3(0.0, 0.718, 0.922);     // Bright cyan #00b7eb
+    float mixFactor1 = sin(time * 0.1 + vUv.x * 3.0) * 0.5 + 0.5;
+    float mixFactor2 = cos(time * 0.1 + vUv.y * 3.0) * 0.5 + 0.5;
     vec3 color = mix(mix(color1, color2, vUv.y), mix(color3, color4, vUv.x), mixFactor1 * 0.6 + mixFactor2 * 0.4);
     gl_FragColor = vec4(color, 1.0);
   }
@@ -37,7 +37,7 @@ const Hero = () => {
   const titleRef = useRef<HTMLDivElement>(null);
   const subtitleRef = useRef(null);
   const buttonsRef = useRef<HTMLDivElement>(null);
-  const iconsRef = useRef<HTMLDivElement | null>(null);
+  const iconsRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef(null);
   const canvasRef = useRef(null);
   const [webGLError, setWebGLError] = useState(false);
@@ -111,13 +111,11 @@ const Hero = () => {
         });
       }
 
-      // Hover effect
       const ctx = gsap.context(() => {
         if (buttonsRef.current) {
           const btns = buttonsRef.current.querySelectorAll('.hero-btn');
           btns.forEach((btn) => {
-            const isOutline =
-              (btn as HTMLButtonElement).dataset.gsap === 'outline';
+            const isOutline = (btn as HTMLElement).dataset.gsap === 'outline';
 
             btn.addEventListener('mouseenter', () => {
               gsap.to(btn, {
@@ -215,7 +213,7 @@ const Hero = () => {
 
   const words = ['everyone', 'businesses', 'drivers', 'companies', 'you'];
   const [wordIndex, setWordIndex] = useState(0);
-  const dynamicTextRef = useRef<HTMLSpanElement>(null);
+  const dynamicTextRef = useRef(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -234,7 +232,7 @@ const Hero = () => {
           },
         });
       }
-    }, 2500); // muda a cada 2.5 segundos
+    }, 2500);
 
     return () => clearInterval(interval);
   }, []);
@@ -243,7 +241,7 @@ const Hero = () => {
     <div
       ref={containerRef}
       id='top'
-      className='relative w-full mx-auto px-4 min-h-[100vh] flex flex-col lg:flex-row justify-between items-center gap-6 sm:gap-10 bg-[#0f0f1b] text-white overflow-hidden'
+      className='relative w-full  mx-auto px-4 min-h-[100vh] flex flex-col lg:flex-row justify-between items-center gap-6 sm:gap-10 bg-[#0f0f1b] text-white overflow-hidden'
     >
       {!webGLError && (
         <canvas ref={canvasRef} className='absolute inset-0 z-0' />
@@ -329,13 +327,11 @@ const Hero = () => {
           className='w-full relative flex justify-center lg:justify-end items-center z-5'
         >
           <div className='absolute w-[3700px] h-[90vh] bottom-[-700px] left-[-1625px] md:left-[-1600px] md:bottom-[-270px] lg:left-[-1400px] mx-auto z-5'>
-            {/* <HeroExperience /> */}
             <HeroExperience />
           </div>
         </section>
       </div>
 
-      {/* TRANSIÇÃO SUAVE NO FINAL */}
       <div className='absolute bottom-0 left-0 w-full h-32 bg-gradient-to-b from-transparent to-[#0d111c] z-10 pointer-events-none' />
 
       {webGLError && (

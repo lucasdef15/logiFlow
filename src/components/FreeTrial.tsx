@@ -209,7 +209,7 @@ const FreeTrial = () => {
       className='bg-[#0EA5E9]  relative min-h-[calc(100vh+100px)]'
     >
       <div className='w-full max-w-[1128px] mx-auto pt-10 p-4 flex flex-col items-center'>
-        <div className='w-full flex justify-center items-center mb-10 z-50'>
+        <div className='w-full flex justify-center items-center mb-10 z-10'>
           <SectionNames sectionName={'Free Trial'} />
         </div>
         <svg

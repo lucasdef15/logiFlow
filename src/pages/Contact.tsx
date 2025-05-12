@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Mail, Phone, MapPin, Clock } from 'lucide-react';
+import { Mail, Phone, MapPin, Clock, MessageCircleMore } from 'lucide-react';
 import { useState, useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
@@ -24,6 +24,8 @@ const Contact = () => {
     message: '',
   });
 
+  const [webGLError, _setWebGLError] = useState(false);
+
   const nameErrorRef = useRef<HTMLSpanElement>(null);
   const emailErrorRef = useRef<HTMLSpanElement>(null);
   const companyErrorRef = useRef<HTMLSpanElement>(null);
@@ -32,8 +34,10 @@ const Contact = () => {
   const titleRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const contactInfoRef = useRef<HTMLDivElement>(null);
+  const backgroundRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
+    // Title animation
     if (titleRef.current?.children) {
       gsap.fromTo(
         titleRef.current.children,
@@ -52,6 +56,8 @@ const Contact = () => {
         }
       );
     }
+
+    // Form fields animation
     if (formRef.current?.children) {
       gsap.fromTo(
         formRef.current.children,
@@ -70,19 +76,40 @@ const Contact = () => {
         }
       );
     }
+
+    // Contact info animation
     if (contactInfoRef.current?.children) {
       gsap.fromTo(
         contactInfoRef.current.children,
-        { opacity: 0, x: 30 },
+        { opacity: 0, x: 30, scale: 0.9 },
         {
           opacity: 1,
           x: 0,
+          scale: 1,
           duration: 0.8,
           ease: 'power2.out',
-          stagger: 0.1,
+          stagger: 0.15,
           scrollTrigger: {
             trigger: contactInfoRef.current,
             start: 'top 85%',
+            end: 'bottom 20%',
+          },
+        }
+      );
+    }
+
+    // Background fade-in
+    if (backgroundRef.current) {
+      gsap.fromTo(
+        backgroundRef.current,
+        { opacity: 0 },
+        {
+          opacity: 1,
+          duration: 1,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: backgroundRef.current,
+            start: 'top 100%',
             end: 'bottom 20%',
           },
         }
@@ -102,8 +129,7 @@ const Contact = () => {
     };
 
     if (errors.name && nameErrorRef.current) animateError(nameErrorRef);
-    if (errors.email && emailErrorRef.current !== null)
-      animateError(emailErrorRef);
+    if (errors.email && emailErrorRef.current) animateError(emailErrorRef);
     if (errors.company && companyErrorRef.current)
       animateError(companyErrorRef);
     if (errors.subject && subjectErrorRef.current)
@@ -147,215 +173,303 @@ const Contact = () => {
   };
 
   return (
-    <div className='flex flex-col items-center w-full max-w-7xl mx-auto px-4 py-16 bg-gray-50 min-h-screen'>
-      <section ref={titleRef} className='text-center mb-12'>
-        <h2 className='text-3xl font-bold text-gray-800 mb-3 tracking-tight'>
-          Entre em Contato
-        </h2>
-        <p className='text-gray-600 max-w-md mx-auto leading-relaxed'>
-          Tem dúvidas ou precisa de ajuda? Nossa equipe está pronta para
-          oferecer suporte personalizado e respostas rápidas.
-        </p>
-      </section>
+    <div className='relative w-full min-h-screen bg-[#0d111c] text-white py-20 px-4 overflow-hidden'>
+      {/* Background Effect */}
+      <div
+        ref={backgroundRef}
+        className='absolute inset-0 w-full h-full z-0 opacity-50 bg-gradient-to-r from-[#00b7eb]/20 to-transparent'
+      />
 
-      <div className='flex flex-col md:flex-row gap-8 w-full max-w-6xl'>
-        {/* Formulário */}
-        <form
-          ref={formRef}
-          onSubmit={handleSubmit}
-          className='flex-1 bg-white p-8 rounded-xl shadow-sm transition-shadow duration-300 hover:shadow-md'
-        >
-          <h3 className='text-xl font-semibold text-gray-800 mb-6'>
-            Envie uma Mensagem
-          </h3>
+      {/* Gradient Transition */}
+      <div className='absolute bottom-0 left-0 w-full h-32 bg-gradient-to-b from-transparent to-[#0d111c] z-10 pointer-events-none' />
 
-          {/* Nome */}
-          <div className='mb-5'>
-            <label
-              htmlFor='name'
-              className='block text-sm font-medium text-gray-700 mb-1'
-            >
-              Nome Completo
-            </label>
-            <input
-              id='name'
-              name='name'
-              type='text'
-              value={formData.name}
-              onChange={handleChange}
-              className='w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors'
-              placeholder='Seu nome'
-            />
-            {errors.name && (
-              <span ref={nameErrorRef} className='text-red-500 text-xs mt-1'>
-                {errors.name}
-              </span>
-            )}
-          </div>
+      {/* WebGL Error Fallback */}
+      {webGLError && (
+        <div className='absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white z-20'>
+          Your browser does not support WebGL. Please try a different browser or
+          update your graphics drivers.
+        </div>
+      )}
 
-          {/* E-mail */}
-          <div className='mb-5'>
-            <label
-              htmlFor='email'
-              className='block text-sm font-medium text-gray-700 mb-1'
-            >
-              E-mail
-            </label>
-            <input
-              id='email'
-              name='email'
-              type='email'
-              value={formData.email}
-              onChange={handleChange}
-              className='w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors'
-              placeholder='seu@email.com'
-            />
-            {errors.email && (
-              <span ref={emailErrorRef} className='text-red-500 text-xs mt-1'>
-                {errors.email}
-              </span>
-            )}
-          </div>
-
-          {/* Empresa */}
-          <div className='mb-5'>
-            <label
-              htmlFor='company'
-              className='block text-sm font-medium text-gray-700 mb-1'
-            >
-              Empresa
-            </label>
-            <input
-              id='company'
-              name='company'
-              type='text'
-              value={formData.company}
-              onChange={handleChange}
-              className='w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors'
-              placeholder='Nome da empresa'
-            />
-            {errors.company && (
-              <span ref={companyErrorRef} className='text-red-500 text-xs mt-1'>
-                {errors.company}
-              </span>
-            )}
-          </div>
-
-          {/* Assunto */}
-          <div className='mb-5'>
-            <label
-              htmlFor='subject'
-              className='block text-sm font-medium text-gray-700 mb-1'
-            >
-              Assunto
-            </label>
-            <input
-              id='subject'
-              name='subject'
-              type='text'
-              value={formData.subject}
-              onChange={handleChange}
-              className='w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors'
-              placeholder='Motivo do contato'
-            />
-            {errors.subject && (
-              <span ref={subjectErrorRef} className='text-red-500 text-xs mt-1'>
-                {errors.subject}
-              </span>
-            )}
-          </div>
-
-          {/* Mensagem */}
-          <div className='mb-6'>
-            <label
-              htmlFor='message'
-              className='block text-sm font-medium text-gray-700 mb-1'
-            >
-              Mensagem
-            </label>
-            <textarea
-              id='message'
-              name='message'
-              rows={5}
-              value={formData.message}
-              onChange={handleChange}
-              className='w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none'
-              placeholder='Como podemos ajudar?'
-            />
-            {errors.message && (
-              <span ref={messageErrorRef} className='text-red-500 text-xs mt-1'>
-                {errors.message}
-              </span>
-            )}
-          </div>
-
-          {/* Botão */}
-          <Button
-            type='submit'
-            className='w-full bg-blue-600 hover:bg-blue-700 cursor-pointer text-white font-medium py-3 rounded-lg transition-colors'
-          >
-            Enviar Mensagem
-          </Button>
-        </form>
-
-        {/* Informações de Contato */}
-        <section
-          ref={contactInfoRef}
-          className='  flex flex-col items-center justify-center bg-gradient-to-bm from-blue-50 to-white p-8 rounded-xl shadow-sm transition-shadow duration-300 hover:shadow-md'
-        >
-          <h3 className='text-xl font-semibold text-gray-800 mb-6'>
-            Informações de Contato
-          </h3>
-          <ul className='space-y-6'>
-            <li className='flex items-start gap-4'>
-              <span className='p-2 bg-blue-100 text-blue-600 rounded-full'>
-                <Mail size={20} />
-              </span>
-              <div>
-                <span className='text-sm font-medium text-gray-700'>
-                  E-mail
-                </span>
-                <p className='text-gray-600'>contato@fastflow.com</p>
-                <p className='text-gray-600'>suporte@fastflow.com</p>
-              </div>
-            </li>
-            <li className='flex items-start gap-4'>
-              <span className='p-2 bg-blue-100 text-blue-600 rounded-full'>
-                <Phone size={20} />
-              </span>
-              <div>
-                <span className='text-sm font-medium text-gray-700'>
-                  Telefone
-                </span>
-                <p className='text-gray-600'>(11) 3456-7890</p>
-                <p className='text-gray-600'>(11) 98765-4321</p>
-              </div>
-            </li>
-            <li className='flex items-start gap-4'>
-              <span className='p-2 bg-blue-100 text-blue-600 rounded-full'>
-                <MapPin size={20} />
-              </span>
-              <div>
-                <span className='text-sm font-medium text-gray-700'>
-                  Endereço
-                </span>
-                <p className='text-gray-600'>Av. Paulista, 1000 - São Paulo</p>
-              </div>
-            </li>
-            <li className='flex items-start gap-4'>
-              <span className='p-2 bg-blue-100 text-blue-600 rounded-full'>
-                <Clock size={20} />
-              </span>
-              <div>
-                <span className='text-sm font-medium text-gray-700'>
-                  Horário de Atendimento
-                </span>
-                <p className='text-gray-600'>Seg a Sex — 09:00 às 18:00</p>
-                <p className='text-gray-600'>Sábado — 09:00 às 13:00</p>
-              </div>
-            </li>
-          </ul>
+      {/* Main Content */}
+      <div className='relative max-w-7xl mx-auto z-10'>
+        <section ref={titleRef} className='text-center mb-12'>
+          <h2 className='text-3xl sm:text-5xl lg:text-6xl font-bold text-[#00b7eb]'>
+            Get in Touch
+          </h2>
+          <p className='text-white/80 text-base sm:text-lg font-medium mt-4 max-w-md mx-auto'>
+            Have questions or need support? Our team is here to provide
+            personalized assistance and quick responses.
+          </p>
         </section>
+
+        <div className='flex flex-col lg:flex-row gap-8 w-full'>
+          {/* Contact Form */}
+          <form
+            ref={formRef}
+            onSubmit={handleSubmit}
+            className='flex-1 bg-[#1a1f2b]/80 p-8 rounded-xl shadow-lg transition-all duration-300 hover:shadow-cyan-500/50'
+          >
+            <h3 className='text-2xl font-semibold text-white mb-6'>
+              Send Us a Message
+            </h3>
+
+            {/* Name */}
+            <div className='mb-5'>
+              <label
+                htmlFor='name'
+                className='block text-sm font-medium text-white/80 mb-1'
+              >
+                Full Name
+              </label>
+              <input
+                id='name'
+                name='name'
+                type='text'
+                value={formData.name}
+                onChange={handleChange}
+                className='w-full bg-[#2a2f3b] border border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-white focus:ring-2 focus:ring-[#00b7eb] focus:border-[#00b7eb] transition-colors'
+                placeholder='Your name'
+                aria-describedby='name-error'
+              />
+              {errors.name && (
+                <span
+                  ref={nameErrorRef}
+                  id='name-error'
+                  className='text-red-500 text-xs mt-1'
+                >
+                  {errors.name}
+                </span>
+              )}
+            </div>
+
+            {/* Email */}
+            <div className='mb-5'>
+              <label
+                htmlFor='email'
+                className='block text-sm font-medium text-white/80 mb-1'
+              >
+                Email
+              </label>
+              <input
+                id='email'
+                name='email'
+                type='email'
+                value={formData.email}
+                onChange={handleChange}
+                className='w-full bg-[#2a2f3b] border border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-white focus:ring-2 focus:ring-[#00b7eb] focus:border-[#00b7eb] transition-colors'
+                placeholder='your@email.com'
+                aria-describedby='email-error'
+              />
+              {errors.email && (
+                <span
+                  ref={emailErrorRef}
+                  id='email-error'
+                  className='text-red-500 text-xs mt-1'
+                >
+                  {errors.email}
+                </span>
+              )}
+            </div>
+
+            {/* Company */}
+            <div className='mb-5'>
+              <label
+                htmlFor='company'
+                className='block text-sm font-medium text-white/80 mb-1'
+              >
+                Company
+              </label>
+              <input
+                id='company'
+                name='company'
+                type='text'
+                value={formData.company}
+                onChange={handleChange}
+                className='w-full bg-[#2a2f3b] border border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-white focus:ring-2 focus:ring-[#00b7eb] focus:border-[#00b7eb] transition-colors'
+                placeholder='Company name'
+                aria-describedby='company-error'
+              />
+              {errors.company && (
+                <span
+                  ref={companyErrorRef}
+                  id='company-error'
+                  className='text-red-500 text-xs mt-1'
+                >
+                  {errors.company}
+                </span>
+              )}
+            </div>
+
+            {/* Subject */}
+            <div className='mb-5'>
+              <label
+                htmlFor='subject'
+                className='block text-sm font-medium text-white/80 mb-1'
+              >
+                Subject
+              </label>
+              <input
+                id='subject'
+                name='subject'
+                type='text'
+                value={formData.subject}
+                onChange={handleChange}
+                className='w-full bg-[#2a2f3b] border border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-white focus:ring-2 focus:ring-[#00b7eb] focus:border-[#00b7eb] transition-colors'
+                placeholder='Reason for contact'
+                aria-describedby='subject-error'
+              />
+              {errors.subject && (
+                <span
+                  ref={subjectErrorRef}
+                  id='subject-error'
+                  className='text-red-500 text-xs mt-1'
+                >
+                  {errors.subject}
+                </span>
+              )}
+            </div>
+
+            {/* Message */}
+            <div className='mb-6'>
+              <label
+                htmlFor='message'
+                className='block text-sm font-medium text-white/80 mb-1'
+              >
+                Message
+              </label>
+              <textarea
+                id='message'
+                name='message'
+                rows={5}
+                value={formData.message}
+                onChange={handleChange}
+                className='w-full bg-[#2a2f3b] border border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-white focus:ring-2 focus:ring-[#00b7eb] focus:border-[#00b7eb] transition-colors resize-none'
+                placeholder='How can we assist you?'
+                aria-describedby='message-error'
+              />
+              {errors.message && (
+                <span
+                  ref={messageErrorRef}
+                  id='message-error'
+                  className='text-red-500 text-xs mt-1'
+                >
+                  {errors.message}
+                </span>
+              )}
+            </div>
+
+            {/* Submit Button */}
+            <Button
+              type='submit'
+              className='w-full bg-[#00b7eb] hover:bg-[#0084ff] cursor-pointer text-white font-semibold py-3 rounded-lg transition-all duration-300'
+              aria-label='Submit contact form'
+            >
+              Send Message
+            </Button>
+          </form>
+
+          {/* Contact Information */}
+          <section
+            ref={contactInfoRef}
+            className='lg:w-[40%] flex flex-col bg-[#1a1f2b]/80 p-6 rounded-xl shadow-lg transition-all duration-300 hover:shadow-cyan-500/50'
+          >
+            <h3 className='text-2xl font-semibold text-white mb-8'>
+              Contact Information
+            </h3>
+            <ul className='space-y-8'>
+              {/* Email */}
+              <li className='flex items-start gap-4 group hover:scale-105 transition-transform duration-300'>
+                <span className='p-3 bg-[#00b7eb]/20 text-[#00b7eb] rounded-full group-hover:bg-[#00b7eb]/40'>
+                  <Mail size={24} />
+                </span>
+                <div>
+                  <span className='text-base font-semibold text-white'>
+                    Email
+                  </span>
+                  <p className='text-white/70 text-sm mt-1'>
+                    contato@fastflow.com
+                  </p>
+                  <p className='text-white/70 text-sm'>suporte@fastflow.com</p>
+                </div>
+              </li>
+              {/* Phone */}
+              <li className='flex items-start gap-4 group hover:scale-105 transition-transform duration-300'>
+                <span className='p-3 bg-[#00b7eb]/20 text-[#00b7eb] rounded-full group-hover:bg-[#00b7eb]/40'>
+                  <Phone size={24} />
+                </span>
+                <div>
+                  <span className='text-base font-semibold text-white'>
+                    Phone
+                  </span>
+                  <p className='text-white/70 text-sm mt-1'>(11) 3456-7890</p>
+                  <p className='text-white/70 text-sm'>(11) 98765-4321</p>
+                </div>
+              </li>
+              {/* WhatsApp */}
+              <li className='flex items-start gap-4 group hover:scale-105 transition-transform duration-300'>
+                <span className='p-3 bg-[#00b7eb]/20 text-[#00b7eb] rounded-full group-hover:bg-[#00b7eb]/40'>
+                  <MessageCircleMore size={24} />
+                </span>
+                <div>
+                  <span className='text-base font-semibold text-white'>
+                    WhatsApp
+                  </span>
+                  <p className='text-white/70 text-sm mt-1'>(11) 91234-5678</p>
+                </div>
+              </li>
+              {/* Address */}
+              <li className='flex items-start gap-4 group hover:scale-105 transition-transform duration-300'>
+                <span className='p-3 bg-[#00b7eb]/20 text-[#00b7eb] rounded-full group-hover:bg-[#00b7eb]/40'>
+                  <MapPin size={24} />
+                </span>
+                <div>
+                  <span className='text-base font-semibold text-white'>
+                    Address
+                  </span>
+                  <p className='text-white/70 text-sm mt-1'>
+                    Av. Paulista, 1000 - São Paulo
+                  </p>
+                  <p className='text-white/70 text-sm underline cursor-pointer hover:text-white transition-colors duration-200'>
+                    <a
+                      href='https://maps.google.com/?q=Av.+Paulista,+1000'
+                      target='_blank'
+                      rel='noopener noreferrer'
+                    >
+                      Ver no Google Maps
+                    </a>
+                  </p>
+                </div>
+              </li>
+              {/* Business Hours */}
+              <li className='flex items-start gap-4 group hover:scale-105 transition-transform duration-300'>
+                <span className='p-3 bg-[#00b7eb]/20 text-[#00b7eb] rounded-full group-hover:bg-[#00b7eb]/40'>
+                  <Clock size={24} />
+                </span>
+                <div>
+                  <span className='text-base font-semibold text-white'>
+                    Business Hours
+                  </span>
+                  <p className='text-white/70 text-sm mt-1'>
+                    Mon-Fri — 09:00 to 18:00
+                  </p>
+                  <p className='text-white/70 text-sm'>Sat — 09:00 to 13:00</p>
+                </div>
+              </li>
+            </ul>
+
+            {/* Call to Action */}
+            <div className='mt-10'>
+              <a
+                href='/contato'
+                className='flex flex-row gap-2 w-fit bg-[#00b7eb] text-white py-2 px-6 rounded-lg font-semibold hover:bg-[#00a0cc] transition-all duration-300'
+              >
+                Fale Conosco
+                <MessageCircleMore />
+              </a>
+            </div>
+          </section>
+        </div>
       </div>
     </div>
   );
