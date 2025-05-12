@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react'; // Ensure this import is here
+import { useState, useRef } from 'react';
 import { CardContent } from '@/components/ui/card';
 import {
   Carousel,
@@ -8,11 +8,10 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
-import SectionNames from './ui/SectionNames';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { useRef } from 'react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import Testimo3d from './ModelsComponents/TestModels/Testimo3d';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -68,51 +67,79 @@ const Testimonials = () => {
   const [api, setApi] = useState<any>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const titleRef1 = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLDivElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
+  const floatingCardRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
-    if (titleRef1.current?.children) {
+    // Title animation
+    if (titleRef.current?.children) {
       gsap.fromTo(
-        titleRef1.current.children,
-        { opacity: 0, y: 20 },
+        titleRef.current.children,
+        { opacity: 0, y: 20, scale: 0.95 },
         {
           opacity: 1,
           y: 0,
-          duration: 1,
-          ease: 'power1.out',
-          stagger: 0.2,
+          scale: 1,
+          duration: 0.8,
+          ease: 'power3.out',
+          stagger: 0.15,
           scrollTrigger: {
-            trigger: titleRef1?.current,
-            start: 'top 80%',
-            end: 'bottom 5%',
-            toggleActions: 'play reverse play stop',
-            once: false,
+            trigger: titleRef.current,
+            start: 'top 90%',
+            end: 'bottom 10%',
+            toggleActions: 'play none none reverse',
           },
         }
       );
     }
-  }, []);
 
-  useGSAP(() => {
+    // Carousel animation
+    if (carouselRef.current?.querySelectorAll('.carousel-item')) {
+      gsap.fromTo(
+        carouselRef.current.querySelectorAll('.carousel-item'),
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: 'power3.out',
+          stagger: 0.1,
+          scrollTrigger: {
+            trigger: carouselRef.current,
+            start: 'top 90%',
+            end: 'bottom 10%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      );
+    }
+
+    // Floating card animation
     gsap.fromTo(
-      carouselRef?.current,
-      { opacity: 0, x: -200 },
+      floatingCardRef.current,
+      { opacity: 0, y: 20, scale: 0.95 },
       {
         opacity: 1,
-        x: 0,
-        duration: 1,
-        ease: 'power1.out',
-        stagger: 0.25,
+        y: 0,
+        scale: 1,
+        duration: 0.8,
+        ease: 'power3.out',
         scrollTrigger: {
-          trigger: carouselRef?.current,
-          start: 'top 80%',
-          end: 'bottom 5%',
-          toggleActions: 'play reverse play stop',
-          once: false,
+          trigger: floatingCardRef.current,
+          start: 'top 90%',
+          end: 'bottom 10%',
+          toggleActions: 'play none none reverse',
         },
       }
     );
+    gsap.to(floatingCardRef.current, {
+      y: -10,
+      duration: 2,
+      repeat: -1,
+      yoyo: true,
+      ease: 'sine.inOut',
+    });
   }, []);
 
   React.useEffect(() => {
@@ -128,108 +155,150 @@ const Testimonials = () => {
     if (api) {
       api.scrollTo(index);
       setActiveIndex(index);
-      console.log('Ativo no slide:', index);
     }
   };
 
   return (
-    <div className='w-full max-w-[1128px] mx-auto mt-20 p-4'>
-      <section
-        ref={titleRef1}
-        className='flex flex-col items-center justify-center text-center gap-1 mb-14'
-      >
-        <SectionNames sectionName='Testimonials' />
-        <h2 className='font-bold text-3xl mb-3'>
-          Trusted by logistics professionals
-        </h2>
-        <p className='w-full max-w-[550px] mx-auto text-[.95rem] text-[var(--text-muted-soft)] font-medium leading-[1.5]'>
-          See what our customers are saying about Track Flow.
-        </p>
-      </section>
-
-      <section
-        ref={carouselRef}
-        className='w-full flex items-center justify-center'
-      >
-        <Carousel className='w-full max-w-[650px]' setApi={setApi}>
-          <CarouselContent>
-            {testimonials.map((t, index) => (
-              <CarouselItem key={index}>
-                <div className=' p-6  border-none bg-[#ffff/9] '>
-                  <CardContent className='flex flex-col p-6 gap-4 items-start rounded-lg shadow-md'>
-                    <p className='italic text-[1.05rem] text-slate-700 relative pl-4'>
-                      <span className='text-cyan-300 text-5xl font-serif absolute left-[-10px] top-[-20px] leading-none'>
-                        “
-                      </span>
-                      {t.quote}
-                      <span className='text-cyan-300 text-5xl font-serif leading-none'>
-                        ”
-                      </span>
-                    </p>
-
-                    <div className='flex items-center gap-3 mt-2'>
-                      <div className='w-full aspect-[1/1] rounded-full overflow-hidden max-w-[60px]'>
-                        <img
-                          className='w-full h-full object-cover object-center'
-                          src={t.avatarUrl}
-                          alt={t.name}
-                        />
-                      </div>
-                      <div>
-                        <p className='font-semibold text-[.95rem]'>{t.name}</p>
-                        <p className='text-sm text-gray-500'>{t.role}</p>
-                        <a
-                          href={t.companyUrl}
-                          className='text-sm text-cyan-500 font-medium hover:underline'
-                        >
-                          {t.company}
-                        </a>
-                      </div>
-                    </div>
-                  </CardContent>
-                </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-
-          <div className='relative flex justify-center items-center mt-5'>
-            {/* Previous button */}
-            <CarouselPrevious
-              onClick={() =>
-                goToSlide(
-                  (activeIndex - 1 + testimonials.length) % testimonials.length
-                )
-              }
-              className='absolute md:left-60 sm:left-50  left:-900000  text-gray-600 hover:text-cyan-500'
-            />
-
-            {/* Dots */}
-            <div className='flex gap-2'>
-              {testimonials.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => goToSlide(index)}
-                  className={`
-                    h-2.5 rounded-full transition-all duration-300 ease-in-out
-                    ${
-                      index === activeIndex
-                        ? 'bg-cyan-300 w-6'
-                        : 'bg-gray-300 w-2.5'
-                    }
-                  `}
-                />
-              ))}
-            </div>
-
-            {/* Next button */}
-            <CarouselNext
-              onClick={() => goToSlide((activeIndex + 1) % testimonials.length)}
-              className='absolute md:right-60 sm:right-50 hidden sm:flex  text-gray-600 hover:text-cyan-500'
-            />
+    <div className='relative w-full min-h-screen mt-50 md:mt-20 lg:mt-0 flex items-center justify-center bg-white dark:from-gray-800 dark:to-gray-900'>
+      <div className='w-full max-w-8xl mx-auto p-8 sm:p-12 flex flex-col items-center justify-center h-full'>
+        {/* Floating Card */}
+        <div
+          ref={floatingCardRef}
+          className='absolute top-[-200px] md:top-[-120px] md:right-[80px] lg:top-[-100px] lg:right-[80px] xl:top-[-50px] xl:right-[80px] w-[300px] h-[300px] rounded-full z-[0]'
+        >
+          <div className='w-full h-full rounded-full bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 backdrop-blur-2xl  dark:border-gray-700 shadow-lg flex flex-col items-center justify-center p-6 transition-all duration-500 ease-out hover:-translate-y-[5px] hover:shadow-[0_12px_40px_rgba(59,130,246,0.2)] hover:transform hover:perspective-1000 hover:rotate-x-2 hover:rotate-y-2'>
+            <Testimo3d />
           </div>
-        </Carousel>
-      </section>
+        </div>
+
+        {/* Title Section */}
+        <section
+          ref={titleRef}
+          className='flex flex-col items-center justify-center text-center gap-4 mb-16'
+        >
+          <span className=' text-cyan-700 dark:text-cyan-300 px-4 py-1.5 rounded-full text-sm font-medium shadow-sm'>
+            Testimonials
+          </span>
+          <h2 className='text-3xl sm:text-4xl md:text-5xl font-extrabold text-cyan-500'>
+            Trusted by Logistics Leaders
+          </h2>
+          <p className='w-full max-w-md sm:max-w-lg mx-auto text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed'>
+            Discover why Track Flow is the preferred solution for logistics
+            professionals worldwide.
+          </p>
+        </section>
+
+        {/* Carousel Section */}
+        <section ref={carouselRef} className='w-full max-w-3xl'>
+          <Carousel
+            className='w-full'
+            setApi={setApi}
+            opts={{ align: 'start', loop: true }}
+          >
+            <CarouselContent className='-ml-4'>
+              {testimonials.map((t, index) => (
+                <CarouselItem
+                  key={index}
+                  className='pl-4 basis-full lg:basis-1/2 h-[360px] carousel-item'
+                >
+                  <div className='p-4'>
+                    <CardContent className='flex flex-col justify-between items-start p-6 gap-4 h-[260px] bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 transition-all hover:shadow-xl hover:-translate-y-1'>
+                      <div className='flex items-center gap-2'>
+                        <svg
+                          className='w-6 h-6 text-yellow-400'
+                          fill='currentColor'
+                          viewBox='0 0 20 20'
+                        >
+                          <path d='M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z' />
+                        </svg>
+                        <span className='text-sm font-medium text-gray-600 dark:text-gray-300'>
+                          5.0 Rating
+                        </span>
+                      </div>
+                      <p className='text-base text-gray-700 dark:text-gray-200 leading-relaxed border-l-4 border-indigo-500 pl-4'>
+                        {t.quote}
+                      </p>
+                      <div className='flex items-center gap-3'>
+                        <div className='w-14 h-14 rounded-full overflow-hidden border-2 border-indigo-200 dark:border-indigo-600'>
+                          <img
+                            className='w-full h-full object-cover'
+                            src={t.avatarUrl}
+                            alt={t.name}
+                            onError={(e) =>
+                              (e.currentTarget.src =
+                                'https://via.placeholder.com/150')
+                            }
+                          />
+                        </div>
+                        <div>
+                          <p className='font-semibold text-gray-900 dark:text-gray-100 text-sm'>
+                            {t.name}
+                          </p>
+                          <p className='text-xs text-gray-500 dark:text-gray-400'>
+                            {t.role}
+                          </p>
+                          <a
+                            href={t.companyUrl}
+                            className='text-xs text-indigo-600 dark:text-indigo-400 font-medium hover:underline'
+                          >
+                            {t.company}
+                          </a>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+
+            <div className=' hidden md:flex justify-center items-center mt-8 gap-6'>
+              <CarouselPrevious
+                onClick={() =>
+                  goToSlide(
+                    (activeIndex - 1 + testimonials.length) %
+                      testimonials.length
+                  )
+                }
+                className='text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all hover:scale-110'
+              />
+              <div className='flex gap-2'>
+                {testimonials.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => goToSlide(index)}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                      index === activeIndex
+                        ? 'bg-indigo-600 w-6'
+                        : 'bg-gray-300 dark:bg-gray-600'
+                    }`}
+                  />
+                ))}
+              </div>
+              <CarouselNext
+                onClick={() =>
+                  goToSlide((activeIndex + 1) % testimonials.length)
+                }
+                className='text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all hover:scale-110'
+              />
+            </div>
+          </Carousel>
+        </section>
+      </div>
+
+      {/* SVG Wave Transition */}
+      <svg
+        xmlns='http://www.w3.org/2000/svg'
+        viewBox='0 0 1440 120'
+        className='absolute bottom-[-2px] left-0 w-full z-10'
+      >
+        <path
+          fill='#0EA5E9'
+          fillOpacity='1'
+          d='M0,60 C240,30 480,90 720,60 C960,30 1200,90 1440,60 L1440,120 L0,120 Z'
+        />
+      </svg>
     </div>
   );
 };
+
 export default Testimonials;

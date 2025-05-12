@@ -1,7 +1,8 @@
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import SectionNames from './ui/SectionNames';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -16,155 +17,188 @@ const FreeTrial = () => {
   const svgTopRef = useRef<SVGSVGElement>(null);
   const svgBottomRef = useRef<SVGSVGElement>(null);
 
+  // Debug refs to ensure they are assigned
+  useEffect(() => {
+    console.log({
+      containerRef: containerRef.current,
+      titleRef: titleRef.current,
+      subtitleRef: subtitleRef.current,
+      svgTopRef: svgTopRef.current,
+      svgBottomRef: svgBottomRef.current,
+      listRef: listRef.current,
+      ulRef: ulRef.current,
+      formRef: formRef.current,
+      buttonRef: buttonRef.current,
+    });
+  }, []);
+
   useGSAP(
     () => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: 'top 80%',
-          end: 'bottom 20%',
-          toggleActions: 'play none none reverse',
-        },
-      });
-
-      // SVG animations (morphing and scaling)
-      tl.fromTo(
-        svgTopRef.current,
-        { scale: 0.8, opacity: 0, rotation: 10 },
-        {
-          scale: 1,
-          opacity: 1,
-          rotation: 0,
-          duration: 1.2,
-          ease: 'expo.inOut',
+      try {
+        // Simple title animation without ScrollTrigger to ensure visibility
+        if (titleRef.current) {
+          gsap.fromTo(
+            titleRef.current,
+            { opacity: 0, x: -100 },
+            { opacity: 1, x: 0, duration: 0.8, ease: 'expo.inOut' }
+          );
         }
-      )
-        .fromTo(
-          (svgTopRef.current?.querySelector('path') as SVGPathElement) ?? null,
-          {
-            attr: {
-              d: 'M50,20 C80,-10 150,10 170,80 C190,150 130,170 90,190 C50,210 20,180 10,120 C0,60 20,40 50,20 Z',
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: 'top 80%',
+            end: 'bottom 20%',
+            toggleActions: 'play none none reverse',
+          },
+        });
+
+        // SVG animations (morphing and scaling)
+        if (svgTopRef.current) {
+          tl.fromTo(
+            svgTopRef.current,
+            { scale: 0.8, opacity: 0, rotation: 10 },
+            {
+              scale: 1,
+              opacity: 1,
+              rotation: 0,
+              duration: 1.2,
+              ease: 'expo.inOut',
+            }
+          );
+        }
+
+        const topPath = svgTopRef.current?.querySelector('path');
+        if (topPath) {
+          tl.fromTo(
+            topPath,
+            {
+              attr: {
+                d: 'M50,20 C80,-10 150,10 170,80 C190,150 130,170 90,190 C50,210 20,180 10,120 C0,60 20,40 50,20 Z',
+              },
             },
-          },
-          {
-            attr: {
-              d: 'M40,30 C90,0 160,20 180,90 C200,160 140,180 100,200 C60,220 20,170 10,110 C0,50 10,40 40,30 Z',
+            {
+              attr: {
+                d: 'M40,30 C90,0 160,20 180,90 C200,160 140,180 100,200 C60,220 20,170 10,110 C0,50 10,40 40,30 Z',
+              },
+              duration: 1.5,
+              ease: 'power4.inOut',
             },
-            duration: 1.5,
-            ease: 'power4.inOut',
-          },
-          0
-        )
-        .fromTo(
-          svgBottomRef.current,
-          { scale: 0.8, opacity: 0, rotation: -10 },
-          {
-            scale: 1,
-            opacity: 1,
-            rotation: 0,
-            duration: 1.2,
-            ease: 'expo.inOut',
-          },
-          0.2
-        )
-        .fromTo(
-          svgBottomRef.current?.querySelector('path') as SVGPathElement,
-          {
-            attr: {
-              d: 'M60,20 C100,-10 160,30 170,90 C180,150 130,170 80,170 C30,170 10,120 20,70 C30,40 40,30 60,20 Z',
+            0
+          );
+        }
+
+        if (svgBottomRef.current) {
+          tl.fromTo(
+            svgBottomRef.current,
+            { scale: 0.8, opacity: 0, rotation: -10 },
+            {
+              scale: 1,
+              opacity: 1,
+              rotation: 0,
+              duration: 1.2,
+              ease: 'expo.inOut',
             },
-          },
-          {
-            attr: {
-              d: 'M50,30 C110,0 170,40 180,100 C190,160 130,180 90,180 C50,180 10,130 20,80 C30,50 40,40 50,30 Z',
+            0.2
+          );
+        }
+
+        const bottomPath = svgBottomRef.current?.querySelector('path');
+        if (bottomPath) {
+          tl.fromTo(
+            bottomPath,
+            {
+              attr: {
+                d: 'M60,20 C100,-10 160,30 170,90 C180,150 130,170 80,170 C30,170 10,120 20,70 C30,40 40,30 60,20 Z',
+              },
             },
-            duration: 1.5,
-            ease: 'power4.inOut',
-          },
-          0.2
+            {
+              attr: {
+                d: 'M50,30 C110,0 170,40 180,100 C190,160 130,180 90,180 C50,180 10,130 20,80 C30,50 40,40 50,30 Z',
+              },
+              duration: 1.5,
+              ease: 'power4.inOut',
+            },
+            0.2
+          );
+        }
+
+        // Subtitle animation
+        tl.fromTo(
+          subtitleRef.current,
+          { opacity: 0, y: 30 },
+          { opacity: 1, y: 0, duration: 0.7, ease: 'power3.inOut' },
+          0.6
         );
 
-      // Title animation (slides in with slight rotation)
-      tl.fromTo(
-        titleRef.current,
-        { opacity: 0, x: -100, rotationY: 10 },
-        { opacity: 1, x: 0, rotationY: 0, duration: 0.8, ease: 'expo.inOut' },
-        0.4
-      );
+        // List items animation
+        tl.fromTo(
+          listRef.current,
+          { opacity: 0, x: -50, scale: 0.95 },
+          {
+            opacity: 1,
+            x: 0,
+            scale: 1,
+            duration: 0.8,
+            stagger: 0.2,
+            ease: 'back.out(1.4)',
+          },
+          0.8
+        ).fromTo(
+          listRef.current.map((el) => el?.querySelector('svg path')),
+          { strokeDasharray: 100, strokeDashoffset: 100 },
+          {
+            strokeDashoffset: 0,
+            duration: 0.6,
+            stagger: 0.2,
+            ease: 'power2.inOut',
+          },
+          0.8
+        );
 
-      // Subtitle animation (fades in with slight lift)
-      tl.fromTo(
-        subtitleRef.current,
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.7, ease: 'power3.inOut' },
-        0.6
-      );
+        // Form animation
+        tl.fromTo(
+          formRef.current,
+          { opacity: 0, scale: 0.9, y: 50 },
+          {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            duration: 0.9,
+            ease: 'expo.inOut',
+          },
+          1
+        );
 
-      // List items animation (staggered bounce-in with checkmark draw)
-      tl.fromTo(
-        listRef.current,
-        { opacity: 0, x: -50, scale: 0.95 },
-        {
-          opacity: 1,
-          x: 0,
-          scale: 1,
-          duration: 0.8,
-          stagger: 0.2,
-          ease: 'back.out(1.4)',
-        },
-        0.8
-      ).fromTo(
-        listRef.current.map((el) => el?.querySelector('svg path')),
-        { strokeDasharray: 100, strokeDashoffset: 100 },
-        {
-          strokeDashoffset: 0,
-          duration: 0.6,
-          stagger: 0.2,
-          ease: 'power2.inOut',
-        },
-        0.8
-      );
-
-      // Form animation (scales in with shadow)
-      tl.fromTo(
-        formRef.current,
-        { opacity: 0, scale: 0.9, y: 50 },
-        {
-          opacity: 1,
-          scale: 1,
-          y: 0,
-          duration: 0.9,
-          ease: 'expo.inOut',
-        },
-        1
-      );
-
-      // Button hover effect
-      const ctx = gsap.context(() => {
-        const button = buttonRef.current;
-        if (button) {
-          button.addEventListener('mouseenter', () => {
-            gsap.to(button, {
-              scale: 1.05,
-              boxShadow: '0px 8px 24px rgba(14, 165, 233, 0.4)',
-              backgroundColor: '#0284c7',
-              duration: 0.3,
-              ease: 'power2.out',
+        // Button hover effect
+        const ctx = gsap.context(() => {
+          const button = buttonRef.current;
+          if (button) {
+            button.addEventListener('mouseenter', () => {
+              gsap.to(button, {
+                scale: 1.05,
+                boxShadow: '0px 8px 24px rgba(14, 165, 233, 0.4)',
+                backgroundColor: '#0284c7',
+                duration: 0.3,
+                ease: 'power2.out',
+              });
             });
-          });
-          button.addEventListener('mouseleave', () => {
-            gsap.to(button, {
-              scale: 1,
-              boxShadow: '0px 0px 0px rgba(0, 0, 0, 0)',
-              backgroundColor: '#0ea5e9',
-              duration: 0.3,
-              ease: 'power2.out',
+            button.addEventListener('mouseleave', () => {
+              gsap.to(button, {
+                scale: 1,
+                boxShadow: '0px 0px 0px rgba(0, 0, 0, 0)',
+                backgroundColor: '#0ea5e9',
+                duration: 0.3,
+                ease: 'power2.out',
+              });
             });
-          });
-        }
-      }, formRef);
+          }
+        }, formRef);
 
-      return () => ctx.revert();
+        return () => ctx.revert();
+      } catch (error) {
+        console.error('GSAP Animation Error:', error);
+      }
     },
     { scope: containerRef }
   );
@@ -172,14 +206,17 @@ const FreeTrial = () => {
   return (
     <div
       ref={containerRef}
-      className='bg-[#0EA5E9] relative my-25 min-h-[80vh]'
+      className='bg-[#0EA5E9]  relative min-h-[calc(100vh+100px)]'
     >
-      <div className='w-full max-w-[1128px] mx-auto pt-10 p-4'>
+      <div className='w-full max-w-[1128px] mx-auto pt-10 p-4 flex flex-col items-center'>
+        <div className='w-full flex justify-center items-center mb-10 z-50'>
+          <SectionNames sectionName={'Free Trial'} />
+        </div>
         <svg
           ref={svgTopRef}
           className='absolute top-[20px] right-10 z-[0]'
-          width='250'
-          height='300'
+          width='450'
+          height='450'
           viewBox='0 0 200 250'
           xmlns='http://www.w3.org/2000/svg'
         >
@@ -189,11 +226,12 @@ const FreeTrial = () => {
           />
         </svg>
 
-        <div className='w-full p-5 flex flex-col md:flex-row md:justify-center md:items-center items-start gap-10 md:gap-4'>
+        <div className='w-full p-5 flex z-20 flex-col md:flex-row md:justify-center md:items-start items-start gap-10 md:gap-4'>
           <section className='w-[100%] md:w-[55%] md:text-left text-center max-w-[600px] flex flex-col gap-5 justify-center'>
             <h2
               ref={titleRef}
-              className='text-[var(--muted)] text-3xl font-bold'
+              className='text-white text-5xl font-bold'
+              style={{ opacity: 1, transform: 'none' }}
             >
               Try FastFlow for Free
             </h2>
@@ -308,9 +346,9 @@ const FreeTrial = () => {
 
         <svg
           ref={svgBottomRef}
-          className='absolute bottom-[20px] left-10 z-[-1] sm:z-[-1] md:z-[1]'
-          width='250'
-          height='250'
+          className='absolute bottom-[70px] left-10 z-[-1] sm:z-[-1] md:z-[0]'
+          width='450'
+          height='450'
           viewBox='0 0 200 200'
           xmlns='http://www.w3.org/2000/svg'
         >
@@ -320,6 +358,16 @@ const FreeTrial = () => {
           />
         </svg>
       </div>
+      <svg
+        xmlns='http://www.w3.org/2000/svg'
+        viewBox='0 0 1440 120'
+        className='absolute bottom-[-2px] left-0 w-full z-10'
+      >
+        <path
+          d='M0,40 C200,20 400,80 720,60 C1040,40 1240,80 1440,60 L1440,120 L0,120 Z'
+          fill='#F9FAFC'
+        />
+      </svg>
     </div>
   );
 };

@@ -1,15 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from './ui/button';
 import { LogIn } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import PopOverComp from './ui/PopOverComp';
+// import { formatDistanceToNow } from 'date-fns';
+// import {
+//   Dialog,
+//   DialogContent,
+//   DialogDescription,
+//   DialogHeader,
+//   DialogTitle,
+// } from '@/components/ui/dialog';
+// import PopOverComp from './ui/PopOverComp';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 type Notification = {
@@ -22,36 +22,41 @@ type Notification = {
 interface DesktopNavProps {
   hasNotifications: boolean;
   notifications: Notification[];
+  className?: string;
 }
 
-const DesktopNav = ({ hasNotifications, notifications }: DesktopNavProps) => {
-  const [_isOpen, setIsOpen] = useState(false);
-  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
-  const [selectedNotification, setSelectedNotification] =
+const DesktopNav = ({
+  // hasNotifications,
+  // notifications,
+  className,
+}: DesktopNavProps) => {
+  const [_isOpen, _setIsOpen] = useState(false);
+  const [_isPopoverOpen, _setIsPopoverOpen] = useState(false);
+  const [_selectedNotification, _setSelectedNotification] =
     useState<Notification | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [_isDialogOpen, _setIsDialogOpen] = useState(false);
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth <= 768) {
-        setIsOpen(false);
-        setIsPopoverOpen(false);
-      }
-    };
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     if (window.innerWidth <= 768) {
+  //       _setIsOpen(false);
+  //       _setIsPopoverOpen(false);
+  //     }
+  //   };
 
-    window.addEventListener('resize', handleResize);
-    handleResize();
+  //   window.addEventListener('resize', handleResize);
+  //   handleResize();
 
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener('resize', handleResize);
+  //   };
+  // }, []);
 
-  const handleNotificationClick = (notification: Notification) => {
-    setSelectedNotification(notification);
-    setIsPopoverOpen(false);
-    setIsDialogOpen(true);
-  };
+  // const handleNotificationClick = (notification: Notification) => {
+  //   setSelectedNotification(notification);
+  //   setIsPopoverOpen(false);
+  //   setIsDialogOpen(true);
+  // };
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -72,49 +77,46 @@ const DesktopNav = ({ hasNotifications, notifications }: DesktopNavProps) => {
   return (
     <>
       <nav className='hidden sm:flex flex-row'>
-        <ul className='flex flex-row justify-center items-center gap-4 text-[.9rem] text-[var(--muted-foreground)] font-medium'>
+        <ul
+          className={`flex flex-row justify-center items-center gap-4 sm:gap-6 text-sm sm:text-base font-medium ${className}`}
+        >
           <li
             onClick={handleClick}
-            className='relative group cursor-pointer transition-colors duration-300 hover:text-[var(--primary)]'
+            className='relative group cursor-pointer transition-transform duration-300 hover:scale-105'
           >
             Home
-            <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-[var(--primary)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
+            <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-gradient-to-r from-blue-600 to-cyan-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
           </li>
-
           <a href='#features'>
-            <li className='relative group cursor-pointer transition-colors duration-300 hover:text-[var(--primary)]'>
+            <li className='relative group cursor-pointer transition-transform duration-300 hover:scale-105'>
               Features
-              <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-[var(--primary)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
+              <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-gradient-to-r from-blue-600 to-cyan-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
             </li>
           </a>
           <a href='#pricing'>
-            <li className='relative group cursor-pointer transition-colors duration-300 hover:text-[var(--primary)]'>
+            <li className='relative group cursor-pointer transition-transform duration-300 hover:scale-105'>
               Pricing
-              <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-[var(--primary)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
+              <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-gradient-to-r from-blue-600 to-cyan-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
             </li>
           </a>
           <Link to={'contact'}>
-            <li className='relative group cursor-pointer transition-colors duration-300 hover:text-[var(--primary)]'>
+            <li className='relative group cursor-pointer transition-transform duration-300 hover:scale-105'>
               Contact
-              <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-[var(--primary)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
+              <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-gradient-to-r from-blue-600 to-cyan-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
             </li>
           </Link>
           <Link to={'about'}>
-            <li className='relative group cursor-pointer transition-colors duration-300 hover:text-[var(--primary)]'>
+            <li className='relative group cursor-pointer transition-transform duration-300 hover:scale-105'>
               About
-              <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-[var(--primary)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
+              <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-gradient-to-r from-blue-600 to-cyan-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
             </li>
           </Link>
-          <li className='relative group cursor-pointer transition-colors duration-300 hover:text-[var(--primary)]'>
-            Dashboard
-            <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-[var(--primary)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
-          </li>
         </ul>
       </nav>
 
-      <section className='hidden sm:flex items-center justify-center gap-5 mt-4 sm:mt-0'>
+      <section className='hidden sm:flex items-center justify-center gap-5'>
         {/* Notification Popover */}
-        <PopOverComp
+        {/* <PopOverComp
           notifications={notifications}
           isDialogOpen={isDialogOpen}
           setIsDialogOpen={setIsDialogOpen}
@@ -122,17 +124,20 @@ const DesktopNav = ({ hasNotifications, notifications }: DesktopNavProps) => {
           isPopoverOpen={isPopoverOpen}
           setIsPopoverOpen={setIsPopoverOpen}
           handleNotificationClick={handleNotificationClick}
-        />
+          className='bg-[#0f0f1b] border-blue-500/30 text-gray-200 shadow-[0_0_8px_rgba(59,130,246,0.3)]'
+        /> */}
 
         {/* Notification Dialog */}
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent>
+        {/* <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogContent className='bg-[#0f0f1b] border-blue-500/30 text-gray-200 p-2 sm:p-4 shadow-[0_0_8px_rgba(59,130,246,0.3)]'>
             <DialogHeader>
-              <DialogTitle>{selectedNotification?.title}</DialogTitle>
-              <DialogDescription>
+              <DialogTitle className='text-blue-300 text-sm sm:text-base'>
+                {selectedNotification?.title}
+              </DialogTitle>
+              <DialogDescription className='text-gray-200 text-xs sm:text-sm'>
                 {selectedNotification?.message}
                 <br />
-                <span className='text-xs text-muted-foreground block mt-2'>
+                <span className='text-blue-400 text-xs block mt-2'>
                   {selectedNotification?.timestamp &&
                     formatDistanceToNow(selectedNotification.timestamp, {
                       addSuffix: true,
@@ -141,10 +146,10 @@ const DesktopNav = ({ hasNotifications, notifications }: DesktopNavProps) => {
               </DialogDescription>
             </DialogHeader>
           </DialogContent>
-        </Dialog>
+        </Dialog> */}
 
-        <Button className='cursor-pointer bg-blue-600 text-[var(--card)] hover:bg-blue-400 transition-colors duration-300 ease-in-out'>
-          <LogIn /> Login
+        <Button className='cursor-pointer bg-[#00b7eb] text-white hover:bg-[#0084ff] shadow-[0_0_6px_rgba(59,130,246,0.5)] hover:shadow-[0_0_10px_rgba(59,130,246,0.7)] transition-all duration-300 ease-in-out hover:scale-105'>
+          <LogIn className='w-4 h-4 mr-2' /> Login
         </Button>
       </section>
     </>

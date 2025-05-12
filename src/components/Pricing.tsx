@@ -1,4 +1,3 @@
-import SectionNames from './ui/SectionNames';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { useRef } from 'react';
@@ -10,7 +9,6 @@ const Pricing = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<(HTMLDivElement | null)[]>([]);
-  const svgBgRef = useRef<SVGSVGElement>(null);
 
   useGSAP(
     () => {
@@ -23,68 +21,40 @@ const Pricing = () => {
         },
       });
 
-      // Background SVG animation (morphing and scaling)
+      // Title animation
       tl.fromTo(
-        svgBgRef.current,
-        { scale: 0.8, opacity: 0, rotation: 15 },
+        Array.from(titleRef.current?.children || []),
+        { opacity: 0, y: 10 },
         {
-          scale: 1,
-          opacity: 0.3,
-          rotation: 0,
-          duration: 1.5,
-          ease: 'expo.inOut',
-        }
-      ).fromTo(
-        svgBgRef.current?.querySelector('path')
-          ? svgBgRef.current.querySelector('path')
-          : null,
-        {
-          attr: {
-            d: 'M50,20 C80,-10 150,10 170,80 C190,150 130,170 90,190 C50,210 20,180 10,120 C0,60 20,40 50,20 Z',
-          },
-        },
-        {
-          attr: {
-            d: 'M40,30 C90,0 160,20 180,90 C200,160 140,180 100,200 C60,220 20,170 10,110 C0,50 10,40 40,30 Z',
-          },
-          duration: 2,
-          ease: 'power4.inOut',
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: 'power3.out',
+          stagger: 0.1,
         },
         0
       );
 
-      // Title section animation (staggered entrance with rotation)
-      tl.fromTo(
-        Array.from(titleRef.current?.children || []),
-        { opacity: 0, y: 30, rotationY: 10 },
-        {
-          opacity: 1,
-          y: 0,
-          rotationY: 0,
-          duration: 0.8,
-          ease: 'expo.inOut',
-          stagger: 0.15,
-        },
-        0.4
-      );
-
-      // Card animation (3D flip and lift)
+      // Card animation
       tl.fromTo(
         cardRef.current,
-        { opacity: 0, y: 60, scale: 0.85, rotationX: 20 },
+        {
+          opacity: 0,
+          y: 30,
+          scale: 0.95,
+        },
         {
           opacity: 1,
-          y: 0,
-          scale: 1,
-          rotationX: 0,
-          duration: 1,
-          ease: 'power4.inOut',
-          stagger: 0.2,
+          y: (i) => (i === 1 ? -10 : 0),
+          scale: (i) => (i === 1 ? 1.05 : 0.98),
+          duration: 0.8,
+          ease: 'power3.out',
+          stagger: 0.1,
         },
-        0.6
+        0.2
       );
 
-      // Checkmark SVG animation (drawing effect)
+      // Checkmark animation
       tl.fromTo(
         cardRef.current.flatMap((card) =>
           Array.from(card?.querySelectorAll('svg path') || [])
@@ -92,14 +62,14 @@ const Pricing = () => {
         { strokeDasharray: 100, strokeDashoffset: 100 },
         {
           strokeDashoffset: 0,
-          duration: 0.7,
-          stagger: 0.1,
-          ease: 'power2.inOut',
+          duration: 0.5,
+          stagger: 0.05,
+          ease: 'power2.out',
         },
-        0.8
+        0.4
       );
 
-      // Card and button hover effects
+      // Hover effects
       const ctx = gsap.context(() => {
         cardRef.current.forEach((card) => {
           if (!card) return;
@@ -107,29 +77,27 @@ const Pricing = () => {
           // Card hover
           card.addEventListener('mouseenter', () => {
             gsap.to(card, {
-              scale: 1.05,
-              y: -15,
-              boxShadow: '0px 16px 32px rgba(0, 0, 0, 0.2)',
+              scale: cardRef.current.indexOf(card) === 1 ? 1.1 : 0.98,
+              y: cardRef.current.indexOf(card) === 1 ? -15 : -5,
               background: card.classList.contains('bg-blue-50')
                 ? 'linear-gradient(135deg, #e0f7fa, #b3e5fc)'
                 : card.classList.contains('bg-teal-50/60')
                 ? 'linear-gradient(135deg, #ccfbf1, #99f6e4)'
                 : 'linear-gradient(135deg, #ffedd5, #fed7aa)',
-              duration: 0.4,
+              duration: 0.3,
               ease: 'power2.out',
             });
           });
           card.addEventListener('mouseleave', () => {
             gsap.to(card, {
-              scale: 1,
-              y: 0,
-              boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+              scale: cardRef.current.indexOf(card) === 1 ? 1.05 : 0.98,
+              y: cardRef.current.indexOf(card) === 1 ? -10 : 0,
               background: card.classList.contains('bg-blue-50')
                 ? '#eff6ff'
                 : card.classList.contains('bg-teal-50/60')
                 ? 'rgba(204, 251, 241, 0.6)'
                 : 'rgba(255, 237, 213, 0.6)',
-              duration: 0.4,
+              duration: 0.3,
               ease: 'power2.out',
             });
           });
@@ -139,8 +107,7 @@ const Pricing = () => {
           if (button) {
             button.addEventListener('mouseenter', () => {
               gsap.to(button, {
-                scale: 1.1,
-                boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.2)',
+                scale: 1.05,
                 backgroundColor: button.classList.contains('bg-sky-500')
                   ? '#0284c7'
                   : undefined,
@@ -149,14 +116,13 @@ const Pricing = () => {
                   : button.classList.contains('text-orange-500')
                   ? '#f97316'
                   : undefined,
-                duration: 0.3,
+                duration: 0.2,
                 ease: 'power2.out',
               });
             });
             button.addEventListener('mouseleave', () => {
               gsap.to(button, {
                 scale: 1,
-                boxShadow: '0px 0px 0px rgba(0, 0, 0, 0)',
                 backgroundColor: button.classList.contains('bg-sky-500')
                   ? '#0ea5e9'
                   : undefined,
@@ -165,7 +131,7 @@ const Pricing = () => {
                   : button.classList.contains('text-orange-500')
                   ? '#fb923c'
                   : undefined,
-                duration: 0.3,
+                duration: 0.2,
                 ease: 'power2.out',
               });
             });
@@ -182,35 +148,28 @@ const Pricing = () => {
     <div
       ref={containerRef}
       id='pricing'
-      className='w-full mb-20 relative overflow-hidden'
+      className='w-full min-h-[calc(100vh+10rem)] text-gray-900 relative overflow-hidden bg-gradient-to-b from-gray-50 to-gray-100 dark:bg-gradient-to-b dark:from-gray-800 dark:to-gray-900'
     >
-      <svg
-        ref={svgBgRef}
-        className='absolute top-0 left-0 w-full h-full opacity-30 z-[-1]'
-        viewBox='0 0 200 250'
-        xmlns='http://www.w3.org/2000/svg'
-      >
-        <path
-          fill='#bae6fd'
-          d='M40,30 C90,0 160,20 180,90 C200,160 140,180 100,200 C60,220 20,170 10,110 C0,50 10,40 40,30 Z'
-        />
-      </svg>
+      {/* Subtle radial gradient background */}
+      <div className='absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.08)_0%,transparent_70%)] z-[-1]' />
 
       <section
         ref={titleRef}
-        className='flex flex-col items-center justify-center text-center gap-1 mb-15'
+        className='flex flex-col items-center justify-center text-center gap-4 mb-8 sm:mb-12 md:mb-16'
       >
-        <SectionNames sectionName='Pricing' />
-        <h2 className='font-bold text-3xl mb-3'>
-          Escolha o Plano Ideal para Sua Empresa
+        <span className=' text-indigo-700 dark:text-cyan-300 px-4 py-1.5 rounded-full text-sm font-medium shadow-sm'>
+          pricing
+        </span>
+        <h2 className='text-3xl sm:text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-indigo-600 to-cyan-500 bg-clip-text text-transparent'>
+          Escolha o Plano Ideal para Sua Empressa
         </h2>
-        <p className='w-full max-w-[550px] mx-auto text-[.9rem] text-[var(--text-muted-soft)] font-medium leading-[1.2]'>
+        <p className='w-full max-w-md sm:max-w-lg mx-auto text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed'>
           Temos opções flexíveis para atender às necessidades do seu negócio,
           desde startups até empresas estabelecidas.
         </p>
       </section>
 
-      <section className='flex flex-wrap gap-6 w-full p-8 justify-center items-stretch rounded-xl'>
+      <section className='flex flex-col lg:flex-row gap-6 w-full max-w-full sm:max-w-5xl mx-auto px-4 sm:px-6 md:px-8 py-6 sm:py-8 justify-center items-center lg:items-end'>
         {[
           {
             title: 'Plano Gratuito',
@@ -227,7 +186,8 @@ const Pricing = () => {
             button: {
               text: 'Começar Agora',
               variant: 'outline',
-              className: 'text-cyan-500 border-cyan-300 hover:bg-cyan-50',
+              className:
+                'text-cyan-500 border-cyan-300 cursor-pointer hover:bg-cyan-50',
             },
           },
           {
@@ -246,7 +206,8 @@ const Pricing = () => {
             button: {
               text: 'Escolher Plano',
               variant: 'solid',
-              className: 'bg-sky-500 text-white hover:bg-sky-600',
+              className:
+                'bg-sky-500 text-white cursor-pointer hover:bg-sky-600',
             },
           },
           {
@@ -267,7 +228,7 @@ const Pricing = () => {
               text: 'Escolher Plano',
               variant: 'outline',
               className:
-                'text-orange-500 border-orange-400 hover:bg-orange-100',
+                'text-orange-500 border-orange-400 cursor-pointer hover:bg-orange-100',
             },
           },
         ].map((plan, idx) => (
@@ -276,32 +237,36 @@ const Pricing = () => {
             ref={(el) => {
               cardRef.current[idx] = el;
             }}
-            className={`${plan.bg} border rounded-2xl shadow-md p-6 flex flex-col justify-between w-full max-w-sm transition-transform`}
+            className={`${plan.bg} border border-gray-200/50 dark:border-gray-700/50 rounded-3xl shadow-lg p-6 sm:p-8 flex flex-col justify-between w-full max-w-[360px] sm:max-w-md transition-all duration-200 backdrop-blur-sm`}
           >
             <div>
-              <h4 className='text-xl font-bold text-gray-800 mb-1'>
+              <h4 className='text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2'>
                 {plan.title}
               </h4>
-              <div className='flex items-baseline mb-2'>
-                <span className='text-3xl font-extrabold text-gray-900'>
+              <div className='flex items-baseline mb-4'>
+                <span className='text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-gray-100'>
                   {plan.price}
                 </span>
-                <span className='ml-2 text-sm text-gray-500'>/mês</span>
+                <span className='ml-2 text-sm sm:text-base text-gray-500 dark:text-gray-400'>
+                  /mês
+                </span>
               </div>
-              <p className='text-sm text-gray-600 mb-6'>{plan.desc}</p>
+              <p className='text-sm text-gray-600 dark:text-gray-300 mb-6'>
+                {plan.desc}
+              </p>
 
-              <ul className='space-y-3 mb-6'>
+              <ul className='space-y-3 sm:space-y-4 mb-6 sm:mb-8'>
                 {plan.features.map((feature, i) => (
                   <li
                     key={i}
-                    className='flex items-center gap-2 text-sm text-gray-700'
+                    className='flex items-center gap-3 text-sm text-gray-700 dark:text-gray-200'
                   >
                     <span
-                      className={`w-5 h-5 flex items-center justify-center ${plan.iconBg} rounded-full`}
+                      className={`w-6 h-6 flex items-center justify-center ${plan.iconBg} rounded-full`}
                     >
                       <svg
                         xmlns='http://www.w3.org/2000/svg'
-                        className='h-3.5 w-3.5 text-white'
+                        className='h-4 w-4 text-white'
                         fill='none'
                         viewBox='0 0 24 24'
                         stroke='currentColor'
@@ -320,13 +285,25 @@ const Pricing = () => {
               </ul>
             </div>
             <button
-              className={`w-full px-4 py-2 rounded-xl cursor-pointer font-semibold border ${plan.button.className} transition`}
+              className={`w-full px-6 py-3 rounded-xl font-semibold border-2 ${plan.button.className} transition-all duration-200`}
+              aria-label={`Select ${plan.title}`}
             >
               {plan.button.text}
             </button>
           </div>
         ))}
       </section>
+      <svg
+        xmlns='http://www.w3.org/2000/svg'
+        viewBox='0 0 1440 60'
+        className='absolute bottom-[-1px] left-0 z-10'
+      >
+        <path
+          d='M0,60 L90,50 L180,60 L270,50 L360,60 L450,50 L540,60 L630,50 L720,60 L810,50 L900,60 L990,50 L1080,60 L1170,50 L1260,60 L1350,50 L1440,60 L1440,60 L0,60 Z'
+          fill='#101828'
+          fillOpacity='1'
+        />
+      </svg>
     </div>
   );
 };

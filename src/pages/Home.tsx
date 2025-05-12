@@ -9,9 +9,9 @@ const Home = () => {
   return (
     <>
       <Hero />
-      <div className='bg-[#fefefe] pt-1 pb-20'>
-        <Features />
-      </div>
+
+      <Features />
+
       <Testimonials />
       <FreeTrial />
       <Pricing />

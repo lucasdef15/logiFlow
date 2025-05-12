@@ -1,5 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;700&display=swap');
 @import 'tailwindcss';
 @import 'tw-animate-css';
+/* Removed JavaScript code. Ensure this configuration is moved to a JavaScript file. */
 
 @custom-variant dark (&:is(.dark *));
 
@@ -52,7 +54,7 @@ body,
   --text-muted-faint: oklch(0.7 0 0 / 0.9); /* bem suave para placeholders */
   --radius: 0.625rem;
 
-  --background: #edf2f8;
+  --background: #ffff;
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
@@ -129,7 +131,8 @@ body,
   body {
     @apply bg-background text-foreground;
   }
-  .noti_dot::after {
+
+  .i_dot::after {
     content: '';
     @apply absolute w-[8px] h-[8px] bg-amber-400 rounded-full top-0 right-0 translate-x-1 -translate-y-1;
   }

@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import gsap from 'gsap';
 import DesktopNav from './DesktopNav';
 import MobileNav from './MobileNav';
+import { Truck } from 'lucide-react';
 
 interface Notification {
   id: number;
@@ -14,6 +15,17 @@ const Header = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const headerRef = useRef<HTMLElement>(null);
   const lastScroll = useRef(0);
+
+  // Fade-in animation on mount
+  useEffect(() => {
+    if (headerRef.current) {
+      gsap.fromTo(
+        headerRef.current,
+        { opacity: 0, y: -10 },
+        { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
+      );
+    }
+  }, []);
 
   // Fetch notifications
   useEffect(() => {
@@ -32,7 +44,7 @@ const Header = () => {
       .catch((error) => console.error('Error fetching notifications:', error));
   }, []);
 
-  // Scroll behavior
+  // Scroll behavior (subtle opacity change)
   useEffect(() => {
     const handleScroll = () => {
       const currentScroll = window.scrollY;
@@ -40,16 +52,16 @@ const Header = () => {
       if (!headerRef.current) return;
 
       if (currentScroll > lastScroll.current && currentScroll > 100) {
-        // Scroll down - hide header
+        // Scroll para baixo — esconde o header
         gsap.to(headerRef.current, {
-          y: '-100%',
+          y: -100, // sobe o header
           duration: 0.4,
           ease: 'power2.out',
         });
       } else {
-        // Scroll up - show header
+        // Scroll para cima — mostra o header
         gsap.to(headerRef.current, {
-          y: '0%',
+          y: 0,
           duration: 0.4,
           ease: 'power2.out',
         });
@@ -69,24 +81,30 @@ const Header = () => {
   return (
     <header
       ref={headerRef}
-      className='bg-[var(--card)] w-full shadow-lg sticky top-0 z-10'
+      className=' w-full sticky top-0 z-50  bg-[#1F2937]/80 backdrop-blur-sm '
     >
-      <nav className='bg-[var(--card)] w-full max-w-[1128px] mx-auto flex flex-row justify-between p-4 transition-all duration-300'>
-        <section className='flex items-center justify-center gap-2'>
-          <img
-            className='max-w-[30px]'
-            src='/assets/images/logo.svg'
-            alt='logo svg'
-          />
-          <div className='font-sans tracking-wide'>
-            <span className='text-blue-600 font-bold'>Log</span>
-            <span className='text-blue-300 font-bold'>Flow</span>
+      {/* Glass background layer */}
+      <div className='absolute inset-0 bg-[#1F2937]/90 h-full backdrop-blur-md shadow-sm -z-10' />
+
+      <nav className='max-w-[95%] mx-auto flex items-center justify-between px-4 sm:px-6 py-3'>
+        {/* Logo section */}
+        <section className='flex items-center gap-2 sm:gap-3'>
+          <div className='rounded-full bg-gray-800 p-1.5 sm:p-2 shadow-md'>
+            <Truck className='text-white w-5 h-5 sm:w-6 sm:h-6' />
+          </div>
+          <div className='flex flex-col leading-tight group cursor-pointer'>
+            <div className='text-sm sm:text-base font-semibold tracking-wide text-white group-hover:opacity-90 transition-opacity'>
+              <span className='text-blue-200'>Log</span>
+              <span className='text-[#00b7eb]'>Flow</span>
+            </div>
           </div>
         </section>
 
+        {/* Navigation */}
         <DesktopNav
           hasNotifications={hasNotifications}
           notifications={notifications}
+          className='hidden sm:flex text-gray-300 hover:text-blue-200 transition-colors duration-200'
         />
         <MobileNav
           hasNotifications={hasNotifications}

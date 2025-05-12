@@ -10,13 +10,13 @@ type CardWithLabelIconProps = {
 };
 
 const bgColors: Record<NonNullable<CardWithLabelIconProps['color']>, string> = {
-  blue: 'bg-blue-100 text-blue-600',
-  red: 'bg-red-100 text-red-600',
-  green: 'bg-green-100 text-green-600',
-  amber: 'bg-amber-100 text-amber-600',
-  gray: 'bg-gray-100 text-gray-600',
-  cyan: 'bg-cyan-100 text-cyan-600',
-  orange: 'bg-orange-100 text-orange-600',
+  blue: 'bg-blue-800/50 text-white border-blue-400/30',
+  cyan: 'bg-cyan-800/50 text-white border-cyan-400/30',
+  orange: 'bg-orange-800/50 text-white border-orange-400/30',
+  red: 'bg-red-800/50 text-white border-red-400/30',
+  green: 'bg-green-800/50 text-white border-green-400/30',
+  amber: 'bg-amber-800/50 text-white border-amber-400/30',
+  gray: 'bg-gray-800/50 text-white border-gray-400/30',
 };
 
 const CardWithLabelIcon: React.FC<CardWithLabelIconProps> = ({
@@ -25,61 +25,63 @@ const CardWithLabelIcon: React.FC<CardWithLabelIconProps> = ({
   title,
   description,
 }) => {
-  const colorClasses = bgColors[color];
   const cardRef = useRef<HTMLDivElement>(null);
+  const colorClasses = bgColors[color];
 
   useGSAP(() => {
     const el = cardRef.current;
     if (!el) return;
 
-    const handleEnter = () => {
+    const enter = () =>
       gsap.to(el, {
-        scale: 1.05,
-        skewY: 2,
-        skewX: 1,
-        rotateZ: 1.5,
-        boxShadow: '0 12px 24px rgba(0,0,0,0.12)',
+        y: -6,
+        scale: 1.02,
+        boxShadow: '0 12px 28px rgba(0,0,0,0.15)',
         duration: 0.35,
         ease: 'power3.out',
       });
-    };
 
-    const handleLeave = () => {
+    const leave = () =>
       gsap.to(el, {
+        y: 0,
         scale: 1,
-        skewY: 0,
-        skewX: 0,
-        rotateZ: 0,
-        boxShadow: '4px 4px 8px -2px rgba(0,0,0,0.1)',
+        boxShadow: '0 6px 16px rgba(0,0,0,0.08)',
         duration: 0.4,
         ease: 'power2.inOut',
       });
-    };
 
-    el.addEventListener('mouseenter', handleEnter);
-    el.addEventListener('mouseleave', handleLeave);
+    el.addEventListener('mouseenter', enter);
+    el.removeEventListener('mouseleave', leave);
 
     return () => {
-      el.removeEventListener('mouseenter', handleEnter);
-      el.removeEventListener('mouseleave', handleLeave);
+      el.removeEventListener('mouseenter', enter);
+      el.removeEventListener('mouseleave', leave);
     };
   }, []);
 
   return (
     <div
       ref={cardRef}
-      className='flex flex-col gap-2 bg-[#ffff/3] w-[325px] p-4 rounded-sm shadow-[4px_4px_8px_-2px_rgba(0,0,0,0.1)] transition-transform duration-200 ease-out will-change-transform'
+      className={`relative w-full p-4 sm:p-5 md:p-6 rounded-2xl border backdrop-blur-md transition duration-300 ease-out ${colorClasses}`}
     >
       <div
-        className={`w-12 h-12 flex items-center justify-center rounded-full ${colorClasses}`}
+        className='w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-sm ring-1 ring-inset ring-white/10 shadow-inner'
+        style={{
+          backgroundImage:
+            'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.15), transparent 60%)',
+        }}
       >
-        {React.cloneElement(icon, { className: 'w-6 h-6' })}
+        {React.cloneElement(icon, {
+          className: 'w-5 h-5 sm:w-6 sm:h-6 text-white',
+        })}
       </div>
-      <div>
-        <h3 className='text-base font-semibold text-[var(--primary-foreground)]'>
+      <div className='mt-4 space-y-1'>
+        <h3 className='text-base sm:text-lg md:text-xl font-semibold text-white tracking-tight'>
           {title}
         </h3>
-        <p className='text-sm text-[var(--text-muted-soft)]'>{description}</p>
+        <p className='text-sm sm:text-base md:text-lg text-white/80'>
+          {description}
+        </p>
       </div>
     </div>
   );
