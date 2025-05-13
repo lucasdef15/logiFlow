@@ -1,0 +1,393 @@
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
+import { useRef, useState } from 'react';
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
+
+const Register = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    terms: false,
+  });
+
+  const [errors, setErrors] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    terms: '',
+  });
+
+  const nameErrorRef = useRef<HTMLSpanElement>(null);
+  const emailErrorRef = useRef<HTMLSpanElement>(null);
+  const passwordErrorRef = useRef<HTMLSpanElement>(null);
+  const confirmPasswordErrorRef = useRef<HTMLSpanElement>(null);
+  const termsErrorRef = useRef<HTMLSpanElement>(null);
+  const titleRef = useRef<HTMLDivElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const footerRef = useRef<HTMLDivElement>(null);
+  const backgroundRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    // Title animation
+    if (titleRef.current?.children) {
+      gsap.fromTo(
+        titleRef.current.children,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: 'power2.out',
+          stagger: 0.2,
+          scrollTrigger: {
+            trigger: titleRef.current,
+            start: 'top 85%',
+            end: 'bottom 20%',
+          },
+        }
+      );
+    }
+
+    // Form fields animation
+    if (formRef.current?.children) {
+      gsap.fromTo(
+        formRef.current.children,
+        { opacity: 0, x: -30 },
+        {
+          opacity: 1,
+          x: 0,
+          duration: 0.8,
+          ease: 'power2.out',
+          stagger: 0.1,
+          scrollTrigger: {
+            trigger: formRef.current,
+            start: 'top 85%',
+            end: 'bottom 20%',
+          },
+        }
+      );
+    }
+
+    // Footer animation
+    if (footerRef.current?.children) {
+      gsap.fromTo(
+        footerRef.current.children,
+        { opacity: 0, x: 30 },
+        {
+          opacity: 1,
+          x: 0,
+          duration: 0.8,
+          ease: 'power2.out',
+          stagger: 0.15,
+          scrollTrigger: {
+            trigger: footerRef.current,
+            start: 'top 85%',
+            end: 'bottom 20%',
+          },
+        }
+      );
+    }
+
+    // Background fade-in
+    if (backgroundRef.current) {
+      gsap.fromTo(
+        backgroundRef.current,
+        { opacity: 0 },
+        {
+          opacity: 1,
+          duration: 1,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: backgroundRef.current,
+            start: 'top 100%',
+            end: 'bottom 20%',
+          },
+        }
+      );
+    }
+  }, []);
+
+  useGSAP(() => {
+    const animateError = (ref: React.RefObject<HTMLSpanElement | null>) => {
+      if (ref.current) {
+        gsap.fromTo(
+          ref.current,
+          { opacity: 0, y: 5 },
+          { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' }
+        );
+      }
+    };
+
+    if (errors.name && nameErrorRef.current) animateError(nameErrorRef);
+    if (errors.email && emailErrorRef.current) animateError(emailErrorRef);
+    if (errors.password && passwordErrorRef.current)
+      animateError(passwordErrorRef);
+    if (errors.confirmPassword && confirmPasswordErrorRef.current)
+      animateError(confirmPasswordErrorRef);
+    if (errors.terms && termsErrorRef.current) animateError(termsErrorRef);
+  }, [errors]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === 'checkbox' ? checked : value,
+    });
+
+    setErrors({
+      ...errors,
+      [name]: '',
+    });
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const newErrors = {
+      name: formData.name.trim() === '' ? 'Nome é obrigatório' : '',
+      email:
+        formData.email.trim() === ''
+          ? 'E-mail é obrigatório'
+          : !/\S+@\S+\.\S+/.test(formData.email)
+          ? 'E-mail inválido'
+          : '',
+      password:
+        formData.password.trim() === ''
+          ? 'Senha é obrigatória'
+          : formData.password.length < 6
+          ? 'Senha deve ter pelo menos 6 caracteres'
+          : '',
+      confirmPassword:
+        formData.confirmPassword !== formData.password
+          ? 'As senhas não coincidem'
+          : '',
+      terms: !formData.terms ? 'Você deve aceitar os termos' : '',
+    };
+
+    setErrors(newErrors);
+
+    const hasErrors = Object.values(newErrors).some((error) => error !== '');
+    if (!hasErrors) {
+      console.log('Dados enviados:', formData);
+      // Backend submission logic here
+    }
+  };
+
+  return (
+    <div className='relative w-full min-h-screen bg-[#0d111c] text-white py-20 px-4 overflow-hidden'>
+      {/* Background Effect */}
+      <div
+        ref={backgroundRef}
+        className='absolute inset-0 w-full h-full z-0 opacity-50 bg-gradient-to-r from-[#00b7eb]/20 to-transparent'
+      />
+
+      {/* Gradient Transition */}
+      <div className='absolute bottom-0 left-0 w-full h-32 bg-gradient-to-b from-transparent to-[#0d111c] z-10 pointer-events-none' />
+
+      {/* Main Content */}
+      <div className='relative max-w-7xl mx-auto z-10'>
+        <section ref={titleRef} className='text-center mb-12'>
+          <h2 className='text-3xl sm:text-5xl lg:text-6xl font-bold text-[#00b7eb]'>
+            Registre-se no LogFlow
+          </h2>
+          <p className='text-white/80 text-base sm:text-lg font-medium mt-4 max-w-md mx-auto'>
+            Crie sua conta para acessar o sistema inteligente de gestão de
+            entregas
+          </p>
+        </section>
+
+        <div className='flex justify-center'>
+          <form
+            ref={formRef}
+            onSubmit={handleSubmit}
+            className='w-full max-w-md bg-[#1a1f2b]/80 p-8 rounded-xl shadow-lg transition-all duration-300 hover:shadow-cyan-500/50'
+          >
+            <h3 className='text-2xl font-semibold text-white mb-6'>
+              Criar Conta
+            </h3>
+
+            {/* Full Name */}
+            <div className='mb-5'>
+              <label
+                htmlFor='name'
+                className='block text-sm font-medium text-white/80 mb-1'
+              >
+                Nome Completo
+              </label>
+              <input
+                id='name'
+                name='name'
+                type='text'
+                value={formData.name}
+                onChange={handleChange}
+                className='w-full bg-[#2a2f3b] border border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-white focus:ring-2 focus:ring-[#00b7eb] focus:border-[#00b7eb] transition-colors'
+                placeholder='Seu nome'
+                aria-describedby='name-error'
+              />
+              {errors.name && (
+                <span
+                  ref={nameErrorRef}
+                  id='name-error'
+                  className='text-red-500 text-xs mt-1'
+                >
+                  {errors.name}
+                </span>
+              )}
+            </div>
+
+            {/* Email */}
+            <div className='mb-5'>
+              <label
+                htmlFor='email'
+                className='block text-sm font-medium text-white/80 mb-1'
+              >
+                Email
+              </label>
+              <input
+                id='email'
+                name='email'
+                type='email'
+                value={formData.email}
+                onChange={handleChange}
+                className='w-full bg-[#2a2f3b] border border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-white focus:ring-2 focus:ring-[#00b7eb] focus:border-[#00b7eb] transition-colors'
+                placeholder='seu@email.com'
+                aria-describedby='email-error'
+              />
+              {errors.email && (
+                <span
+                  ref={emailErrorRef}
+                  id='email-error'
+                  className='text-red-500 text-xs mt-1'
+                >
+                  {errors.email}
+                </span>
+              )}
+            </div>
+
+            {/* Password */}
+            <div className='mb-5'>
+              <label
+                htmlFor='password'
+                className='block text-sm font-medium text-white/80 mb-1'
+              >
+                Senha
+              </label>
+              <input
+                id='password'
+                name='password'
+                type='password'
+                value={formData.password}
+                onChange={handleChange}
+                className='w-full bg-[#2a2f3b] border border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-white focus:ring-2 focus:ring-[#00b7eb] focus:border-[#00b7eb] transition-colors'
+                placeholder='Sua senha'
+                aria-describedby='password-error'
+              />
+              {errors.password && (
+                <span
+                  ref={passwordErrorRef}
+                  id='password-error'
+                  className='text-red-500 text-xs mt-1'
+                >
+                  {errors.password}
+                </span>
+              )}
+            </div>
+
+            {/* Confirm Password */}
+            <div className='mb-5'>
+              <label
+                htmlFor='confirmPassword'
+                className='block text-sm font-medium text-white/80 mb-1'
+              >
+                Confirmar Senha
+              </label>
+              <input
+                id='confirmPassword'
+                name='confirmPassword'
+                type='password'
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                className='w-full bg-[#2a2f3b] border border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-white focus:ring-2 focus:ring-[#00b7eb] focus:border-[#00b7eb] transition-colors'
+                placeholder='Confirme sua senha'
+                aria-describedby='confirmPassword-error'
+              />
+              {errors.confirmPassword && (
+                <span
+                  ref={confirmPasswordErrorRef}
+                  id='confirmPassword-error'
+                  className='text-red-500 text-xs mt-1'
+                >
+                  {errors.confirmPassword}
+                </span>
+              )}
+            </div>
+
+            {/* Terms and Conditions */}
+            <div className='mb-6'>
+              <label
+                htmlFor='terms'
+                className='flex items-center text-sm text-white/80'
+              >
+                <input
+                  type='checkbox'
+                  id='terms'
+                  name='terms'
+                  checked={formData.terms}
+                  onChange={handleChange}
+                  className='mr-2'
+                />
+                Aceito os{' '}
+                <Link
+                  to='/terms'
+                  className='text-[#00b7eb] hover:underline ml-1'
+                >
+                  Termos e Condições
+                </Link>
+              </label>
+              {errors.terms && (
+                <span
+                  ref={termsErrorRef}
+                  id='terms-error'
+                  className='text-red-500 text-xs mt-1'
+                >
+                  {errors.terms}
+                </span>
+              )}
+            </div>
+
+            {/* Submit Button */}
+            <Button
+              type='submit'
+              className='w-full bg-[#00b7eb] hover:bg-[#0084ff] cursor-pointer text-white font-semibold py-3 rounded-lg transition-all duration-300'
+              aria-label='Criar conta'
+            >
+              Criar Conta
+            </Button>
+
+            {/* Footer */}
+            <div
+              ref={footerRef}
+              className='mt-6 text-center text-sm text-white/80'
+            >
+              <p>
+                Já tem uma conta?{' '}
+                <Link to='/login' className='text-[#00b7eb] hover:underline'>
+                  Faça login
+                </Link>
+              </p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Register;

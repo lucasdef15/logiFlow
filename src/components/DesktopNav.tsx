@@ -148,7 +148,10 @@ const DesktopNav = ({
           </DialogContent>
         </Dialog> */}
 
-        <Button className='cursor-pointer bg-[#00b7eb] text-white hover:bg-[#0084ff] shadow-[0_0_6px_rgba(59,130,246,0.5)] hover:shadow-[0_0_10px_rgba(59,130,246,0.7)] transition-all duration-300 ease-in-out hover:scale-105'>
+        <Button
+          onClick={() => navigate('/login')}
+          className='cursor-pointer bg-[#00b7eb] text-white hover:bg-[#0084ff] shadow-[0_0_6px_rgba(59,130,246,0.5)] hover:shadow-[0_0_10px_rgba(59,130,246,0.7)] transition-all duration-300 ease-in-out hover:scale-105'
+        >
           <LogIn className='w-4 h-4 mr-2' /> Login
         </Button>
       </section>

@@ -7,6 +7,8 @@ import Home from './pages/Home.tsx';
 import Contact from './pages/Contact.tsx';
 import About from './pages/About.tsx';
 import FreeTrialPage from './pages/FreeTrialPage.tsx';
+import Login from './pages/Login.tsx';
+import Register from './pages/Register.tsx';
 
 const router = createBrowserRouter([
   {
@@ -28,6 +30,14 @@ const router = createBrowserRouter([
       {
         path: 'free-trial',
         Component: FreeTrialPage,
+      },
+      {
+        path: 'login',
+        Component: Login,
+      },
+      {
+        path: 'register',
+        Component: Register,
       },
     ],
   },
