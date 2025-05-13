@@ -115,7 +115,7 @@ const Register = () => {
   }, []);
 
   useGSAP(() => {
-    const animateError = (ref: React.RefObject<HTMLSpanElement | null>) => {
+    const animateError = (ref: React.RefObject<HTMLSpanElement>) => {
       if (ref.current) {
         gsap.fromTo(
           ref.current,
@@ -125,13 +125,16 @@ const Register = () => {
       }
     };
 
-    if (errors.name && nameErrorRef.current) animateError(nameErrorRef);
-    if (errors.email && emailErrorRef.current) animateError(emailErrorRef);
+    if (errors.name && nameErrorRef.current)
+      animateError(nameErrorRef as React.RefObject<HTMLSpanElement>);
+    if (errors.email && emailErrorRef.current)
+      animateError(emailErrorRef as React.RefObject<HTMLSpanElement>);
     if (errors.password && passwordErrorRef.current)
-      animateError(passwordErrorRef);
+      animateError(passwordErrorRef as React.RefObject<HTMLSpanElement>);
     if (errors.confirmPassword && confirmPasswordErrorRef.current)
-      animateError(confirmPasswordErrorRef);
-    if (errors.terms && termsErrorRef.current) animateError(termsErrorRef);
+      animateError(confirmPasswordErrorRef as React.RefObject<HTMLSpanElement>);
+    if (errors.terms && termsErrorRef.current)
+      animateError(termsErrorRef as React.RefObject<HTMLSpanElement>);
   }, [errors]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -147,6 +150,11 @@ const Register = () => {
     });
   };
 
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -155,17 +163,19 @@ const Register = () => {
       email:
         formData.email.trim() === ''
           ? 'E-mail é obrigatório'
-          : !/\S+@\S+\.\S+/.test(formData.email)
-          ? 'E-mail inválido'
+          : !validateEmail(formData.email)
+          ? 'Digite um e-mail válido'
           : '',
       password:
         formData.password.trim() === ''
           ? 'Senha é obrigatória'
           : formData.password.length < 6
-          ? 'Senha deve ter pelo menos 6 caracteres'
+          ? 'A senha deve ter pelo menos 6 caracteres'
           : '',
       confirmPassword:
-        formData.confirmPassword !== formData.password
+        formData.confirmPassword.trim() === ''
+          ? 'Confirmação de senha é obrigatória'
+          : formData.confirmPassword !== formData.password
           ? 'As senhas não coincidem'
           : '',
       terms: !formData.terms ? 'Você deve aceitar os termos' : '',
@@ -175,7 +185,7 @@ const Register = () => {
 
     const hasErrors = Object.values(newErrors).some((error) => error !== '');
     if (!hasErrors) {
-      console.log('Dados enviados:', formData);
+      console.log('Dados de registro:', formData);
       // Backend submission logic here
     }
   };

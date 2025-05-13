@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { useRef } from 'react';
+import { useState, useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -8,13 +8,24 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 
 const Login = () => {
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
+
+  const [errors, setErrors] = useState({
+    email: '',
+    password: '',
+  });
+
   const titleRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const footerRef = useRef<HTMLDivElement>(null);
   const backgroundRef = useRef<HTMLDivElement>(null);
+  const emailErrorRef = useRef<HTMLSpanElement>(null);
+  const passwordErrorRef = useRef<HTMLSpanElement>(null);
 
   useGSAP(() => {
-    // Title animation
     if (titleRef.current?.children) {
       gsap.fromTo(
         titleRef.current.children,
@@ -34,7 +45,6 @@ const Login = () => {
       );
     }
 
-    // Form fields animation
     if (formRef.current?.children) {
       gsap.fromTo(
         formRef.current.children,
@@ -54,7 +64,6 @@ const Login = () => {
       );
     }
 
-    // Footer animation
     if (footerRef.current?.children) {
       gsap.fromTo(
         footerRef.current.children,
@@ -74,7 +83,6 @@ const Login = () => {
       );
     }
 
-    // Background fade-in
     if (backgroundRef.current) {
       gsap.fromTo(
         backgroundRef.current,
@@ -92,6 +100,65 @@ const Login = () => {
       );
     }
   }, []);
+
+  const animateError = (ref: React.RefObject<HTMLSpanElement | null>) => {
+    if (ref.current) {
+      gsap.fromTo(
+        ref.current,
+        { opacity: 0, y: 5 },
+        { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' }
+      );
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+
+    setErrors({
+      ...errors,
+      [e.target.name]: '',
+    });
+  };
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Explicitly define the type for newErrors
+    const newErrors: { email: string; password: string } = {
+      email:
+        formData.email.trim() === ''
+          ? 'E-mail é obrigatório'
+          : !validateEmail(formData.email)
+          ? 'Digite um e-mail válido'
+          : '',
+      password:
+        formData.password.trim() === ''
+          ? 'Senha é obrigatória'
+          : formData.password.length < 6
+          ? 'A senha deve ter pelo menos 6 caracteres'
+          : '',
+    };
+
+    setErrors(newErrors);
+
+    // Trigger animation if there are errors
+    if (newErrors.email) animateError(emailErrorRef);
+    if (newErrors.password) animateError(passwordErrorRef);
+
+    const hasErrors = Object.values(newErrors).some((error) => error !== '');
+    if (!hasErrors) {
+      console.log('Dados de login:', formData);
+      // Aqui você pode adicionar a lógica para enviar os dados ao backend
+    }
+  };
 
   return (
     <div className='relative w-full min-h-screen bg-[#0d111c] text-white py-20 px-4 overflow-hidden'>
@@ -118,6 +185,7 @@ const Login = () => {
         <div className='flex justify-center'>
           <form
             ref={formRef}
+            onSubmit={handleSubmit}
             className='w-full max-w-md bg-[#1a1f2b]/80 p-8 rounded-xl shadow-lg transition-all duration-300 hover:shadow-cyan-500/50'
           >
             <h3 className='text-2xl font-semibold text-white mb-6'>Entrar</h3>
@@ -134,10 +202,21 @@ const Login = () => {
                 id='email'
                 name='email'
                 type='email'
+                value={formData.email}
+                onChange={handleChange}
                 className='w-full bg-[#2a2f3b] border border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-white focus:ring-2 focus:ring-[#00b7eb] focus:border-[#00b7eb] transition-colors'
                 placeholder='seu@email.com'
-                required
+                aria-describedby='email-error'
               />
+              {errors.email && (
+                <span
+                  ref={emailErrorRef}
+                  id='email-error'
+                  className='text-red-500 text-xs mt-1'
+                >
+                  {errors.email}
+                </span>
+              )}
             </div>
 
             {/* Password */}
@@ -152,10 +231,21 @@ const Login = () => {
                 id='password'
                 name='password'
                 type='password'
+                value={formData.password}
+                onChange={handleChange}
                 className='w-full bg-[#2a2f3b] border border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-white focus:ring-2 focus:ring-[#00b7eb] focus:border-[#00b7eb] transition-colors'
                 placeholder='Sua senha'
-                required
+                aria-describedby='password-error'
               />
+              {errors.password && (
+                <span
+                  ref={passwordErrorRef}
+                  id='password-error'
+                  className='text-red-500 text-xs mt-1'
+                >
+                  {errors.password}
+                </span>
+              )}
             </div>
 
             {/* Remember Me & Forgot Password */}
