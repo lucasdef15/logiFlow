@@ -8,15 +8,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 
 const Login = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  });
-
-  const [errors, setErrors] = useState({
-    email: '',
-    password: '',
-  });
+  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [errors, setErrors] = useState({ email: '', password: '' });
 
   const titleRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
@@ -26,62 +19,33 @@ const Login = () => {
   const passwordErrorRef = useRef<HTMLSpanElement>(null);
 
   useGSAP(() => {
-    if (titleRef.current?.children) {
-      gsap.fromTo(
-        titleRef.current.children,
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: 'power2.out',
-          stagger: 0.2,
-          scrollTrigger: {
-            trigger: titleRef.current,
-            start: 'top 85%',
-            end: 'bottom 20%',
-          },
-        }
-      );
-    }
+    const animations = [
+      { ref: titleRef, y: 30 },
+      { ref: formRef, x: -30 },
+      { ref: footerRef, x: 30 },
+    ];
 
-    if (formRef.current?.children) {
-      gsap.fromTo(
-        formRef.current.children,
-        { opacity: 0, x: -30 },
-        {
-          opacity: 1,
-          x: 0,
-          duration: 0.8,
-          ease: 'power2.out',
-          stagger: 0.1,
-          scrollTrigger: {
-            trigger: formRef.current,
-            start: 'top 85%',
-            end: 'bottom 20%',
-          },
-        }
-      );
-    }
-
-    if (footerRef.current?.children) {
-      gsap.fromTo(
-        footerRef.current.children,
-        { opacity: 0, x: 30 },
-        {
-          opacity: 1,
-          x: 0,
-          duration: 0.8,
-          ease: 'power2.out',
-          stagger: 0.15,
-          scrollTrigger: {
-            trigger: footerRef.current,
-            start: 'top 85%',
-            end: 'bottom 20%',
-          },
-        }
-      );
-    }
+    animations.forEach(({ ref, x, y }) => {
+      if (ref.current?.children) {
+        gsap.fromTo(
+          ref.current.children,
+          { opacity: 0, x, y },
+          {
+            opacity: 1,
+            x: 0,
+            y: 0,
+            duration: 0.8,
+            ease: 'power2.out',
+            stagger: 0.1,
+            scrollTrigger: {
+              trigger: ref.current,
+              start: 'top 85%',
+              end: 'bottom 20%',
+            },
+          }
+        );
+      }
+    });
 
     if (backgroundRef.current) {
       gsap.fromTo(
@@ -112,64 +76,46 @@ const Login = () => {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-
-    setErrors({
-      ...errors,
-      [e.target.name]: '',
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: '' });
   };
 
-  const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
+  const validateEmail = (email: string) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Explicitly define the type for newErrors
-    const newErrors: { email: string; password: string } = {
-      email:
-        formData.email.trim() === ''
-          ? 'E-mail é obrigatório'
-          : !validateEmail(formData.email)
-          ? 'Digite um e-mail válido'
-          : '',
-      password:
-        formData.password.trim() === ''
-          ? 'Senha é obrigatória'
-          : formData.password.length < 6
-          ? 'A senha deve ter pelo menos 6 caracteres'
-          : '',
+    const newErrors = {
+      email: !formData.email.trim()
+        ? 'E-mail é obrigatório'
+        : !validateEmail(formData.email)
+        ? 'Digite um e-mail válido'
+        : '',
+      password: !formData.password.trim()
+        ? 'Senha é obrigatória'
+        : formData.password.length < 6
+        ? 'A senha deve ter pelo menos 6 caracteres'
+        : '',
     };
-
     setErrors(newErrors);
 
-    // Trigger animation if there are errors
     if (newErrors.email) animateError(emailErrorRef);
     if (newErrors.password) animateError(passwordErrorRef);
 
-    const hasErrors = Object.values(newErrors).some((error) => error !== '');
-    if (!hasErrors) {
+    if (!Object.values(newErrors).some(Boolean)) {
       console.log('Dados de login:', formData);
-      // Aqui você pode adicionar a lógica para enviar os dados ao backend
     }
   };
 
   return (
-    <div className='relative w-full min-h-screen bg-[#0d111c] text-white py-20 px-4 overflow-hidden'>
+    <div className='relative w-full min-h-screen bg-white dark:bg-[#0d111c] text-[#0d111c] dark:text-white py-20 px-4 overflow-hidden'>
       {/* Background Effect */}
       <div
         ref={backgroundRef}
         className='absolute inset-0 w-full h-full z-0 opacity-50 bg-gradient-to-r from-[#00b7eb]/20 to-transparent'
       />
 
-      {/* Gradient Transition */}
-      <div className='absolute bottom-0 left-0 w-full h-32 bg-gradient-to-b from-transparent to-[#0d111c] z-10 pointer-events-none' />
+      <div className='absolute bottom-0 left-0 w-full h-32 bg-gradient-to-b from-transparent dark:to-[#0d111c] to-white z-10 pointer-events-none' />
 
       {/* Main Content */}
       <div className='relative max-w-7xl mx-auto z-10'>
@@ -177,7 +123,7 @@ const Login = () => {
           <h2 className='text-3xl sm:text-5xl lg:text-6xl font-bold text-[#00b7eb]'>
             LogFlow
           </h2>
-          <p className='text-white/80 text-base sm:text-lg font-medium mt-4 max-w-md mx-auto'>
+          <p className='text-black/70 dark:text-white/80 text-base sm:text-lg font-medium mt-4 max-w-md mx-auto'>
             Sistema inteligente de gestão de entregas
           </p>
         </section>
@@ -186,15 +132,17 @@ const Login = () => {
           <form
             ref={formRef}
             onSubmit={handleSubmit}
-            className='w-full max-w-md bg-[#1a1f2b]/80 p-8 rounded-xl shadow-lg transition-all duration-300 hover:shadow-cyan-500/50'
+            className='w-full max-w-md bg-[#f1f5f9] dark:bg-[#1a1f2b]/80 p-8 rounded-xl shadow-lg transition-all duration-300 hover:shadow-cyan-500/50'
           >
-            <h3 className='text-2xl font-semibold text-white mb-6'>Entrar</h3>
+            <h3 className='text-2xl font-semibold dark:text-white text-[#0d111c] mb-6'>
+              Entrar
+            </h3>
 
             {/* Email */}
             <div className='mb-5'>
               <label
                 htmlFor='email'
-                className='block text-sm font-medium text-white/80 mb-1'
+                className='block text-sm font-medium text-black/70 dark:text-white/80 mb-1'
               >
                 Email
               </label>
@@ -204,7 +152,7 @@ const Login = () => {
                 type='email'
                 value={formData.email}
                 onChange={handleChange}
-                className='w-full bg-[#2a2f3b] border border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-white focus:ring-2 focus:ring-[#00b7eb] focus:border-[#00b7eb] transition-colors'
+                className='w-full bg-white dark:bg-[#2a2f3b] border border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-black dark:text-white focus:ring-2 focus:ring-[#00b7eb] focus:border-[#00b7eb] transition-colors'
                 placeholder='seu@email.com'
                 aria-describedby='email-error'
               />
@@ -223,7 +171,7 @@ const Login = () => {
             <div className='mb-5'>
               <label
                 htmlFor='password'
-                className='block text-sm font-medium text-white/80 mb-1'
+                className='block text-sm font-medium text-black/70 dark:text-white/80 mb-1'
               >
                 Senha
               </label>
@@ -233,7 +181,7 @@ const Login = () => {
                 type='password'
                 value={formData.password}
                 onChange={handleChange}
-                className='w-full bg-[#2a2f3b] border border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-white focus:ring-2 focus:ring-[#00b7eb] focus:border-[#00b7eb] transition-colors'
+                className='w-full bg-white dark:bg-[#2a2f3b] border border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-black dark:text-white focus:ring-2 focus:ring-[#00b7eb] focus:border-[#00b7eb] transition-colors'
                 placeholder='Sua senha'
                 aria-describedby='password-error'
               />
@@ -248,11 +196,10 @@ const Login = () => {
               )}
             </div>
 
-            {/* Remember Me & Forgot Password */}
             <div className='flex items-center justify-between mb-6'>
               <label
                 htmlFor='remember-me'
-                className='flex items-center text-sm text-white/80'
+                className='flex items-center text-sm text-black/70 dark:text-white/80'
               >
                 <input
                   type='checkbox'
@@ -270,7 +217,6 @@ const Login = () => {
               </Link>
             </div>
 
-            {/* Submit Button */}
             <Button
               type='submit'
               className='w-full bg-[#00b7eb] hover:bg-[#0084ff] cursor-pointer text-white font-semibold py-3 rounded-lg transition-all duration-300'
@@ -282,7 +228,7 @@ const Login = () => {
             {/* Footer */}
             <div
               ref={footerRef}
-              className='mt-6 text-center text-sm text-white/80'
+              className='mt-6 text-center text-sm text-black/70 dark:text-white/80'
             >
               <p>
                 Não tem uma conta?{' '}

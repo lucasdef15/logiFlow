@@ -12,6 +12,8 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Testimo3d from './ModelsComponents/TestModels/Testimo3d';
+import { useTheme } from '@/context/Theme-provider';
+import SectionNames from './ui/SectionNames';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -158,15 +160,17 @@ const Testimonials = () => {
     }
   };
 
+  const { theme } = useTheme();
+
   return (
-    <div className='relative w-full min-h-screen mt-50 md:mt-20 lg:mt-0 flex items-center justify-center bg-white dark:from-gray-800 dark:to-gray-900'>
+    <div className='relative w-full min-h-screen mt-50 md:mt-20 lg:mt-0 flex items-center justify-center bg-white dark:bg-gray-900'>
       <div className='w-full max-w-8xl mx-auto p-8 sm:p-12 flex flex-col items-center justify-center h-full'>
         {/* Floating Card */}
         <div
           ref={floatingCardRef}
           className='absolute top-[-200px] md:top-[-120px] md:right-[80px] lg:top-[-100px] lg:right-[80px] xl:top-[-50px] xl:right-[80px] w-[300px] h-[300px] rounded-full z-[0]'
         >
-          <div className='w-full h-full rounded-full bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 backdrop-blur-2xl  dark:border-gray-700 shadow-lg flex flex-col items-center justify-center p-6 transition-all duration-500 ease-out hover:-translate-y-[5px] hover:shadow-[0_12px_40px_rgba(59,130,246,0.2)] hover:transform hover:perspective-1000 hover:rotate-x-2 hover:rotate-y-2'>
+          <div className='w-full h-full rounded-full bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 backdrop-blur-2xl shadow-lg flex flex-col items-center justify-center p-6 transition-all duration-500 ease-out hover:-translate-y-[5px] hover:shadow-[0_12px_40px_rgba(59,130,246,0.2)] dark:hover:shadow-[0_12px_40px_rgba(59,130,246,0.3)] hover:transform hover:perspective-1000 hover:rotate-x-2 hover:rotate-y-2'>
             <Testimo3d />
           </div>
         </div>
@@ -176,10 +180,16 @@ const Testimonials = () => {
           ref={titleRef}
           className='flex flex-col items-center justify-center text-center gap-4 mb-16'
         >
-          <span className=' text-cyan-700 dark:text-cyan-300 px-4 py-1.5 rounded-full text-sm font-medium shadow-sm'>
-            Testimonials
-          </span>
-          <h2 className='text-3xl sm:text-4xl md:text-5xl font-extrabold text-cyan-500'>
+          {theme === 'dark' ? (
+            <SectionNames sectionName='Testimonials' />
+          ) : (
+            <>
+              <span className='text-cyan-700 px-4 py-1.5 rounded-full text-sm font-medium shadow-sm bg-gray-100 '>
+                Testimonials
+              </span>
+            </>
+          )}
+          <h2 className='text-3xl sm:text-4xl md:text-5xl font-extrabold text-cyan-600 dark:text-cyan-400'>
             Trusted by Logistics Leaders
           </h2>
           <p className='w-full max-w-md sm:max-w-lg mx-auto text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed'>
@@ -205,7 +215,7 @@ const Testimonials = () => {
                     <CardContent className='flex flex-col justify-between items-start p-6 gap-4 h-[260px] bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 transition-all hover:shadow-xl hover:-translate-y-1'>
                       <div className='flex items-center gap-2'>
                         <svg
-                          className='w-6 h-6 text-yellow-400'
+                          className='w-6 h-6 text-yellow-400 dark:text-yellow-300'
                           fill='currentColor'
                           viewBox='0 0 20 20'
                         >
@@ -215,7 +225,7 @@ const Testimonials = () => {
                           5.0 Rating
                         </span>
                       </div>
-                      <p className='text-base text-gray-700 dark:text-gray-200 leading-relaxed border-l-4 border-indigo-500 pl-4'>
+                      <p className='text-base text-gray-700 dark:text-gray-200 leading-relaxed border-l-4 border-indigo-500 dark:border-indigo-400 pl-4'>
                         {t.quote}
                       </p>
                       <div className='flex items-center gap-3'>
@@ -240,6 +250,8 @@ const Testimonials = () => {
                           <a
                             href={t.companyUrl}
                             className='text-xs text-indigo-600 dark:text-indigo-400 font-medium hover:underline'
+                            target='_blank'
+                            rel='noopener noreferrer'
                           >
                             {t.company}
                           </a>
@@ -251,7 +263,7 @@ const Testimonials = () => {
               ))}
             </CarouselContent>
 
-            <div className=' hidden md:flex justify-center items-center mt-8 gap-6'>
+            <div className='hidden md:flex justify-center items-center mb-8 gap-6'>
               <CarouselPrevious
                 onClick={() =>
                   goToSlide(
@@ -259,16 +271,16 @@ const Testimonials = () => {
                       testimonials.length
                   )
                 }
-                className='text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all hover:scale-110'
+                className='text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all hover:scale-110'
               />
-              <div className='flex gap-2'>
+              <div className='flex gap-2 relative top-[-50px]'>
                 {testimonials.map((_, index) => (
                   <button
                     key={index}
                     onClick={() => goToSlide(index)}
                     className={`w-2 h-2 rounded-full transition-all duration-300 ${
                       index === activeIndex
-                        ? 'bg-indigo-600 w-6'
+                        ? 'bg-indigo-600 dark:bg-indigo-400 w-6'
                         : 'bg-gray-300 dark:bg-gray-600'
                     }`}
                   />
@@ -278,7 +290,7 @@ const Testimonials = () => {
                 onClick={() =>
                   goToSlide((activeIndex + 1) % testimonials.length)
                 }
-                className='text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all hover:scale-110'
+                className='text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all hover:scale-110'
               />
             </div>
           </Carousel>
@@ -289,10 +301,10 @@ const Testimonials = () => {
       <svg
         xmlns='http://www.w3.org/2000/svg'
         viewBox='0 0 1440 120'
-        className='absolute bottom-[-2px] left-0 w-full z-10'
+        className='absolute bottom-[-2px] left-0 w-full z-10 text-[#0EA5E9] dark:text-gray-900 '
       >
         <path
-          fill='#0EA5E9'
+          fill='currentColor'
           fillOpacity='1'
           d='M0,60 C240,30 480,90 720,60 C960,30 1200,90 1440,60 L1440,120 L0,120 Z'
         />

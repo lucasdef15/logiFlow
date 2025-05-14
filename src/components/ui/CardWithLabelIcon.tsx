@@ -10,13 +10,14 @@ type CardWithLabelIconProps = {
 };
 
 const bgColors: Record<NonNullable<CardWithLabelIconProps['color']>, string> = {
-  blue: 'bg-blue-800/50 text-white border-blue-400/30',
-  cyan: 'bg-cyan-800/50 text-white border-cyan-400/30',
-  orange: 'bg-orange-800/50 text-white border-orange-400/30',
-  red: 'bg-red-800/50 text-white border-red-400/30',
-  green: 'bg-green-800/50 text-white border-green-400/30',
-  amber: 'bg-amber-800/50 text-white border-amber-400/30',
-  gray: 'bg-gray-800/50 text-white border-gray-400/30',
+  blue: 'dark:bg-blue-800/50 bg-blue-800/90 text-white border-blue-400/30',
+  cyan: 'dark:bg-cyan-800/50 bg-cyan-800/90 text-white border-cyan-400/30',
+  orange:
+    'dark:bg-orange-800/50 bg-orange-800/90 text-white border-orange-400/30',
+  red: 'dark:bg-red-800/50 bg-red-800/90 text-white border-red-400/30',
+  green: 'dark:bg-green-800/50 bg-green-800/90 text-white border-green-400/30',
+  amber: 'dark:bg-amber-800/50 bg-amber-800/90 text-white border-amber-400/30',
+  gray: 'dark:bg-gray-800/50 bg-gray-800/90 text-white border-gray-400/30',
 };
 
 const CardWithLabelIcon: React.FC<CardWithLabelIconProps> = ({

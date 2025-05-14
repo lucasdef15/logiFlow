@@ -244,13 +244,12 @@ const Features = () => {
           />
         </section>
 
-        {/* How It Works Section */}
-        <section className='py-20'>
+        <section className='py-20  '>
           <h2
             ref={howItWorksTitleRef}
-            className='text-4xl sm:text-5xl font-bold text-center text-blue-100 mb-14'
+            className='text-4xl sm:text-5xl font-bold text-center text-blue-600 dark:text-blue-100 mb-14'
           >
-            <span className='bg-gradient-to-r from-blue-300 to-cyan-300 bg-clip-text text-transparent'>
+            <span className='bg-gradient-to-r from-blue-200 to-cyan-400 dark:from-blue-300 dark:to-cyan-300 bg-clip-text text-transparent'>
               How It Works
             </span>
           </h2>
@@ -261,17 +260,19 @@ const Features = () => {
             {steps.map((step, index) => (
               <div
                 key={index}
-                className='relative bg-[#0d111c]/80 p-6 rounded-xl shadow-md border border-blue-500/20 w-full max-w-md flex items-center gap-4 hover:shadow-cyan-400/20 transition-all duration-300'
+                className='relative bg-white/80 dark:bg-[#0d111c]/80 p-6 rounded-xl shadow-md border border-blue-200/50 dark:border-blue-500/20 w-full max-w-md flex items-center gap-4 hover:shadow-blue-300/30 dark:hover:shadow-cyan-400/20 transition-all duration-300'
               >
                 <div className='flex-shrink-0'>{step.icon}</div>
                 <div>
-                  <h3 className='text-xl font-semibold text-blue-200'>
+                  <h3 className='text-xl font-semibold text-blue-600 dark:text-blue-200'>
                     {step.title}
                   </h3>
-                  <p className='text-gray-300 text-sm'>{step.description}</p>
+                  <p className='text-gray-600 dark:text-gray-300 text-sm'>
+                    {step.description}
+                  </p>
                 </div>
                 {index < steps.length - 1 && (
-                  <div className='absolute left-5 bottom-[-40px] w-0.5 h-10 bg-blue-400/50'></div>
+                  <div className='absolute left-5 bottom-[-40px] w-0.5 h-10 bg-blue-300/50 dark:bg-blue-400/50'></div>
                 )}
               </div>
             ))}
@@ -279,9 +280,9 @@ const Features = () => {
           <div className='flex justify-center mt-10'>
             <Button
               aria-label='Try Now'
-              className='group inline-flex cursor-pointer items-center gap-2 px-6 py-3 bg-gradient-to-r from-white/80 via-white/60 to-white/80 text-blue-950 font-medium shadow-[inset_0_0_1px_rgba(255,255,255,0.3)] border border-white/30 hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] backdrop-blur-md transition-all duration-300 hover:scale-[1.3]'
+              className='group inline-flex cursor-pointer items-center gap-2 px-6 py-3 bg-gradient-to-r from-gray-100/80 via-gray-200/60 to-gray-100/80 dark:from-white/80 dark:via-white/60 dark:to-white/80 text-blue-950 dark:text-blue-950 font-medium shadow-[inset_0_0_1px_rgba(0,0,0,0.3)] dark:shadow-[inset_0_0_1px_rgba(255,255,255,0.3)] border border-gray-300 dark:border-white/30 hover:shadow-[0_0_20px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] backdrop-blur-md transition-all duration-300 hover:scale-[1.3]'
             >
-              <Rocket className='w-4 h-4 text-cyan-500 group-hover:translate-x-1 transition-transform duration-300' />
+              <Rocket className='w-4 h-4 text-cyan-600 dark:text-cyan-500 group-hover:translate-x-1 transition-transform duration-300' />
               Try Now
             </Button>
           </div>
@@ -292,7 +293,7 @@ const Features = () => {
       <svg
         xmlns='http://www.w3.org/2000/svg'
         viewBox='0 0 1440 120'
-        className='absolute bottom-[-5px] left-0 w-full text-white'
+        className='absolute bottom-[-5px] left-0 w-full text-white dark:text-[#101828]'
         aria-hidden='true'
       >
         <path

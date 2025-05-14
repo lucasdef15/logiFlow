@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -190,24 +190,44 @@ const Register = () => {
     }
   };
 
+  useEffect(() => {
+    fetch('http://www.logiflow.io/api/register', {
+      method: 'POST', // Set the method to POST
+      headers: {
+        'Content-Type': 'application/json', // Indicate you're sending JSON
+      },
+      body: JSON.stringify({
+        email: 'lucas@teste.com', // The email value
+        password: 'lukao1000', // The password value
+      }),
+    })
+      .then((response) => response.json()) // Parse the response as JSON
+      .then((data) => {
+        console.log(data); // Handle the response data here
+      })
+      .catch((error) => {
+        console.error('Error:', error); // Handle any errors
+      });
+  }, []);
+
   return (
-    <div className='relative w-full min-h-screen bg-[#0d111c] text-white py-20 px-4 overflow-hidden'>
+    <div className='relative w-full min-h-screen bg-gray-100 dark:bg-[#0d111c] text-gray-900 dark:text-white py-20 px-4 overflow-hidden'>
       {/* Background Effect */}
       <div
         ref={backgroundRef}
-        className='absolute inset-0 w-full h-full z-0 opacity-50 bg-gradient-to-r from-[#00b7eb]/20 to-transparent'
+        className='absolute inset-0 w-full h-full z-0 opacity-50 bg-gradient-to-r from-blue-100/20 dark:from-[#00b7eb]/20 to-transparent'
       />
 
       {/* Gradient Transition */}
-      <div className='absolute bottom-0 left-0 w-full h-32 bg-gradient-to-b from-transparent to-[#0d111c] z-10 pointer-events-none' />
+      <div className='absolute bottom-0 left-0 w-full h-32 bg-gradient-to-b from-transparent to-gray-100 dark:to-[#0d111c] z-10 pointer-events-none' />
 
       {/* Main Content */}
       <div className='relative max-w-7xl mx-auto z-10'>
         <section ref={titleRef} className='text-center mb-12'>
-          <h2 className='text-3xl sm:text-5xl lg:text-6xl font-bold text-[#00b7eb]'>
+          <h2 className='text-3xl sm:text-5xl lg:text-6xl font-bold text-blue-600 dark:text-[#00b7eb]'>
             Registre-se no LogFlow
           </h2>
-          <p className='text-white/80 text-base sm:text-lg font-medium mt-4 max-w-md mx-auto'>
+          <p className='text-gray-600 dark:text-white/80 text-base sm:text-lg font-medium mt-4 max-w-md mx-auto'>
             Crie sua conta para acessar o sistema inteligente de gestão de
             entregas
           </p>
@@ -217,9 +237,9 @@ const Register = () => {
           <form
             ref={formRef}
             onSubmit={handleSubmit}
-            className='w-full max-w-md bg-[#1a1f2b]/80 p-8 rounded-xl shadow-lg transition-all duration-300 hover:shadow-cyan-500/50'
+            className='w-full max-w-md bg-white/80 dark:bg-[#1a1f2b]/80 p-8 rounded-xl shadow-lg transition-all duration-300 hover:shadow-blue-300/50 dark:hover:shadow-cyan-500/50'
           >
-            <h3 className='text-2xl font-semibold text-white mb-6'>
+            <h3 className='text-2xl font-semibold text-gray-900 dark:text-white mb-6'>
               Criar Conta
             </h3>
 
@@ -227,7 +247,7 @@ const Register = () => {
             <div className='mb-5'>
               <label
                 htmlFor='name'
-                className='block text-sm font-medium text-white/80 mb-1'
+                className='block text-sm font-medium text-gray-700 dark:text-white/80 mb-1'
               >
                 Nome Completo
               </label>
@@ -237,7 +257,7 @@ const Register = () => {
                 type='text'
                 value={formData.name}
                 onChange={handleChange}
-                className='w-full bg-[#2a2f3b] border border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-white focus:ring-2 focus:ring-[#00b7eb] focus:border-[#00b7eb] transition-colors'
+                className='w-full bg-gray-50 dark:bg-[#2a2f3b] border border-blue-200/50 dark:border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-[#00b7eb] focus:border-blue-500 dark:focus:border-[#00b7eb] transition-colors'
                 placeholder='Seu nome'
                 aria-describedby='name-error'
               />
@@ -256,7 +276,7 @@ const Register = () => {
             <div className='mb-5'>
               <label
                 htmlFor='email'
-                className='block text-sm font-medium text-white/80 mb-1'
+                className='block text-sm font-medium text-gray-700 dark:text-white/80 mb-1'
               >
                 Email
               </label>
@@ -266,7 +286,7 @@ const Register = () => {
                 type='email'
                 value={formData.email}
                 onChange={handleChange}
-                className='w-full bg-[#2a2f3b] border border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-white focus:ring-2 focus:ring-[#00b7eb] focus:border-[#00b7eb] transition-colors'
+                className='w-full bg-gray-50 dark:bg-[#2a2f3b] border border-blue-200/50 dark:border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-[#00b7eb] focus:border-blue-500 dark:focus:border-[#00b7eb] transition-colors'
                 placeholder='seu@email.com'
                 aria-describedby='email-error'
               />
@@ -285,7 +305,7 @@ const Register = () => {
             <div className='mb-5'>
               <label
                 htmlFor='password'
-                className='block text-sm font-medium text-white/80 mb-1'
+                className='block text-sm font-medium text-gray-700 dark:text-white/80 mb-1'
               >
                 Senha
               </label>
@@ -295,7 +315,7 @@ const Register = () => {
                 type='password'
                 value={formData.password}
                 onChange={handleChange}
-                className='w-full bg-[#2a2f3b] border border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-white focus:ring-2 focus:ring-[#00b7eb] focus:border-[#00b7eb] transition-colors'
+                className='w-full bg-gray-50 dark:bg-[#2a2f3b] border border-blue-200/50 dark:border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-[#00b7eb] focus:border-blue-500 dark:focus:border-[#00b7eb] transition-colors'
                 placeholder='Sua senha'
                 aria-describedby='password-error'
               />
@@ -314,7 +334,7 @@ const Register = () => {
             <div className='mb-5'>
               <label
                 htmlFor='confirmPassword'
-                className='block text-sm font-medium text-white/80 mb-1'
+                className='block text-sm font-medium text-gray-700 dark:text-white/80 mb-1'
               >
                 Confirmar Senha
               </label>
@@ -324,7 +344,7 @@ const Register = () => {
                 type='password'
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                className='w-full bg-[#2a2f3b] border border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-white focus:ring-2 focus:ring-[#00b7eb] focus:border-[#00b7eb] transition-colors'
+                className='w-full bg-gray-50 dark:bg-[#2a2f3b] border border-blue-200/50 dark:border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-[#00b7eb] focus:border-blue-500 dark:focus:border-[#00b7eb] transition-colors'
                 placeholder='Confirme sua senha'
                 aria-describedby='confirmPassword-error'
               />
@@ -343,7 +363,7 @@ const Register = () => {
             <div className='mb-6'>
               <label
                 htmlFor='terms'
-                className='flex items-center text-sm text-white/80'
+                className='flex items-center text-sm text-gray-700 dark:text-white/80'
               >
                 <input
                   type='checkbox'
@@ -351,12 +371,12 @@ const Register = () => {
                   name='terms'
                   checked={formData.terms}
                   onChange={handleChange}
-                  className='mr-2'
+                  className='mr-2 h-5 w-5 text-blue-500 dark:text-[#00b7eb] focus:ring-blue-500 dark:focus:ring-[#00b7eb] border-blue-200/50 dark:border-[#00b7eb]/30 rounded'
                 />
                 Aceito os{' '}
                 <Link
                   to='/terms'
-                  className='text-[#00b7eb] hover:underline ml-1'
+                  className='text-blue-500 dark:text-[#00b7eb] hover:underline ml-1'
                 >
                   Termos e Condições
                 </Link>
@@ -375,7 +395,7 @@ const Register = () => {
             {/* Submit Button */}
             <Button
               type='submit'
-              className='w-full bg-[#00b7eb] hover:bg-[#0084ff] cursor-pointer text-white font-semibold py-3 rounded-lg transition-all duration-300'
+              className='w-full bg-blue-500 dark:bg-[#00b7eb] hover:bg-blue-600 dark:hover:bg-[#0084ff] cursor-pointer text-white font-semibold py-3 rounded-lg transition-all duration-300'
               aria-label='Criar conta'
             >
               Criar Conta
@@ -384,11 +404,14 @@ const Register = () => {
             {/* Footer */}
             <div
               ref={footerRef}
-              className='mt-6 text-center text-sm text-white/80'
+              className='mt-6 text-center text-sm text-gray-600 dark:text-white/80'
             >
               <p>
                 Já tem uma conta?{' '}
-                <Link to='/login' className='text-[#00b7eb] hover:underline'>
+                <Link
+                  to='/login'
+                  className='text-blue-500 dark:text-[#00b7eb] hover:underline'
+                >
                   Faça login
                 </Link>
               </p>

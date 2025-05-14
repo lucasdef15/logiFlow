@@ -7,15 +7,15 @@ import SectionNames from './ui/SectionNames';
 gsap.registerPlugin(ScrollTrigger);
 
 const FreeTrial = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const titleRef = useRef<HTMLDivElement>(null);
-  const subtitleRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef(null);
+  const titleRef = useRef(null);
+  const subtitleRef = useRef(null);
   const listRef = useRef<(HTMLLIElement | null)[]>([]);
-  const ulRef = useRef<HTMLUListElement>(null);
-  const formRef = useRef<HTMLElement>(null);
+  const ulRef = useRef(null);
+  const formRef = useRef(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const svgTopRef = useRef<SVGSVGElement>(null);
-  const svgBottomRef = useRef<SVGSVGElement>(null);
+  const svgBottomRef = useRef<SVGSVGElement | null>(null);
 
   // Debug refs to ensure they are assigned
   useEffect(() => {
@@ -206,7 +206,7 @@ const FreeTrial = () => {
   return (
     <div
       ref={containerRef}
-      className='bg-[#0EA5E9]  relative min-h-[calc(100vh+100px)]'
+      className='bg-[#0EA5E9] dark:bg-gray-900 relative min-h-[calc(100vh+100px)]'
     >
       <div className='w-full max-w-[1128px] mx-auto pt-10 p-4 flex flex-col items-center'>
         <div className='w-full flex justify-center items-center mb-10 z-10'>
@@ -214,14 +214,14 @@ const FreeTrial = () => {
         </div>
         <svg
           ref={svgTopRef}
-          className='absolute top-[20px] right-10 z-[0]'
+          className='absolute top-[20px] right-10 z-[0] text-[#27AEEB] dark:text-cyan-700/10'
           width='450'
           height='450'
           viewBox='0 0 200 250'
           xmlns='http://www.w3.org/2000/svg'
         >
           <path
-            fill='#27AEEB'
+            fill='currentColor'
             d='M40,30 C90,0 160,20 180,90 C200,160 140,180 100,200 C60,220 20,170 10,110 C0,50 10,40 40,30 Z'
           />
         </svg>
@@ -230,18 +230,21 @@ const FreeTrial = () => {
           <section className='w-[100%] md:w-[55%] md:text-left text-center max-w-[600px] flex flex-col gap-5 justify-center'>
             <h2
               ref={titleRef}
-              className='text-white text-5xl font-bold'
+              className='text-white dark:text-cyan-200 text-5xl font-bold'
               style={{ opacity: 1, transform: 'none' }}
             >
               Try FastFlow for Free
             </h2>
 
-            <p ref={subtitleRef} className='text-[var(--muted)] opacity-90'>
+            <p
+              ref={subtitleRef}
+              className='text-gray-100 dark:text-gray-300 opacity-90'
+            >
               Testing FastFlow is easy and commitment-free. Get started now and
               see the difference in your company's logistics.
             </p>
 
-            <ul ref={ulRef} className='text-white space-y-3'>
+            <ul ref={ulRef} className='text-white dark:text-gray-200 space-y-3'>
               {[
                 '14-day free trial period',
                 'Access to all features of the basic plan',
@@ -255,10 +258,10 @@ const FreeTrial = () => {
                   }}
                   className='flex items-center gap-2'
                 >
-                  <span className='w-5 h-5 flex items-center justify-center bg-white/20 rounded-full'>
+                  <span className='w-5 h-5 flex items-center justify-center bg-white/20 dark:bg-cyan-700/30 rounded-full'>
                     <svg
                       xmlns='http://www.w3.org/2000/svg'
-                      className='h-3.5 w-3.5 text-white'
+                      className='h-3.5 w-3.5 text-white dark:text-cyan-200'
                       fill='none'
                       viewBox='0 0 24 24'
                       stroke='currentColor'
@@ -279,56 +282,68 @@ const FreeTrial = () => {
 
           <section
             ref={formRef}
-            className='w-[100%] md:w-[40%] py-16 px-4 bg-[#ffffff]/10 rounded-2xl shadow-xl mx-auto backdrop-blur-md'
+            className='w-[100%] md:w-[40%] py-16 px-4 bg-[#ffffff]/10 dark:bg-gray-800/80 rounded-2xl shadow-xl mx-auto backdrop-blur-md'
           >
-            <h3 className='text-white text-3xl font-bold mb-6 text-center'>
+            <h3 className='text-white dark:text-cyan-200 text-3xl font-bold mb-6 text-center'>
               Start Your Free Trial
             </h3>
             <form action='' className='space-y-4'>
               <div className='flex flex-col'>
-                <label htmlFor='fullname' className='text-white text-sm mb-1'>
+                <label
+                  htmlFor='fullname'
+                  className='text-white dark:text-gray-200 text-sm mb-1'
+                >
                   Full Name
                 </label>
                 <input
                   type='text'
                   id='fullname'
-                  className='px-4 py-2 rounded-lg bg-white/80 text-black focus:outline-none focus:ring-2 focus:ring-sky-400'
+                  className='px-4 py-2 rounded-lg bg-white/80 dark:bg-gray-700/80 text-black dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-sky-400 dark:focus:ring-cyan-400'
                   placeholder='John Doe'
                 />
               </div>
 
               <div className='flex flex-col'>
-                <label htmlFor='email' className='text-white text-sm mb-1'>
+                <label
+                  htmlFor='email'
+                  className='text-white dark:text-gray-200 text-sm mb-1'
+                >
                   Email
                 </label>
                 <input
                   type='email'
                   id='email'
-                  className='px-4 py-2 rounded-lg bg-white/80 text-black focus:outline-none focus:ring-2 focus:ring-sky-400'
+                  className='px-4 py-2 rounded-lg bg-white/80 dark:bg-gray-700/80 text-black dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-sky-400 dark:focus:ring-cyan-400'
                   placeholder='your@email.com'
                 />
               </div>
 
               <div className='flex flex-col'>
-                <label htmlFor='phone' className='text-white text-sm mb-1'>
+                <label
+                  htmlFor='phone'
+                  className='text-white dark:text-gray-200 text-sm mb-1'
+                >
                   Phone
                 </label>
                 <input
                   type='tel'
                   id='phone'
-                  className='px-4 py-2 rounded-lg bg-white/80 text-black focus:outline-none focus:ring-2 focus:ring-sky-400'
+                  className='px-4 py-2 rounded-lg bg-white/80 dark:bg-gray-700/80 text-black dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-sky-400 dark:focus:ring-cyan-400'
                   placeholder='+1 (555) 123-4567'
                 />
               </div>
 
               <div className='flex flex-col'>
-                <label htmlFor='company' className='text-white text-sm mb-1'>
+                <label
+                  htmlFor='company'
+                  className='text-white dark:text-gray-200 text-sm mb-1'
+                >
                   Company
                 </label>
                 <input
                   type='text'
                   id='company'
-                  className='px-4 py-2 rounded-lg bg-white/80 text-black focus:outline-none focus:ring-2 focus:ring-sky-400'
+                  className='px-4 py-2 rounded-lg bg-white/80 dark:bg-gray-700/80 text-black dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-sky-400 dark:focus:ring-cyan-400'
                   placeholder='Your Company Name'
                 />
               </div>
@@ -336,7 +351,7 @@ const FreeTrial = () => {
               <button
                 ref={buttonRef}
                 type='submit'
-                className='w-full mt-6 bg-sky-500 cursor-pointer hover:bg-sky-600 text-white font-bold py-3 rounded-xl transition duration-300'
+                className='w-full mt-6 bg-sky-500 dark:bg-cyan-600 cursor-pointer hover:bg-sky-600 dark:hover:bg-cyan-700 text-white dark:text-gray-100 font-bold py-3 rounded-xl transition duration-300'
               >
                 Start Free Trial
               </button>
@@ -346,14 +361,14 @@ const FreeTrial = () => {
 
         <svg
           ref={svgBottomRef}
-          className='absolute bottom-[70px] left-10 z-[-1] sm:z-[-1] md:z-[0]'
+          className='absolute bottom-[70px] left-10 z-[-1] sm:z-[-1] md:z-[0] text-[#27AEEB] dark:text-cyan-700/10'
           width='450'
           height='450'
           viewBox='0 0 200 200'
           xmlns='http://www.w3.org/2000/svg'
         >
           <path
-            fill='#27AEEB'
+            fill='currentColor'
             d='M50,30 C110,0 170,40 180,100 C190,160 130,180 90,180 C50,180 10,130 20,80 C30,50 40,40 50,30 Z'
           />
         </svg>
@@ -361,11 +376,11 @@ const FreeTrial = () => {
       <svg
         xmlns='http://www.w3.org/2000/svg'
         viewBox='0 0 1440 120'
-        className='absolute bottom-[-2px] left-0 w-full z-10'
+        className='absolute bottom-[-2px] left-0 w-full z-10 text-[#F9FAFC] dark:text-gray-800'
       >
         <path
           d='M0,40 C200,20 400,80 720,60 C1040,40 1240,80 1440,60 L1440,120 L0,120 Z'
-          fill='#F9FAFC'
+          fill='currentColor'
         />
       </svg>
     </div>

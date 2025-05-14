@@ -241,7 +241,7 @@ const Hero = () => {
     <div
       ref={containerRef}
       id='top'
-      className='relative w-full  mx-auto px-4 min-h-[100vh] flex flex-col lg:flex-row justify-between items-center gap-6 sm:gap-10 bg-[#0f0f1b] text-white overflow-hidden'
+      className='relative w-full mx-auto px-4 min-h-[100vh] flex flex-col lg:flex-row justify-between items-center gap-6 sm:gap-10 bg-white text-[#1f1f1f] dark:bg-[#0f0f1b] dark:text-white overflow-hidden'
     >
       {!webGLError && (
         <canvas ref={canvasRef} className='absolute inset-0 z-0' />
@@ -250,7 +250,7 @@ const Hero = () => {
         <section className='w-full lg:w-[70%] flex flex-col justify-center items-center lg:items-start gap-6 z-10'>
           <span
             ref={badgeRef}
-            className='bg-white text-blue-700 px-3 py-1 rounded-full text-sm font-semibold shadow'
+            className='bg-white text-blue-700 dark:bg-gray-800 dark:text-blue-300 px-3 py-1 rounded-full text-sm font-semibold shadow dark:shadow-lg'
           >
             Introduction Track Flow
           </span>
@@ -283,18 +283,21 @@ const Hero = () => {
             ref={buttonsRef}
             className='flex flex-col sm:flex-row items-center justify-between gap-4 w-full sm:w-auto h-full'
           >
+            {/* Primary button */}
             <Button
               onClick={handleStartFreeClick}
-              className='flex-1 inline-flex items-center bg-[#00b7eb] cursor-pointer hover:bg-[#0084ff] text-white font-semibold py-3 px-6 text-base transition-all duration-300 hero-btn'
+              className='flex-1 inline-flex items-center bg-[#00b7eb] text-white cursor-pointer hover:bg-[#0084ff] font-semibold py-3 px-6 text-base transition-all duration-300 hero-btn dark:bg-[#00b7eb] dark:hover:bg-[#0084ff]'
               data-gsap='primary'
             >
               Get Started Free <ArrowRight className='ml-2' />
             </Button>
 
+            {/* Outline button */}
             <Button
               onClick={handleStartFreeClick}
               variant='outline'
-              className='flex-1 inline-flex items-center bg-transparent cursor-pointer border border-[#00b7eb] text-[#00b7eb] hover:bg-[#0084ff] hover:text-white hover:border-[#0084ff] font-semibold py-3 px-6 text-base transition-all duration-300 hero-btn'
+              className='flex-1 inline-flex items-center bg-transparent border border-[#00b7eb] text-[#00b7eb] hover:bg-[#0084ff] hover:text-white hover:border-[#0084ff] cursor-pointer font-semibold py-3 px-6 text-base transition-all duration-300 hero-btn
+      dark:border-[#00b7eb] dark:text-[#00b7eb] dark:hover:bg-[#0084ff] dark:hover:text-white dark:hover:border-[#0084ff]'
               data-gsap='outline'
             >
               Book a Demo <ChevronRight className='ml-2' />
@@ -332,7 +335,7 @@ const Hero = () => {
         </section>
       </div>
 
-      <div className='absolute bottom-0 left-0 w-full h-32 bg-gradient-to-b from-transparent to-[#0d111c] z-10 pointer-events-none' />
+      <div className='absolute bottom-0 left-0 w-full h-20 bg-gradient-to-b from-transparent  to-[#0d111c] z-10 pointer-events-none' />
 
       {webGLError && (
         <div className='absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white z-20'>

@@ -2,11 +2,13 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { useRef } from 'react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useTheme } from '@/context/Theme-provider';
+import SectionNames from './ui/SectionNames';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const Pricing = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef(null);
   const titleRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -23,7 +25,7 @@ const Pricing = () => {
 
       // Title animation
       tl.fromTo(
-        Array.from(titleRef.current?.children || []),
+        Array.from(titleRef.current?.children ?? []),
         { opacity: 0, y: 10 },
         {
           opacity: 1,
@@ -80,9 +82,15 @@ const Pricing = () => {
               scale: cardRef.current.indexOf(card) === 1 ? 1.1 : 0.98,
               y: cardRef.current.indexOf(card) === 1 ? -15 : -5,
               background: card.classList.contains('bg-blue-50')
-                ? 'linear-gradient(135deg, #e0f7fa, #b3e5fc)'
+                ? document.documentElement.classList.contains('dark')
+                  ? 'linear-gradient(135deg, #1e3a8a, #3b82f6)'
+                  : 'linear-gradient(135deg, #e0f7fa, #b3e5fc)'
                 : card.classList.contains('bg-teal-50/60')
-                ? 'linear-gradient(135deg, #ccfbf1, #99f6e4)'
+                ? document.documentElement.classList.contains('dark')
+                  ? 'linear-gradient(135deg, #115e59, #2dd4bf)'
+                  : 'linear-gradient(135deg, #ccfbf1, #99f6e4)'
+                : document.documentElement.classList.contains('dark')
+                ? 'linear-gradient(135deg, #9a3412, #f59e0b)'
                 : 'linear-gradient(135deg, #ffedd5, #fed7aa)',
               duration: 0.3,
               ease: 'power2.out',
@@ -93,9 +101,15 @@ const Pricing = () => {
               scale: cardRef.current.indexOf(card) === 1 ? 1.05 : 0.98,
               y: cardRef.current.indexOf(card) === 1 ? -10 : 0,
               background: card.classList.contains('bg-blue-50')
-                ? '#eff6ff'
+                ? document.documentElement.classList.contains('dark')
+                  ? '#1e3a8a'
+                  : '#eff6ff'
                 : card.classList.contains('bg-teal-50/60')
-                ? 'rgba(204, 251, 241, 0.6)'
+                ? document.documentElement.classList.contains('dark')
+                  ? 'rgba(17, 94, 89, 0.6)'
+                  : 'rgba(204, 251, 241, 0.6)'
+                : document.documentElement.classList.contains('dark')
+                ? 'rgba(154, 52, 18, 0.6)'
                 : 'rgba(255, 237, 213, 0.6)',
               duration: 0.3,
               ease: 'power2.out',
@@ -109,12 +123,18 @@ const Pricing = () => {
               gsap.to(button, {
                 scale: 1.05,
                 backgroundColor: button.classList.contains('bg-sky-500')
-                  ? '#0284c7'
+                  ? document.documentElement.classList.contains('dark')
+                    ? '#0e7490'
+                    : '#0284c7'
                   : undefined,
                 borderColor: button.classList.contains('text-cyan-500')
-                  ? '#06b6d4'
+                  ? document.documentElement.classList.contains('dark')
+                    ? '#22d3ee'
+                    : '#06b6d4'
                   : button.classList.contains('text-orange-500')
-                  ? '#f97316'
+                  ? document.documentElement.classList.contains('dark')
+                    ? '#fb923c'
+                    : '#f97316'
                   : undefined,
                 duration: 0.2,
                 ease: 'power2.out',
@@ -124,12 +144,18 @@ const Pricing = () => {
               gsap.to(button, {
                 scale: 1,
                 backgroundColor: button.classList.contains('bg-sky-500')
-                  ? '#0ea5e9'
+                  ? document.documentElement.classList.contains('dark')
+                    ? '#0ea5e9'
+                    : '#0ea5e9'
                   : undefined,
                 borderColor: button.classList.contains('text-cyan-500')
-                  ? '#22d3ee'
+                  ? document.documentElement.classList.contains('dark')
+                    ? '#06b6d4'
+                    : '#22d3ee'
                   : button.classList.contains('text-orange-500')
-                  ? '#fb923c'
+                  ? document.documentElement.classList.contains('dark')
+                    ? '#f97316'
+                    : '#fb923c'
                   : undefined,
                 duration: 0.2,
                 ease: 'power2.out',
@@ -144,24 +170,32 @@ const Pricing = () => {
     { scope: containerRef }
   );
 
+  const { theme } = useTheme();
+
   return (
     <div
       ref={containerRef}
       id='pricing'
-      className='w-full min-h-[calc(100vh+10rem)] text-gray-900 relative overflow-hidden bg-gradient-to-b from-gray-50 to-gray-100 dark:bg-gradient-to-b dark:from-gray-800 dark:to-gray-900'
+      className='w-full min-h-[calc(100vh+10rem)] pt-3 text-gray-900 dark:text-gray-100 relative overflow-hidden bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900'
     >
       {/* Subtle radial gradient background */}
-      <div className='absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.08)_0%,transparent_70%)] z-[-1]' />
+      <div className='absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.08)_0%,transparent_70%)] dark:bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.15)_0%,transparent_70%)] z-[-1]' />
 
       <section
         ref={titleRef}
         className='flex flex-col items-center justify-center text-center gap-4 mb-8 sm:mb-12 md:mb-16'
       >
-        <span className=' text-indigo-700 dark:text-cyan-300 px-4 py-1.5 rounded-full text-sm font-medium shadow-sm'>
-          pricing
-        </span>
-        <h2 className='text-3xl sm:text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-indigo-600 to-cyan-500 bg-clip-text text-transparent'>
-          Escolha o Plano Ideal para Sua Empressa
+        {theme === 'dark' ? (
+          <SectionNames sectionName='Testimonials' />
+        ) : (
+          <>
+            <span className='text-cyan-700 px-4 py-1.5 rounded-full text-sm font-medium shadow-sm bg-gray-100 '>
+              Testimonials
+            </span>
+          </>
+        )}
+        <h2 className='text-3xl sm:text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-indigo-600 to-cyan-500 dark:from-indigo-400 dark:to-cyan-300 bg-clip-text text-transparent'>
+          Escolha o Plano Ideal para Sua Empresa
         </h2>
         <p className='w-full max-w-md sm:max-w-lg mx-auto text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed'>
           Temos opções flexíveis para atender às necessidades do seu negócio,
@@ -181,13 +215,13 @@ const Pricing = () => {
               'Monitoramento básico',
               'Suporte por email',
             ],
-            bg: 'bg-blue-50',
-            iconBg: 'bg-orange-300/80',
+            bg: 'bg-blue-50 dark:bg-blue-950/60',
+            iconBg: 'bg-orange-300/80 dark:bg-orange-500/70',
             button: {
               text: 'Começar Agora',
               variant: 'outline',
               className:
-                'text-cyan-500 border-cyan-300 cursor-pointer hover:bg-cyan-50',
+                'text-cyan-500 dark:text-cyan-300 border-cyan-300 dark:border-cyan-400 cursor-pointer hover:bg-cyan-50 dark:hover:bg-cyan-900/50',
             },
           },
           {
@@ -201,13 +235,13 @@ const Pricing = () => {
               'Relatórios básicos',
               'Suporte por chat',
             ],
-            bg: 'bg-teal-50/60',
-            iconBg: 'bg-sky-400/90',
+            bg: 'bg-teal-50/60 dark:bg-teal-950/60',
+            iconBg: 'bg-sky-400/90 dark:bg-sky-500/70',
             button: {
               text: 'Escolher Plano',
               variant: 'solid',
               className:
-                'bg-sky-500 text-white cursor-pointer hover:bg-sky-600',
+                'bg-sky-500 dark:bg-sky-600 text-white dark:text-gray-100 cursor-pointer hover:bg-sky-600 dark:hover:bg-sky-700',
             },
           },
           {
@@ -222,13 +256,13 @@ const Pricing = () => {
               'Suporte 24/7',
               'API para integração',
             ],
-            bg: 'bg-orange-50/60',
-            iconBg: 'bg-orange-400/80',
+            bg: 'bg-orange-50/60 dark:bg-orange-950/60',
+            iconBg: 'bg-orange-400/80 dark:bg-orange-600/70',
             button: {
               text: 'Escolher Plano',
               variant: 'outline',
               className:
-                'text-orange-500 border-orange-400 cursor-pointer hover:bg-orange-100',
+                'text-orange-500 dark:text-orange-300 border-orange-400 dark:border-orange-400 cursor-pointer hover:bg-orange-100 dark:hover:bg-orange-900/50',
             },
           },
         ].map((plan, idx) => (
@@ -237,7 +271,7 @@ const Pricing = () => {
             ref={(el) => {
               cardRef.current[idx] = el;
             }}
-            className={`${plan.bg} border border-gray-200/50 dark:border-gray-700/50 rounded-3xl shadow-[4px_4px_20px_rgba(0,0,0,0.2)] p-6 sm:p-8 flex flex-col justify-between w-full max-w-[360px] sm:max-w-md transition-all duration-200 backdrop-blur-sm`}
+            className={`${plan.bg} border border-gray-200/50 dark:border-gray-700/50 rounded-3xl shadow-[4px_4px_20px_rgba(0,0,0,0.2)] dark:shadow-[4px_4px_20px_rgba(0,0,0,0.3)] p-6 sm:p-8 flex flex-col justify-between w-full max-w-[360px] sm:max-w-md transition-all duration-200 backdrop-blur-sm`}
           >
             <div>
               <h4 className='text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2'>
@@ -266,7 +300,7 @@ const Pricing = () => {
                     >
                       <svg
                         xmlns='http://www.w3.org/2000/svg'
-                        className='h-4 w-4 text-white'
+                        className='h-4 w-4 text-white dark:text-gray-100'
                         fill='none'
                         viewBox='0 0 24 24'
                         stroke='currentColor'
@@ -296,11 +330,11 @@ const Pricing = () => {
       <svg
         xmlns='http://www.w3.org/2000/svg'
         viewBox='0 0 1440 60'
-        className='absolute bottom-[-1px] left-0 z-10'
+        className='absolute bottom-[-1px] left-0 z-10 text-[#101828] dark:text-[#111111]'
       >
         <path
           d='M0,60 L90,50 L180,60 L270,50 L360,60 L450,50 L540,60 L630,50 L720,60 L810,50 L900,60 L990,50 L1080,60 L1170,50 L1260,60 L1350,50 L1440,60 L1440,60 L0,60 Z'
-          fill='#101828'
+          fill='currentColor'
           fillOpacity='1'
         />
       </svg>

@@ -16,7 +16,7 @@ const Header = () => {
   const headerRef = useRef<HTMLElement>(null);
   const lastScroll = useRef(0);
 
-  // Fade-in animation on mount
+  // Fade-in animation
   useEffect(() => {
     if (headerRef.current) {
       gsap.fromTo(
@@ -27,7 +27,7 @@ const Header = () => {
     }
   }, []);
 
-  // Fetch notifications
+  // Load notifications
   useEffect(() => {
     fetch('/data/notifications.json')
       .then((res) => res.json())
@@ -44,22 +44,19 @@ const Header = () => {
       .catch((error) => console.error('Error fetching notifications:', error));
   }, []);
 
-  // Scroll behavior (subtle opacity change)
+  // Scroll behavior
   useEffect(() => {
     const handleScroll = () => {
       const currentScroll = window.scrollY;
-
       if (!headerRef.current) return;
 
       if (currentScroll > lastScroll.current && currentScroll > 100) {
-        // Scroll para baixo — esconde o header
         gsap.to(headerRef.current, {
-          y: -100, // sobe o header
+          y: -100,
           duration: 0.4,
           ease: 'power2.out',
         });
       } else {
-        // Scroll para cima — mostra o header
         gsap.to(headerRef.current, {
           y: 0,
           duration: 0.4,
@@ -71,9 +68,7 @@ const Header = () => {
     };
 
     window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const hasNotifications = notifications.length > 0;
@@ -81,20 +76,19 @@ const Header = () => {
   return (
     <header
       ref={headerRef}
-      className=' w-full sticky top-0 z-50  bg-[#1F2937]/80 backdrop-blur-sm '
+      className='w-full sticky top-0 z-50 bg-white/30 dark:bg-[#1F2937]/30 backdrop-blur-sm transition-colors duration-300'
     >
-      {/* Glass background layer */}
-      <div className='absolute inset-0 bg-[#1F2937]/90 h-full backdrop-blur-md shadow-sm -z-10' />
+      <div className='absolute inset-0 bg-white/10 dark:bg-[#1F2937]/10 h-full backdrop-blur-md shadow-sm -z-10 transition-colors duration-300' />
 
       <nav className='max-w-[95%] mx-auto flex items-center justify-between px-4 sm:px-6 py-3'>
-        {/* Logo section */}
+        {/* Logo */}
         <section className='flex items-center gap-2 sm:gap-3'>
-          <div className='rounded-full bg-gray-800 p-1.5 sm:p-2 shadow-md'>
-            <Truck className='text-white w-5 h-5 sm:w-6 sm:h-6' />
+          <div className='rounded-full bg-gray-200 dark:bg-gray-800 p-1.5 sm:p-2 shadow-md'>
+            <Truck className='text-gray-900 dark:text-white w-5 h-5 sm:w-6 sm:h-6' />
           </div>
           <div className='flex flex-col leading-tight group cursor-pointer'>
-            <div className='text-sm sm:text-base font-semibold tracking-wide text-white group-hover:opacity-90 transition-opacity'>
-              <span className='text-blue-200'>Log</span>
+            <div className='text-sm sm:text-base font-semibold tracking-wide text-gray-900 dark:text-white group-hover:opacity-90 transition-opacity'>
+              <span className='text-blue-600 dark:text-blue-200'>Log</span>
               <span className='text-[#00b7eb]'>Flow</span>
             </div>
           </div>
@@ -104,7 +98,7 @@ const Header = () => {
         <DesktopNav
           hasNotifications={hasNotifications}
           notifications={notifications}
-          className='hidden sm:flex text-gray-300 hover:text-blue-200 transition-colors duration-200'
+          className='hidden sm:flex text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-200 transition-colors duration-200'
         />
         <MobileNav
           hasNotifications={hasNotifications}

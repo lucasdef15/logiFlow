@@ -10,8 +10,10 @@ import FreeTrialPage from './pages/FreeTrialPage.tsx';
 import Login from './pages/Login.tsx';
 import Register from './pages/Register.tsx';
 import Dashboard from './pages/Dashboard.tsx';
-import ProtectedRoute from './components/ProtectedRoute';
+// import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext.tsx';
+import DashboardHome from './pages/DashboardHome.tsx';
+import { ThemeProvider } from './context/Theme-provider.tsx';
 
 const router = createBrowserRouter([
   {
@@ -24,9 +26,21 @@ const router = createBrowserRouter([
       { path: 'free-trial', Component: FreeTrialPage },
       { path: 'login', Component: Login },
       { path: 'register', Component: Register },
+      { path: 'dashboard', Component: Dashboard },
+
+      // {
+      //   element: <ProtectedRoute />,
+      //   children: [{ path: 'dashboard', Component: Dashboard }],
+      // },
+    ],
+  },
+  {
+    path: '/dashboard',
+    Component: Dashboard,
+    children: [
       {
-        element: <ProtectedRoute />,
-        children: [{ path: 'dashboard', Component: Dashboard }],
+        path: '/dashboard',
+        element: <DashboardHome />,
       },
     ],
   },
@@ -37,7 +51,9 @@ if (rootElement) {
   ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
       <AuthProvider>
-        <RouterProvider router={router} />
+        <ThemeProvider>
+          <RouterProvider router={router} />
+        </ThemeProvider>
       </AuthProvider>
     </React.StrictMode>
   );

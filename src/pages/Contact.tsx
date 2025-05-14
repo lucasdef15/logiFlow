@@ -173,19 +173,19 @@ const Contact = () => {
   };
 
   return (
-    <div className='relative w-full min-h-screen bg-[#0d111c] text-white py-20 px-4 overflow-hidden'>
+    <div className='relative w-full min-h-screen bg-gray-100 dark:bg-[#0d111c] text-gray-900 dark:text-white py-20 px-4 overflow-hidden'>
       {/* Background Effect */}
       <div
         ref={backgroundRef}
-        className='absolute inset-0 w-full h-full z-0 opacity-50 bg-gradient-to-r from-[#00b7eb]/20 to-transparent'
+        className='absolute inset-0 w-full h-full z-0 opacity-50 bg-gradient-to-r from-blue-100/20 dark:from-[#00b7eb]/20 to-transparent'
       />
 
       {/* Gradient Transition */}
-      <div className='absolute bottom-0 left-0 w-full h-32 bg-gradient-to-b from-transparent to-[#0d111c] z-10 pointer-events-none' />
+      <div className='absolute bottom-0 left-0 w-full h-32 bg-gradient-to-b from-transparent to-gray-100 dark:to-[#0d111c] z-10 pointer-events-none' />
 
       {/* WebGL Error Fallback */}
       {webGLError && (
-        <div className='absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white z-20'>
+        <div className='absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-gray-900 dark:text-white z-20'>
           Your browser does not support WebGL. Please try a different browser or
           update your graphics drivers.
         </div>
@@ -194,10 +194,10 @@ const Contact = () => {
       {/* Main Content */}
       <div className='relative max-w-7xl mx-auto z-10'>
         <section ref={titleRef} className='text-center mb-12'>
-          <h2 className='text-3xl sm:text-5xl lg:text-6xl font-bold text-[#00b7eb]'>
+          <h2 className='text-3xl sm:text-5xl lg:text-6xl font-bold text-blue-600 dark:text-[#00b7eb]'>
             Get in Touch
           </h2>
-          <p className='text-white/80 text-base sm:text-lg font-medium mt-4 max-w-md mx-auto'>
+          <p className='text-gray-600 dark:text-white/80 text-base sm:text-lg font-medium mt-4 max-w-md mx-auto'>
             Have questions or need support? Our team is here to provide
             personalized assistance and quick responses.
           </p>
@@ -208,9 +208,9 @@ const Contact = () => {
           <form
             ref={formRef}
             onSubmit={handleSubmit}
-            className='flex-1 bg-[#1a1f2b]/80 p-8 rounded-xl shadow-lg transition-all duration-300 hover:shadow-cyan-500/50'
+            className='flex-1 bg-white/80 dark:bg-[#1a1f2b]/80 p-8 rounded-xl shadow-lg transition-all duration-300 hover:shadow-blue-300/50 dark:hover:shadow-cyan-500/50'
           >
-            <h3 className='text-2xl font-semibold text-white mb-6'>
+            <h3 className='text-2xl font-semibold text-gray-900 dark:text-white mb-6'>
               Send Us a Message
             </h3>
 
@@ -218,7 +218,7 @@ const Contact = () => {
             <div className='mb-5'>
               <label
                 htmlFor='name'
-                className='block text-sm font-medium text-white/80 mb-1'
+                className='block text-sm font-medium text-gray-700 dark:text-white/80 mb-1'
               >
                 Full Name
               </label>
@@ -228,7 +228,7 @@ const Contact = () => {
                 type='text'
                 value={formData.name}
                 onChange={handleChange}
-                className='w-full bg-[#2a2f3b] border border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-white focus:ring-2 focus:ring-[#00b7eb] focus:border-[#00b7eb] transition-colors'
+                className='w-full bg-gray-50 dark:bg-[#2a2f3b] border border-blue-200/50 dark:border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-[#00b7eb] focus:border-blue-500 dark:focus:border-[#00b7eb] transition-colors'
                 placeholder='Your name'
                 aria-describedby='name-error'
               />
@@ -247,7 +247,7 @@ const Contact = () => {
             <div className='mb-5'>
               <label
                 htmlFor='email'
-                className='block text-sm font-medium text-white/80 mb-1'
+                className='block text-sm font-medium text-gray-700 dark:text-white/80 mb-1'
               >
                 Email
               </label>
@@ -257,7 +257,7 @@ const Contact = () => {
                 type='email'
                 value={formData.email}
                 onChange={handleChange}
-                className='w-full bg-[#2a2f3b] border border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-white focus:ring-2 focus:ring-[#00b7eb] focus:border-[#00b7eb] transition-colors'
+                className='w-full bg-gray-50 dark:bg-[#2a2f3b] border border-blue-200/50 dark:border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-[#00b7eb] focus:border-blue-500 dark:focus:border-[#00b7eb] transition-colors'
                 placeholder='your@email.com'
                 aria-describedby='email-error'
               />
@@ -276,7 +276,7 @@ const Contact = () => {
             <div className='mb-5'>
               <label
                 htmlFor='company'
-                className='block text-sm font-medium text-white/80 mb-1'
+                className='block text-sm font-medium text-gray-700 dark:text-white/80 mb-1'
               >
                 Company
               </label>
@@ -286,7 +286,7 @@ const Contact = () => {
                 type='text'
                 value={formData.company}
                 onChange={handleChange}
-                className='w-full bg-[#2a2f3b] border border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-white focus:ring-2 focus:ring-[#00b7eb] focus:border-[#00b7eb] transition-colors'
+                className='w-full bg-gray-50 dark:bg-[#2a2f3b] border border-blue-200/50 dark:border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-[#00b7eb] focus:border-blue-500 dark:focus:border-[#00b7eb] transition-colors'
                 placeholder='Company name'
                 aria-describedby='company-error'
               />
@@ -305,7 +305,7 @@ const Contact = () => {
             <div className='mb-5'>
               <label
                 htmlFor='subject'
-                className='block text-sm font-medium text-white/80 mb-1'
+                className='block text-sm font-medium text-gray-700 dark:text-white/80 mb-1'
               >
                 Subject
               </label>
@@ -315,7 +315,7 @@ const Contact = () => {
                 type='text'
                 value={formData.subject}
                 onChange={handleChange}
-                className='w-full bg-[#2a2f3b] border border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-white focus:ring-2 focus:ring-[#00b7eb] focus:border-[#00b7eb] transition-colors'
+                className='w-full bg-gray-50 dark:bg-[#2a2f3b] border border-blue-200/50 dark:border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-[#00b7eb] focus:border-blue-500 dark:focus:border-[#00b7eb] transition-colors'
                 placeholder='Reason for contact'
                 aria-describedby='subject-error'
               />
@@ -334,7 +334,7 @@ const Contact = () => {
             <div className='mb-6'>
               <label
                 htmlFor='message'
-                className='block text-sm font-medium text-white/80 mb-1'
+                className='block text-sm font-medium text-gray-700 dark:text-white/80 mb-1'
               >
                 Message
               </label>
@@ -344,7 +344,7 @@ const Contact = () => {
                 rows={5}
                 value={formData.message}
                 onChange={handleChange}
-                className='w-full bg-[#2a2f3b] border border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-white focus:ring-2 focus:ring-[#00b7eb] focus:border-[#00b7eb] transition-colors resize-none'
+                className='w-full bg-gray-50 dark:bg-[#2a2f3b] border border-blue-200/50 dark:border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-[#00b7eb] focus:border-blue-500 dark:focus:border-[#00b7eb] transition-colors resize-none'
                 placeholder='How can we assist you?'
                 aria-describedby='message-error'
               />
@@ -362,7 +362,7 @@ const Contact = () => {
             {/* Submit Button */}
             <Button
               type='submit'
-              className='w-full bg-[#00b7eb] hover:bg-[#0084ff] cursor-pointer text-white font-semibold py-3 rounded-lg transition-all duration-300'
+              className='w-full bg-blue-500 dark:bg-[#00b7eb] hover:bg-blue-600 dark:hover:bg-[#0084ff] cursor-pointer text-white font-semibold py-3 rounded-lg transition-all duration-300'
               aria-label='Submit contact form'
             >
               Send Message
@@ -372,65 +372,73 @@ const Contact = () => {
           {/* Contact Information */}
           <section
             ref={contactInfoRef}
-            className='lg:w-[40%] flex flex-col bg-[#1a1f2b]/80 p-6 rounded-xl shadow-lg transition-all duration-300 hover:shadow-cyan-500/50'
+            className='lg:w-[40%] flex flex-col bg-white/80 dark:bg-[#1a1f2b]/80 p-6 rounded-xl shadow-lg transition-all duration-300 hover:shadow-blue-300/50 dark:hover:shadow-cyan-500/50'
           >
-            <h3 className='text-2xl font-semibold text-white mb-8'>
+            <h3 className='text-2xl font-semibold text-gray-900 dark:text-white mb-8'>
               Contact Information
             </h3>
             <ul className='space-y-8'>
               {/* Email */}
               <li className='flex items-start gap-4 group hover:scale-105 transition-transform duration-300'>
-                <span className='p-3 bg-[#00b7eb]/20 text-[#00b7eb] rounded-full group-hover:bg-[#00b7eb]/40'>
+                <span className='p-3 bg-blue-100/80 dark:bg-[#00b7eb]/20 text-blue-500 dark:text-[#00b7eb] rounded-full group-hover:bg-blue-200/80 dark:group-hover:bg-[#00b7eb]/40'>
                   <Mail size={24} />
                 </span>
                 <div>
-                  <span className='text-base font-semibold text-white'>
+                  <span className='text-base font-semibold text-gray-900 dark:text-white'>
                     Email
                   </span>
-                  <p className='text-white/70 text-sm mt-1'>
+                  <p className='text-gray-600 dark:text-white/70 text-sm mt-1'>
                     contato@fastflow.com
                   </p>
-                  <p className='text-white/70 text-sm'>suporte@fastflow.com</p>
+                  <p className='text-gray-600 dark:text-white/70 text-sm'>
+                    suporte@fastflow.com
+                  </p>
                 </div>
               </li>
               {/* Phone */}
               <li className='flex items-start gap-4 group hover:scale-105 transition-transform duration-300'>
-                <span className='p-3 bg-[#00b7eb]/20 text-[#00b7eb] rounded-full group-hover:bg-[#00b7eb]/40'>
+                <span className='p-3 bg-blue-100/80 dark:bg-[#00b7eb]/20 text-blue-500 dark:text-[#00b7eb] rounded-full group-hover:bg-blue-200/80 dark:group-hover:bg-[#00b7eb]/40'>
                   <Phone size={24} />
                 </span>
                 <div>
-                  <span className='text-base font-semibold text-white'>
+                  <span className='text-base font-semibold text-gray-900 dark:text-white'>
                     Phone
                   </span>
-                  <p className='text-white/70 text-sm mt-1'>(11) 3456-7890</p>
-                  <p className='text-white/70 text-sm'>(11) 98765-4321</p>
+                  <p className='text-gray-600 dark:text-white/70 text-sm mt-1'>
+                    (11) 3456-7890
+                  </p>
+                  <p className='text-gray-600 dark:text-white/70 text-sm'>
+                    (11) 98765-4321
+                  </p>
                 </div>
               </li>
               {/* WhatsApp */}
               <li className='flex items-start gap-4 group hover:scale-105 transition-transform duration-300'>
-                <span className='p-3 bg-[#00b7eb]/20 text-[#00b7eb] rounded-full group-hover:bg-[#00b7eb]/40'>
+                <span className='p-3 bg-blue-100/80 dark:bg-[#00b7eb]/20 text-blue-500 dark:text-[#00b7eb] rounded-full group-hover:bg-blue-200/80 dark:group-hover:bg-[#00b7eb]/40'>
                   <MessageCircleMore size={24} />
                 </span>
                 <div>
-                  <span className='text-base font-semibold text-white'>
+                  <span className='text-base font-semibold text-gray-900 dark:text-white'>
                     WhatsApp
                   </span>
-                  <p className='text-white/70 text-sm mt-1'>(11) 91234-5678</p>
+                  <p className='text-gray-600 dark:text-white/70 text-sm mt-1'>
+                    (11) 91234-5678
+                  </p>
                 </div>
               </li>
               {/* Address */}
               <li className='flex items-start gap-4 group hover:scale-105 transition-transform duration-300'>
-                <span className='p-3 bg-[#00b7eb]/20 text-[#00b7eb] rounded-full group-hover:bg-[#00b7eb]/40'>
+                <span className='p-3 bg-blue-100/80 dark:bg-[#00b7eb]/20 text-blue-500 dark:text-[#00b7eb] rounded-full group-hover:bg-blue-200/80 dark:group-hover:bg-[#00b7eb]/40'>
                   <MapPin size={24} />
                 </span>
                 <div>
-                  <span className='text-base font-semibold text-white'>
+                  <span className='text-base font-semibold text-gray-900 dark:text-white'>
                     Address
                   </span>
-                  <p className='text-white/70 text-sm mt-1'>
+                  <p className='text-gray-600 dark:text-white/70 text-sm mt-1'>
                     Av. Paulista, 1000 - São Paulo
                   </p>
-                  <p className='text-white/70 text-sm underline cursor-pointer hover:text-white transition-colors duration-200'>
+                  <p className='text-gray-600 dark:text-white/70 text-sm underline cursor-pointer hover:text-gray-900 dark:hover:text-white transition-colors duration-200'>
                     <a
                       href='https://maps.google.com/?q=Av.+Paulista,+1000'
                       target='_blank'
@@ -443,17 +451,19 @@ const Contact = () => {
               </li>
               {/* Business Hours */}
               <li className='flex items-start gap-4 group hover:scale-105 transition-transform duration-300'>
-                <span className='p-3 bg-[#00b7eb]/20 text-[#00b7eb] rounded-full group-hover:bg-[#00b7eb]/40'>
+                <span className='p-3 bg-blue-100/80 dark:bg-[#00b7eb]/20 text-blue-500 dark:text-[#00b7eb] rounded-full group-hover:bg-blue-200/80 dark:group-hover:bg-[#00b7eb]/40'>
                   <Clock size={24} />
                 </span>
                 <div>
-                  <span className='text-base font-semibold text-white'>
+                  <span className='text-base font-semibold text-gray-900 dark:text-white'>
                     Business Hours
                   </span>
-                  <p className='text-white/70 text-sm mt-1'>
+                  <p className='text-gray-600 dark:text-white/70 text-sm mt-1'>
                     Mon-Fri — 09:00 to 18:00
                   </p>
-                  <p className='text-white/70 text-sm'>Sat — 09:00 to 13:00</p>
+                  <p className='text-gray-600 dark:text-white/70 text-sm'>
+                    Sat — 09:00 to 13:00
+                  </p>
                 </div>
               </li>
             </ul>
@@ -462,7 +472,7 @@ const Contact = () => {
             <div className='mt-10'>
               <a
                 href='/contato'
-                className='flex flex-row gap-2 w-fit bg-[#00b7eb] text-white py-2 px-6 rounded-lg font-semibold hover:bg-[#00a0cc] transition-all duration-300'
+                className='flex flex-row gap-2 w-fit bg-blue-500 dark:bg-[#00b7eb] text-white py-2 px-6 rounded-lg font-semibold hover:bg-blue-600 dark:hover:bg-[#00a0cc] transition-all duration-300'
               >
                 Fale Conosco
                 <MessageCircleMore />
