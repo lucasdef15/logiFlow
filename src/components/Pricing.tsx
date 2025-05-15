@@ -186,7 +186,7 @@ const Pricing = () => {
     <div
       ref={containerRef}
       id='pricing'
-      className='w-full min-h-[calc(100vh+10rem)] pt-3 text-gray-900 dark:text-gray-100 relative overflow-hidden bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900'
+      className='w-full min-h-[calc(100vh+10rem)] pt-10 text-gray-900 dark:text-gray-100 relative overflow-hidden bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900'
       data-theme={theme}
     >
       <style>

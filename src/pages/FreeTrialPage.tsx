@@ -1,9 +1,12 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Card } from '@/components/ui/card';
 import { Truck, MapPin, Users, Clock } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { useAuth } from '@/context/AuthContext';
+import { Eye, EyeOff } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -11,17 +14,25 @@ const FreeTrialPage = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+    confirmPassword: '',
     terms: false,
   });
   const [errors, setErrors] = useState({
     email: '',
     password: '',
+    confirmPassword: '',
     terms: '',
+    general: '',
   });
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const formRef = useRef<HTMLDivElement>(null);
   const leftSideRef = useRef<HTMLDivElement>(null);
   const backgroundRef = useRef<HTMLDivElement>(null);
+
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const features = [
     {
@@ -113,18 +124,90 @@ const FreeTrialPage = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Client-side validation
     const newErrors = {
-      email: formData.email.trim() === '' ? 'Email is required' : '',
-      password: formData.password.trim() === '' ? 'Password is required' : '',
-      terms: !formData.terms ? 'You must agree to the terms' : '',
+      email:
+        formData.email.trim() === ''
+          ? 'E-mail é obrigatório'
+          : !validateEmail(formData.email)
+          ? 'Digite um e-mail válido'
+          : '',
+      password:
+        formData.password.trim() === ''
+          ? 'Senha é obrigatória'
+          : formData.password.length < 6
+          ? 'A senha deve ter pelo menos 6 caracteres'
+          : '',
+      confirmPassword:
+        formData.confirmPassword.trim() === ''
+          ? 'Confirmação de senha é obrigatória'
+          : formData.confirmPassword !== formData.password
+          ? 'As senhas não coincidem'
+          : '',
+      terms: !formData.terms ? 'Você deve aceitar os termos' : '',
+      general: '',
     };
+
     setErrors(newErrors);
 
-    const hasErrors = Object.values(newErrors).some((error) => error !== '');
-    if (!hasErrors) {
-      console.log('Form submitted:', formData);
+    const hasClientErrors = Object.values(newErrors).some(
+      (error) => error !== ''
+    );
+    if (hasClientErrors) return;
+
+    try {
+      const response = await fetch('http://www.logiflow.io/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          confirmPassword: formData.confirmPassword,
+          terms: formData.terms,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        login({
+          token: data.data.token,
+          user: data.data.user,
+          company: data.data.company,
+        });
+
+        if (data.data.meta?.redirectTo) {
+          navigate(data.data.meta.redirectTo);
+        } else {
+          navigate('/dashboard');
+        }
+      } else {
+        // Handle server-side errors
+        const serverErrors = data.error || {};
+        setErrors({
+          email: serverErrors.email || '',
+          password: serverErrors.password || '',
+          confirmPassword: serverErrors.confirmPassword || '',
+          terms: serverErrors.terms || '',
+          general: data.message || 'Erro ao registrar',
+        });
+      }
+    } catch (error) {
+      setErrors({
+        ...errors,
+        general: 'Erro na conexão com o servidor.',
+      });
+      console.error(error);
     }
   };
 
@@ -214,6 +297,27 @@ const FreeTrialPage = () => {
             your logistics operations.
           </p>
           <form onSubmit={handleSubmit} className='space-y-6'>
+            {/* geral error */}
+            {errors.general && (
+              <div className='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-sm flex items-start gap-2'>
+                <svg
+                  className='w-5 h-5 mt-0.5 flex-shrink-0 text-red-500'
+                  fill='none'
+                  stroke='currentColor'
+                  viewBox='0 0 24 24'
+                  xmlns='http://www.w3.org/2000/svg'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M12 9v2m0 4h.01M4.93 19h14.14c1.04 0 1.67-1.15 1.14-2.04L13.14 4.21c-.52-.89-1.76-.89-2.28 0L3.79 16.96c-.52.89.1 2.04 1.14 2.04z'
+                  />
+                </svg>
+                <span>{errors.general}</span>
+              </div>
+            )}
+
             <div>
               <label
                 htmlFor='email'
@@ -228,7 +332,12 @@ const FreeTrialPage = () => {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder='you@company.com'
-                className='w-full bg-gray-50 dark:bg-[#2a2f3b] border border-blue-200/50 dark:border-[#00b7eb]/30 rounded-lg px-4 py-3 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-[#00b7eb] focus:border-blue-500 dark:focus:border-[#00b7eb] transition-colors'
+                className={cn(
+                  'w-full bg-white dark:bg-[#2a2f3b] border rounded-lg px-4 py-2 text-sm text-black dark:text-white focus:ring-2 transition-colors',
+                  errors.email || errors.general
+                    ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
+                    : 'border-[#00b7eb]/30 focus:ring-[#00b7eb] focus:border-[#00b7eb]'
+                )}
                 required
               />
               {errors.email && (
@@ -237,29 +346,75 @@ const FreeTrialPage = () => {
                 </span>
               )}
             </div>
-            <div>
+
+            <div className='mb-5 relative'>
               <label
                 htmlFor='password'
-                className='block text-sm font-medium text-gray-700 dark:text-white/80 mb-2'
+                className='block text-sm font-medium text-black/70 dark:text-white/80 mb-1'
               >
-                Password
+                Senha
               </label>
               <input
-                type='password'
                 id='password'
                 name='password'
+                type={showPassword ? 'text' : 'password'}
                 value={formData.password}
                 onChange={handleChange}
-                placeholder='Create a secure password'
-                className='w-full bg-gray-50 dark:bg-[#2a2f3b] border border-blue-200/50 dark:border-[#00b7eb]/30 rounded-lg px-4 py-3 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-[#00b7eb] focus:border-blue-500 dark:focus:border-[#00b7eb] transition-colors'
-                required
+                className={cn(
+                  'w-full bg-white dark:bg-[#2a2f3b] border rounded-lg px-4 py-2 text-sm text-black dark:text-white focus:ring-2 transition-colors pr-10', // Adiciona padding à direita
+                  errors.password || errors.general
+                    ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
+                    : 'border-[#00b7eb]/30 focus:ring-[#00b7eb] focus:border-[#00b7eb]'
+                )}
+                placeholder='Sua senha'
+                aria-describedby='password-error'
               />
+              <button
+                type='button'
+                onClick={() => setShowPassword((prev) => !prev)}
+                className='absolute right-3 top-9 text-gray-500 hover:text-[#00b7eb] focus:outline-none'
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
               {errors.password && (
-                <span className='text-red-500 text-xs mt-2'>
+                <span
+                  id='password-error'
+                  className='text-red-500 text-xs mt-1 block'
+                >
                   {errors.password}
                 </span>
               )}
             </div>
+
+            <div className='mb-5'>
+              <label
+                htmlFor='confirmPassword'
+                className='block text-sm font-medium text-black/70 dark:text-white/80 mb-1'
+              >
+                Confirm Password
+              </label>
+              <input
+                type='password'
+                id='confirmPassword'
+                name='confirmPassword'
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                placeholder='Re-enter your password'
+                className={cn(
+                  'w-full bg-white dark:bg-[#2a2f3b] border rounded-lg px-4 py-2 text-sm text-black dark:text-white focus:ring-2 transition-colors pr-10', // Adiciona padding à direita
+                  errors.confirmPassword || errors.general
+                    ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
+                    : 'border-[#00b7eb]/30 focus:ring-[#00b7eb] focus:border-[#00b7eb]'
+                )}
+              />
+              {errors.confirmPassword && (
+                <span className='text-red-500 text-xs mt-2'>
+                  {errors.confirmPassword}
+                </span>
+              )}
+            </div>
+
             <div className='flex items-center gap-3'>
               <input
                 type='checkbox'
@@ -288,7 +443,7 @@ const FreeTrialPage = () => {
             )}
             <button
               type='submit'
-              className='w-full bg-blue-500 dark:bg-[#00b7eb] hover:bg-blue-600 dark:hover:bg-[#0084ff] text-white font-medium py-3 rounded-lg transition-all duration-300 shadow-sm hover:shadow-md'
+              className='w-full cursor-pointer bg-blue-500 dark:bg-[#00b7eb] hover:bg-blue-600 dark:hover:bg-[#0084ff] text-white font-medium py-3 rounded-lg transition-all duration-300 shadow-sm hover:shadow-md'
             >
               Start Free Trial
             </button>

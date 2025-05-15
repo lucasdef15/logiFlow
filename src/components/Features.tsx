@@ -1,6 +1,6 @@
-import { ChartColumnIncreasing, Rocket } from 'lucide-react';
-import CardWithLabelIcon from './ui/CardWithLabelIcon';
 import {
+  ChartColumnIncreasing,
+  Rocket,
   Bell,
   CloudOff,
   Code,
@@ -10,21 +10,18 @@ import {
   CloudCog,
   Users,
 } from 'lucide-react';
-import SectionNames from './ui/SectionNames';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { useRef, useEffect } from 'react';
+import { useRef } from 'react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Button } from './ui/button';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const Features = () => {
   const containerRef = useRef(null);
-  const titleRef = useRef<HTMLElement>(null);
+  const titleRef = useRef(null);
   const cardsRef = useRef<HTMLDivElement>(null);
   const stepsRef = useRef<HTMLDivElement>(null);
-  const howItWorksTitleRef = useRef(null);
 
   useGSAP(
     () => {
@@ -38,255 +35,187 @@ const Features = () => {
       });
 
       tl.fromTo(
-        titleRef.current?.children ? Array.from(titleRef.current.children) : [],
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.8, ease: 'expo.inOut', stagger: 0.15 }
+        titleRef.current,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' }
       );
 
-      const cards = Array.from(
-        cardsRef.current?.children || []
-      ) as HTMLElement[];
+      const cards = Array.from(cardsRef.current?.children || []);
       tl.fromTo(
         cards,
-        { opacity: 0, y: 40, scale: 0.95 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.9,
-          ease: 'power3.inOut',
-          stagger: 0.1,
-        },
-        '-=0.4'
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out', stagger: 0.1 },
+        '-=0.3'
       );
 
       const steps = Array.from(stepsRef.current?.children || []);
       tl.fromTo(
         steps,
-        { opacity: 0, x: -30 },
-        { opacity: 1, x: 0, duration: 0.7, ease: 'power2.out', stagger: 0.1 },
-        '-=0.3'
+        { opacity: 0, x: -20 },
+        { opacity: 1, x: 0, duration: 0.5, ease: 'power2.out', stagger: 0.1 },
+        '-=0.2'
       );
     },
     { scope: containerRef }
   );
 
-  // Animation for How It Works title
-  useGSAP(() => {
-    gsap.fromTo(
-      howItWorksTitleRef.current,
-      { opacity: 0, y: 40 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: 'power2.out',
-        scrollTrigger: {
-          trigger: howItWorksTitleRef.current,
-          start: 'top 85%',
-        },
-      }
-    );
-  }, []);
-
-  useEffect(() => {
-    const cards = Array.from(cardsRef.current?.children || []);
-    cards.forEach((card) => {
-      card.addEventListener('mouseenter', () => {
-        gsap.to(card, {
-          scale: 1.03,
-          boxShadow: '0 10px 20px rgba(0, 0, 0, 0.2)',
-          duration: 0.3,
-          ease: 'power2.out',
-        });
-      });
-      card.addEventListener('mouseleave', () => {
-        gsap.to(card, {
-          scale: 1,
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-          duration: 0.3,
-          ease: 'power2.out',
-        });
-      });
-    });
-
-    return () => {
-      cards.forEach((card) => {
-        card.removeEventListener('mouseenter', () => {});
-        card.removeEventListener('mouseleave', () => {});
-      });
-    };
-  }, []);
-
-  const steps = [
+  const features = [
     {
-      icon: (
-        <CloudCog
-          className='w-10 h-10 text-blue-300'
-          aria-label='Cloud Cog Icon'
-        />
-      ),
-      title: 'Access Your Dashboard',
-      description: 'Log in to view real-time logistics insights.',
+      icon: <ChartColumnIncreasing className='w-6 h-6 text-indigo-400' />,
+      title: 'Smart Dashboard',
+      description: 'Real-time insights with tailored KPIs.',
     },
     {
-      icon: (
-        <Compass
-          className='w-10 h-10 text-cyan-300'
-          aria-label='Compass Icon'
-        />
-      ),
-      title: 'Plan Optimal Routes',
-      description: 'AI-driven route optimization for efficiency.',
+      icon: <Bell className='w-6 h-6 text-teal-400' />,
+      title: 'Instant Alerts',
+      description: 'Stay updated with critical notifications.',
     },
     {
-      icon: (
-        <Users className='w-10 h-10 text-orange-300' aria-label='Users Icon' />
-      ),
-      title: 'Manage Your Team',
-      description: 'Coordinate tasks seamlessly.',
+      icon: <CloudOff className='w-6 h-6 text-amber-400' />,
+      title: 'Offline Access',
+      description: 'Work seamlessly without internet.',
     },
     {
-      icon: <Map className='w-10 h-10 text-blue-300' aria-label='Map Icon' />,
-      title: 'Monitor in Real-time',
-      description: 'Track vehicles and statuses live.',
+      icon: <Code className='w-6 h-6 text-indigo-400' />,
+      title: 'API Connectivity',
+      description: 'Integrate with your existing tools.',
     },
     {
-      icon: (
-        <ClockArrowUp
-          className='w-10 h-10 text-cyan-300'
-          aria-label='Clock Arrow Up Icon'
-        />
-      ),
-      title: 'Analyze and Improve',
-      description: 'Optimize with historical data.',
+      icon: <ClockArrowUp className='w-6 h-6 text-teal-400' />,
+      title: 'Delivery History',
+      description: 'Analyze past routes for optimization.',
+    },
+    {
+      icon: <Map className='w-6 h-6 text-amber-400' />,
+      title: 'Live Tracking',
+      description: 'Monitor routes and traffic in real-time.',
+    },
+    {
+      icon: <Compass className='w-6 h-6 text-indigo-400' />,
+      title: 'AI Routes',
+      description: 'Optimize paths with smart algorithms.',
+    },
+    {
+      icon: <CloudCog className='w-6 h-6 text-teal-400' />,
+      title: 'Cloud Access',
+      description: 'Secure access from anywhere.',
+    },
+    {
+      icon: <Users className='w-6 h-6 text-amber-400' />,
+      title: 'Team Coordination',
+      description: 'Assign and manage tasks easily.',
     },
   ];
 
+  const steps = [
+    {
+      icon: <CloudCog className='w-8 h-8 text-indigo-400' />,
+      title: 'Access Dashboard',
+      description: 'View real-time logistics data.',
+    },
+    {
+      icon: <Compass className='w-8 h-8 text-teal-400' />,
+      title: 'Optimize Routes',
+      description: 'Plan efficient delivery paths.',
+    },
+    {
+      icon: <Users className='w-8 h-8 text-amber-400' />,
+      title: 'Manage Teams',
+      description: 'Coordinate tasks effortlessly.',
+    },
+    {
+      icon: <Map className='w-8 h-8 text-indigo-400' />,
+      title: 'Track Live',
+      description: 'Monitor vehicles in real-time.',
+    },
+    {
+      icon: <ClockArrowUp className='w-8 h-8 text-teal-400' />,
+      title: 'Improve Operations',
+      description: 'Leverage data for efficiency.',
+    },
+  ];
+
+  const handleGetStarted = () => {
+    // Handle the "Get Started" button click
+    window.location.href = '#free-trial';
+  };
+
   return (
-    <div className='w-full bg-gradient-to-b from-[#0d111c] via-blue-900/90 to-cyan-400/90 text-gray-100 py-16 sm:py-24 px-4 sm:px-8 backdrop-blur-sm bg-[rgba(59,130,246,0.1)] overflow-hidden relative'>
-      <div ref={containerRef} id='features' className='max-w-[90%] mx-auto'>
+    <div
+      id='features'
+      ref={containerRef}
+      className='relative w-full bg-gradient-to-b from-gray-900 to-indigo-900 text-white py-12 px-4 sm:px-6 lg:px-8 overflow-hidden'
+    >
+      <div className='max-w-7xl mx-auto mb-10'>
         {/* Title Section */}
-        <section
-          ref={titleRef}
-          className='flex flex-col items-center text-center gap-6 mb-16'
-        >
-          <SectionNames sectionName={'Features'} />
-          <h2 className='text-4xl sm:text-5xl font-bold text-blue-200'>
-            <span className='bg-gradient-to-r from-blue-300 to-cyan-300 bg-clip-text text-transparent'>
-              Master Logistics with Ease
-            </span>
+        <div ref={titleRef} className='text-center mb-12'>
+          <h2 className='text-3xl sm:text-4xl font-bold bg-gradient-to-r from-indigo-300 to-teal-300 bg-clip-text text-transparent'>
+            Simplify Logistics with Powerful Tools
           </h2>
-          <p className='max-w-[700px] text-base sm:text-lg text-gray-300 leading-relaxed'>
-            Streamline your operations with powerful, intuitive tools designed
-            for modern logistics.
+          <p className='mt-4 text-base sm:text-lg text-gray-300 max-w-2xl mx-auto'>
+            Streamline operations with intuitive features designed for modern
+            logistics management.
           </p>
-        </section>
+        </div>
 
         {/* Features Cards */}
-        <section
+        <div
           ref={cardsRef}
-          className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-20'
+          className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16'
         >
-          <CardWithLabelIcon
-            icon={<ChartColumnIncreasing className='w-8 h-8' />}
-            color='blue'
-            title='Intelligent Dashboard'
-            description='Real-time insights with customizable KPIs.'
-          />
-          <CardWithLabelIcon
-            icon={<Bell className='w-8 h-8' />}
-            color='cyan'
-            title='Automatic Notifications'
-            description='Instant alerts for critical updates.'
-          />
-          <CardWithLabelIcon
-            icon={<CloudOff className='w-8 h-8' />}
-            color='orange'
-            title='Offline Mode'
-            description='Work seamlessly without connectivity.'
-          />
-          <CardWithLabelIcon
-            icon={<Code className='w-8 h-8' />}
-            color='blue'
-            title='API Integration'
-            description='Connect with existing systems.'
-          />
-          <CardWithLabelIcon
-            icon={<ClockArrowUp className='w-8 h-8' />}
-            color='cyan'
-            title='Route History'
-            description='Analyze past deliveries for improvement.'
-          />
-          <CardWithLabelIcon
-            icon={<Map className='w-8 h-8' />}
-            color='orange'
-            title='Real-time Visualization'
-            description='Live maps with traffic and status.'
-          />
-          <CardWithLabelIcon
-            icon={<Compass className='w-8 h-8' />}
-            color='blue'
-            title='AI Route Optimization'
-            description='Smart, efficient route planning.'
-          />
-          <CardWithLabelIcon
-            icon={<CloudCog className='w-8 h-8' />}
-            color='cyan'
-            title='Cloud-based Platform'
-            description='Access anywhere with backups.'
-          />
-          <CardWithLabelIcon
-            icon={<Users className='w-8 h-8' />}
-            color='orange'
-            title='Team Management'
-            description='Monitor and assign tasks easily.'
-          />
-        </section>
+          {features.map((feature, index) => (
+            <div
+              key={index}
+              className='group bg-gray-800/50 backdrop-blur-md p-6 rounded-lg border border-gray-700 hover:border-indigo-500 transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/20'
+            >
+              <div className='flex items-center gap-3 mb-3'>
+                {feature.icon}
+                <h3 className='text-lg font-semibold text-white'>
+                  {feature.title}
+                </h3>
+              </div>
+              <p className='text-sm text-gray-400'>{feature.description}</p>
+            </div>
+          ))}
+        </div>
 
-        <section className='py-20  '>
-          <h2
-            ref={howItWorksTitleRef}
-            className='text-4xl sm:text-5xl font-bold text-center text-blue-600 dark:text-blue-100 mb-14'
-          >
-            <span className='bg-gradient-to-r from-blue-200 to-cyan-400 dark:from-blue-300 dark:to-cyan-300 bg-clip-text text-transparent'>
-              How It Works
-            </span>
+        {/* How It Works Section */}
+        <div className='py-12'>
+          <h2 className='text-3xl sm:text-4xl font-bold text-center bg-gradient-to-r from-indigo-300 to-teal-300 bg-clip-text text-transparent mb-10'>
+            How It Works
           </h2>
           <div
             ref={stepsRef}
-            className='relative flex flex-col items-center gap-8'
+            className='flex flex-col items-center gap-6 max-w-lg mx-auto'
           >
             {steps.map((step, index) => (
               <div
                 key={index}
-                className='relative bg-white/80 dark:bg-[#0d111c]/80 p-6 rounded-xl shadow-md border border-blue-200/50 dark:border-blue-500/20 w-full max-w-md flex items-center gap-4 hover:shadow-blue-300/30 dark:hover:shadow-cyan-400/20 transition-all duration-300'
+                className='relative flex items-center gap-4 bg-gray-800/50 backdrop-blur-md p-5 rounded-lg border border-gray-700 w-full hover:border-teal-500 transition-all duration-300'
               >
                 <div className='flex-shrink-0'>{step.icon}</div>
                 <div>
-                  <h3 className='text-xl font-semibold text-blue-600 dark:text-blue-200'>
+                  <h3 className='text-lg font-semibold text-white'>
                     {step.title}
                   </h3>
-                  <p className='text-gray-600 dark:text-gray-300 text-sm'>
-                    {step.description}
-                  </p>
+                  <p className='text-sm text-gray-400'>{step.description}</p>
                 </div>
                 {index < steps.length - 1 && (
-                  <div className='absolute left-5 bottom-[-40px] w-0.5 h-10 bg-blue-300/50 dark:bg-blue-400/50'></div>
+                  <div className='absolute left-6 bottom-[-20px] w-0.5 h-5 bg-indigo-400/50'></div>
                 )}
               </div>
             ))}
           </div>
           <div className='flex justify-center mt-10'>
-            <Button
-              aria-label='Try Now'
-              className='group inline-flex cursor-pointer items-center gap-2 px-6 py-3 bg-gradient-to-r from-gray-100/80 via-gray-200/60 to-gray-100/80 dark:from-white/80 dark:via-white/60 dark:to-white/80 text-blue-950 dark:text-blue-950 font-medium shadow-[inset_0_0_1px_rgba(0,0,0,0.3)] dark:shadow-[inset_0_0_1px_rgba(255,255,255,0.3)] border border-gray-300 dark:border-white/30 hover:shadow-[0_0_20px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] backdrop-blur-md transition-all duration-300 hover:scale-[1.3]'
+            <button
+              onClick={handleGetStarted}
+              className='group flex items-center cursor-pointer gap-2 px-6 py-3 bg-gradient-to-r from-indigo-500 to-teal-500 text-white rounded-lg font-medium hover:scale-105 transition-all duration-300'
             >
-              <Rocket className='w-4 h-4 text-cyan-600 dark:text-cyan-500 group-hover:translate-x-1 transition-transform duration-300' />
-              Try Now
-            </Button>
+              <Rocket className='w-5 h-5 group-hover:translate-x-1 transition-transform' />
+              Get Started
+            </button>
           </div>
-        </section>
+        </div>
       </div>
 
       {/* SVG Wave */}

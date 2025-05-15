@@ -5,6 +5,8 @@ import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useAuth } from '@/context/AuthContext.tsx';
+import { cn } from '@/lib/utils';
+import { Eye, EyeOff } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -15,6 +17,7 @@ const Login = () => {
     password: '',
     general: '',
   });
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -25,7 +28,7 @@ const Login = () => {
   const backgroundRef = useRef<HTMLDivElement>(null);
   const emailErrorRef = useRef<HTMLSpanElement>(null);
   const passwordErrorRef = useRef<HTMLSpanElement>(null);
-  const generalErrorRef = useRef<HTMLSpanElement>(null);
+  const generalErrorRef = useRef<HTMLDivElement>(null);
 
   const friendlyMessage = (msg: string) => {
     if (msg === 'Internal server Error' || msg === 'Internal server error') {
@@ -182,14 +185,27 @@ const Login = () => {
               Entrar
             </h3>
 
+            {/* geral error */}
             {errors.general && (
-              <div className='mb-5'>
-                <span
-                  ref={generalErrorRef}
-                  className='text-red-500 text-sm font-medium'
+              <div
+                ref={generalErrorRef}
+                className='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-sm flex items-start gap-2'
+              >
+                <svg
+                  className='w-5 h-5 mt-0.5 flex-shrink-0 text-red-500'
+                  fill='none'
+                  stroke='currentColor'
+                  viewBox='0 0 24 24'
+                  xmlns='http://www.w3.org/2000/svg'
                 >
-                  {errors.general}
-                </span>
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M12 9v2m0 4h.01M4.93 19h14.14c1.04 0 1.67-1.15 1.14-2.04L13.14 4.21c-.52-.89-1.76-.89-2.28 0L3.79 16.96c-.52.89.1 2.04 1.14 2.04z'
+                  />
+                </svg>
+                <span>{errors.general}</span>
               </div>
             )}
 
@@ -206,7 +222,12 @@ const Login = () => {
                 type='email'
                 value={formData.email}
                 onChange={handleChange}
-                className='w-full bg-white dark:bg-[#2a2f3b] border border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-black dark:text-white focus:ring-2 focus:ring-[#00b7eb] focus:border-[#00b7eb] transition-colors'
+                className={cn(
+                  'w-full bg-white dark:bg-[#2a2f3b] border rounded-lg px-4 py-2 text-sm text-black dark:text-white focus:ring-2 transition-colors',
+                  errors.email || errors.general
+                    ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
+                    : 'border-[#00b7eb]/30 focus:ring-[#00b7eb] focus:border-[#00b7eb]'
+                )}
                 placeholder='seu@email.com'
                 aria-describedby='email-error'
               />
@@ -221,7 +242,7 @@ const Login = () => {
               )}
             </div>
 
-            <div className='mb-5'>
+            <div className='mb-5 relative'>
               <label
                 htmlFor='password'
                 className='block text-sm font-medium text-black/70 dark:text-white/80 mb-1'
@@ -231,18 +252,31 @@ const Login = () => {
               <input
                 id='password'
                 name='password'
-                type='password'
+                type={showPassword ? 'text' : 'password'}
                 value={formData.password}
                 onChange={handleChange}
-                className='w-full bg-white dark:bg-[#2a2f3b] border border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-black dark:text-white focus:ring-2 focus:ring-[#00b7eb] focus:border-[#00b7eb] transition-colors'
+                className={cn(
+                  'w-full bg-white dark:bg-[#2a2f3b] border rounded-lg px-4 py-2 text-sm text-black dark:text-white focus:ring-2 transition-colors pr-10', // Adiciona padding à direita
+                  errors.password || errors.general
+                    ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
+                    : 'border-[#00b7eb]/30 focus:ring-[#00b7eb] focus:border-[#00b7eb]'
+                )}
                 placeholder='Sua senha'
                 aria-describedby='password-error'
               />
+              <button
+                type='button'
+                onClick={() => setShowPassword((prev) => !prev)}
+                className='absolute right-3 top-9 text-gray-500 hover:text-[#00b7eb] focus:outline-none'
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
               {errors.password && (
                 <span
                   ref={passwordErrorRef}
                   id='password-error'
-                  className='text-red-500 text-xs mt-1'
+                  className='text-red-500 text-xs mt-1 block'
                 >
                   {errors.password}
                 </span>
@@ -258,7 +292,11 @@ const Login = () => {
                   type='checkbox'
                   id='remember-me'
                   name='remember-me'
-                  className='mr-2'
+                  className={`mr-2 h-4 w-4 rounded-sm appearance-none border border-gray-400 checked:bg-[#00b7eb] checked:border-transparent focus:outline-none focus:ring-2 focus:ring-[#00b7eb] transition ${
+                    errors.password || errors.general
+                      ? 'border-red-500 text-red-500'
+                      : ''
+                  }`}
                 />
                 Lembrar-me
               </label>

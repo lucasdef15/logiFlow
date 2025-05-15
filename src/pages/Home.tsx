@@ -4,6 +4,7 @@ import FreeTrial from '@/components/FreeTrial';
 import Hero from '@/components/Hero';
 import Pricing from '@/components/Pricing';
 import Testimonials from '@/components/Testimonials';
+import Advantages from '@/components/Advantages';
 
 const Home = () => {
   return (
@@ -12,6 +13,7 @@ const Home = () => {
       <Features />
       <Testimonials />
       <FreeTrial />
+      <Advantages />
       <Pricing />
       <Footer />
     </>

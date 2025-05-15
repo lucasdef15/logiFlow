@@ -1,8 +1,9 @@
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import SectionNames from './ui/SectionNames';
+import { cn } from '@/lib/utils';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -16,6 +17,20 @@ const FreeTrial = () => {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const svgTopRef = useRef<SVGSVGElement>(null);
   const svgBottomRef = useRef<SVGSVGElement | null>(null);
+  const emailErrorRef = useRef<HTMLSpanElement>(null);
+  const companyErrorRef = useRef<HTMLSpanElement>(null);
+  const generalErrorRef = useRef<HTMLDivElement>(null);
+
+  const [formData, setFormData] = useState({
+    email: '',
+    company: '',
+  });
+
+  const [errors, setErrors] = useState({
+    email: '',
+    company: '',
+    general: '',
+  });
 
   useGSAP(
     () => {
@@ -188,10 +203,106 @@ const FreeTrial = () => {
     { scope: containerRef }
   );
 
+  useGSAP(() => {
+    const animateError = (
+      ref: React.RefObject<HTMLSpanElement | HTMLDivElement | null>
+    ) => {
+      if (ref.current) {
+        gsap.fromTo(
+          ref.current,
+          { opacity: 0, y: 5 },
+          { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' }
+        );
+      }
+    };
+
+    if (errors.email) animateError(emailErrorRef);
+    if (errors.company) animateError(companyErrorRef);
+    if (errors.general) animateError(generalErrorRef);
+  }, [errors]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+
+    setErrors({
+      ...errors,
+      [name]: '',
+      general: '',
+    });
+  };
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Client-side validation
+    const newErrors = {
+      email:
+        formData.email.trim() === ''
+          ? 'E-mail é obrigatório'
+          : !validateEmail(formData.email)
+          ? 'Digite um e-mail válido'
+          : '',
+      company:
+        formData.company.trim() === '' ? 'Nome da empresa é obrigatório' : '',
+      general: '',
+    };
+
+    setErrors(newErrors);
+
+    const hasClientErrors = Object.values(newErrors).some(
+      (error) => error !== ''
+    );
+    if (hasClientErrors) return;
+
+    try {
+      const response = await fetch('http://www.logiflow.io/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          company: formData.company,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Handle successful free trial registration (e.g., redirect or show success message)
+        window.location.href = '/free-trial-success'; // Example redirect
+      } else {
+        // Handle server-side errors
+        const serverErrors = data.error || {};
+        setErrors({
+          email: serverErrors.email || '',
+          company: serverErrors.company || '',
+          general: data.message || 'Erro ao iniciar o teste gratuito',
+        });
+      }
+    } catch (error) {
+      setErrors({
+        ...errors,
+        general: 'Erro na conexão com o servidor.',
+      });
+      console.error(error);
+    }
+  };
+
   return (
     <div
+      id='free-trial'
       ref={containerRef}
-      className='bg-[#0EA5E9] dark:bg-gray-900 relative min-h-[calc(100vh+100px)]'
+      className='bg-[#0EA5E9] dark:bg-gray-900 relative min-h-[90vh]'
     >
       <div className='w-full max-w-[1128px] mx-auto pt-10 p-4 flex flex-col items-center'>
         <div className='w-full flex justify-center items-center mb-10 z-10'>
@@ -272,21 +383,30 @@ const FreeTrial = () => {
             <h3 className='text-white dark:text-cyan-200 text-3xl font-bold mb-6 text-center'>
               Start Your Free Trial
             </h3>
-            <form action='' className='space-y-4'>
-              <div className='flex flex-col'>
-                <label
-                  htmlFor='fullname'
-                  className='text-white dark:text-gray-200 text-sm mb-1'
+            <form onSubmit={handleSubmit} className='space-y-4'>
+              {/* General Error */}
+              {errors.general && (
+                <div
+                  ref={generalErrorRef}
+                  className='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-sm flex items-start gap-2'
                 >
-                  Full Name
-                </label>
-                <input
-                  type='text'
-                  id='fullname'
-                  className='px-4 py-2 rounded-lg bg-white/80 dark:bg-gray-700/80 text-black dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-sky-400 dark:focus:ring-cyan-400'
-                  placeholder='John Doe'
-                />
-              </div>
+                  <svg
+                    className='w-5 h-5 mt-0.5 flex-shrink-0 text-red-500'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                    xmlns='http://www.w3.org/2000/svg'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M12 9v2m0 4h.01M4.93 19h14.14c1.04 0 1.67-1.15 1.14-2.04L13.14 4.21c-.52-.89-1.76-.89-2.28 0L3.79 16.96c-.52.89.1 2.04 1.14 2.04z'
+                    />
+                  </svg>
+                  <span>{errors.general}</span>
+                </div>
+              )}
 
               <div className='flex flex-col'>
                 <label
@@ -298,24 +418,27 @@ const FreeTrial = () => {
                 <input
                   type='email'
                   id='email'
-                  className='px-4 py-2 rounded-lg bg-white/80 dark:bg-gray-700/80 text-black dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-sky-400 dark:focus:ring-cyan-400'
+                  name='email'
+                  value={formData.email}
+                  onChange={handleChange}
+                  className={cn(
+                    'px-4 py-2 rounded-lg bg-white/80 dark:bg-gray-700/80 text-black dark:text-gray-200 focus:outline-none focus:ring-2 transition-colors',
+                    errors.email || errors.general
+                      ? 'border-red-600 focus:ring-red-600 focus:border-red-600'
+                      : 'focus:ring-sky-400 dark:focus:ring-cyan-400'
+                  )}
                   placeholder='your@email.com'
+                  aria-describedby='email-error'
                 />
-              </div>
-
-              <div className='flex flex-col'>
-                <label
-                  htmlFor='phone'
-                  className='text-white dark:text-gray-200 text-sm mb-1'
-                >
-                  Phone
-                </label>
-                <input
-                  type='tel'
-                  id='phone'
-                  className='px-4 py-2 rounded-lg bg-white/80 dark:bg-gray-700/80 text-black dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-sky-400 dark:focus:ring-cyan-400'
-                  placeholder='+1 (555) 123-4567'
-                />
+                {errors.email && (
+                  <span
+                    ref={emailErrorRef}
+                    id='email-error'
+                    className='text-red-600 text-xs mt-1'
+                  >
+                    {errors.email}
+                  </span>
+                )}
               </div>
 
               <div className='flex flex-col'>
@@ -328,9 +451,27 @@ const FreeTrial = () => {
                 <input
                   type='text'
                   id='company'
-                  className='px-4 py-2 rounded-lg bg-white/80 dark:bg-gray-700/80 text-black dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-sky-400 dark:focus:ring-cyan-400'
+                  name='company'
+                  value={formData.company}
+                  onChange={handleChange}
+                  className={cn(
+                    'px-4 py-2 rounded-lg bg-white/80 dark:bg-gray-700/80 text-black dark:text-gray-200 focus:outline-none focus:ring-2 transition-colors',
+                    errors.company || errors.general
+                      ? 'border-red-600 focus:ring-red-600 focus:border-red-600'
+                      : 'focus:ring-sky-400 dark:focus:ring-cyan-400'
+                  )}
                   placeholder='Your Company Name'
+                  aria-describedby='company-error'
                 />
+                {errors.company && (
+                  <span
+                    ref={companyErrorRef}
+                    id='company-error'
+                    className='text-red-600 text-xs mt-1'
+                  >
+                    {errors.company}
+                  </span>
+                )}
               </div>
 
               <button
@@ -346,7 +487,7 @@ const FreeTrial = () => {
 
         <svg
           ref={svgBottomRef}
-          className='absolute bottom-[70px] left-10 z-[-1] sm:z-[-1] md:z-[0] text-[#27AEEB] dark:text-cyan-700/10'
+          className='absolute bottom-[150px] left-50 z-[-1] sm:z-[-1] md:z-[0] text-[#27AEEB] dark:text-cyan-700/10'
           width='450'
           height='450'
           viewBox='0 0 200 200'
@@ -358,7 +499,7 @@ const FreeTrial = () => {
           />
         </svg>
       </div>
-      <svg
+      {/* <svg
         xmlns='http://www.w3.org/2000/svg'
         viewBox='0 0 1440 120'
         className='absolute bottom-[-2px] left-0 w-full z-10 text-[#F9FAFC] dark:text-gray-800'
@@ -367,7 +508,7 @@ const FreeTrial = () => {
           d='M0,40 C200,20 400,80 720,60 C1040,40 1240,80 1440,60 L1440,120 L0,120 Z'
           fill='currentColor'
         />
-      </svg>
+      </svg> */}
     </div>
   );
 };

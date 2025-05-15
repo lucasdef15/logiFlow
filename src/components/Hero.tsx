@@ -335,7 +335,7 @@ const Hero = () => {
         </section>
       </div>
 
-      <div className='absolute bottom-0 left-0 w-full h-20 bg-gradient-to-b from-transparent  to-[#0d111c] z-10 pointer-events-none' />
+      <div className='absolute bottom-0 left-0 w-full h-32 bg-gradient-to-b from-transparent to-[rgba(16,24,41)] z-10 pointer-events-none' />
 
       {webGLError && (
         <div className='absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white z-20'>
