@@ -3,6 +3,7 @@ import gsap from 'gsap';
 import DesktopNav from './DesktopNav';
 import MobileNav from './MobileNav';
 import { Truck } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface Notification {
   id: number;
@@ -82,17 +83,19 @@ const Header = () => {
 
       <nav className='max-w-[95%] mx-auto flex items-center justify-between px-4 sm:px-6 py-3'>
         {/* Logo */}
-        <section className='flex items-center gap-2 sm:gap-3'>
-          <div className='rounded-full bg-gray-200 dark:bg-gray-800 p-1.5 sm:p-2 shadow-md'>
-            <Truck className='text-gray-900 dark:text-white w-5 h-5 sm:w-6 sm:h-6' />
-          </div>
-          <div className='flex flex-col leading-tight group cursor-pointer'>
-            <div className='text-sm sm:text-base font-semibold tracking-wide text-gray-900 dark:text-white group-hover:opacity-90 transition-opacity'>
-              <span className='text-blue-600 dark:text-blue-200'>Log</span>
-              <span className='text-[#00b7eb]'>Flow</span>
+        <Link to='/'>
+          <section className='flex items-center gap-2 sm:gap-3'>
+            <div className='rounded-full bg-gray-200 dark:bg-gray-800 p-1.5 sm:p-2 shadow-md'>
+              <Truck className='text-gray-900 dark:text-white w-5 h-5 sm:w-6 sm:h-6' />
             </div>
-          </div>
-        </section>
+            <div className='flex flex-col leading-tight group cursor-pointer'>
+              <div className='text-sm sm:text-base font-semibold tracking-wide text-gray-900 dark:text-white group-hover:opacity-90 transition-opacity'>
+                <span className='text-blue-600 dark:text-blue-200'>Log</span>
+                <span className='text-[#00b7eb]'>Flow</span>
+              </div>
+            </div>
+          </section>
+        </Link>
 
         {/* Navigation */}
         <DesktopNav
