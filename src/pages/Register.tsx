@@ -204,8 +204,6 @@ const Register = () => {
 
       const data = await response.json();
 
-      console.log('Response data:', data);
-
       if (data.success) {
         login({
           token: data.data.token,

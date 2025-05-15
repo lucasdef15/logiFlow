@@ -168,7 +168,6 @@ const Contact = () => {
     const hasErrors = Object.values(newErrors).some((error) => error !== '');
     if (!hasErrors) {
       console.log('Dados enviados:', formData);
-      // Backend submission logic here
     }
   };
 

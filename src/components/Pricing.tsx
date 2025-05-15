@@ -1,6 +1,6 @@
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { useRef } from 'react';
+import { useRef, useMemo, useEffect } from 'react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useTheme } from '@/context/Theme-provider';
 import SectionNames from './ui/SectionNames';
@@ -11,6 +11,68 @@ const Pricing = () => {
   const containerRef = useRef(null);
   const titleRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<(HTMLDivElement | null)[]>([]);
+  const { theme } = useTheme();
+
+  // Memoize theme-dependent styles
+  const themeStyles = useMemo(
+    () => ({
+      card: {
+        blue: {
+          bg: theme === 'dark' ? '#1e3a8a' : '#eff6ff',
+          hoverBg:
+            theme === 'dark'
+              ? 'linear-gradient(135deg, #1e3a8a, #3b82f6)'
+              : 'linear-gradient(135deg, #e0f7fa, #b3e5fc)',
+        },
+        teal: {
+          bg:
+            theme === 'dark'
+              ? 'rgba(17, 94, 89, 0.6)'
+              : 'rgba(204, 251, 241, 0.6)',
+          hoverBg:
+            theme === 'dark'
+              ? 'linear-gradient(135deg, #115e59, #2dd4bf)'
+              : 'linear-gradient(135deg, #ccfbf1, #99f6e4)',
+        },
+        orange: {
+          bg:
+            theme === 'dark'
+              ? 'rgba(154, 52, 18, 0.6)'
+              : 'rgba(255, 237, 213, 0.6)',
+          hoverBg:
+            theme === 'dark'
+              ? 'linear-gradient(135deg, #9a3412, #f59e0b)'
+              : 'linear-gradient(135deg, #ffedd5, #fed7aa)',
+        },
+      },
+      button: {
+        sky: {
+          bg: theme === 'dark' ? '#0ea5e9' : '#0ea5e9',
+          hoverBg: theme === 'dark' ? '#0e7490' : '#0284c7',
+        },
+        cyan: {
+          border: theme === 'dark' ? '#06b6d4' : '#22d3ee',
+          hoverBorder: theme === 'dark' ? '#22d3ee' : '#06b6d4',
+        },
+        orange: {
+          border: theme === 'dark' ? '#f97316' : '#fb923c',
+          hoverBorder: theme === 'dark' ? '#fb923c' : '#f97316',
+        },
+      },
+    }),
+    [theme]
+  );
+
+  // Update card backgrounds when theme changes
+  useEffect(() => {
+    cardRef.current.forEach((card, idx) => {
+      if (!card) return;
+      const planType = idx === 0 ? 'blue' : idx === 1 ? 'teal' : 'orange';
+      gsap.set(card, {
+        background: themeStyles.card[planType].bg,
+      });
+    });
+  }, [theme, themeStyles]);
 
   useGSAP(
     () => {
@@ -71,71 +133,27 @@ const Pricing = () => {
         0.4
       );
 
-      // Hover effects
+      // Hover effects for buttons (cards use CSS for hover)
       const ctx = gsap.context(() => {
-        cardRef.current.forEach((card) => {
+        cardRef.current.forEach((card, idx) => {
           if (!card) return;
-
-          // Card hover
-          card.addEventListener('mouseenter', () => {
-            gsap.to(card, {
-              scale: cardRef.current.indexOf(card) === 1 ? 1.1 : 0.98,
-              y: cardRef.current.indexOf(card) === 1 ? -15 : -5,
-              background: card.classList.contains('bg-blue-50')
-                ? document.documentElement.classList.contains('dark')
-                  ? 'linear-gradient(135deg, #1e3a8a, #3b82f6)'
-                  : 'linear-gradient(135deg, #e0f7fa, #b3e5fc)'
-                : card.classList.contains('bg-teal-50/60')
-                ? document.documentElement.classList.contains('dark')
-                  ? 'linear-gradient(135deg, #115e59, #2dd4bf)'
-                  : 'linear-gradient(135deg, #ccfbf1, #99f6e4)'
-                : document.documentElement.classList.contains('dark')
-                ? 'linear-gradient(135deg, #9a3412, #f59e0b)'
-                : 'linear-gradient(135deg, #ffedd5, #fed7aa)',
-              duration: 0.3,
-              ease: 'power2.out',
-            });
-          });
-          card.addEventListener('mouseleave', () => {
-            gsap.to(card, {
-              scale: cardRef.current.indexOf(card) === 1 ? 1.05 : 0.98,
-              y: cardRef.current.indexOf(card) === 1 ? -10 : 0,
-              background: card.classList.contains('bg-blue-50')
-                ? document.documentElement.classList.contains('dark')
-                  ? '#1e3a8a'
-                  : '#eff6ff'
-                : card.classList.contains('bg-teal-50/60')
-                ? document.documentElement.classList.contains('dark')
-                  ? 'rgba(17, 94, 89, 0.6)'
-                  : 'rgba(204, 251, 241, 0.6)'
-                : document.documentElement.classList.contains('dark')
-                ? 'rgba(154, 52, 18, 0.6)'
-                : 'rgba(255, 237, 213, 0.6)',
-              duration: 0.3,
-              ease: 'power2.out',
-            });
-          });
-
-          // Button hover
           const button = card.querySelector('button');
+          const buttonType = idx === 0 ? 'cyan' : idx === 1 ? 'sky' : 'orange';
+
           if (button) {
             button.addEventListener('mouseenter', () => {
               gsap.to(button, {
                 scale: 1.05,
-                backgroundColor: button.classList.contains('bg-sky-500')
-                  ? document.documentElement.classList.contains('dark')
-                    ? '#0e7490'
-                    : '#0284c7'
-                  : undefined,
-                borderColor: button.classList.contains('text-cyan-500')
-                  ? document.documentElement.classList.contains('dark')
-                    ? '#22d3ee'
-                    : '#06b6d4'
-                  : button.classList.contains('text-orange-500')
-                  ? document.documentElement.classList.contains('dark')
-                    ? '#fb923c'
-                    : '#f97316'
-                  : undefined,
+                backgroundColor:
+                  buttonType === 'sky'
+                    ? themeStyles.button.sky.hoverBg
+                    : undefined,
+                borderColor:
+                  buttonType === 'cyan'
+                    ? themeStyles.button.cyan.hoverBorder
+                    : buttonType === 'orange'
+                    ? themeStyles.button.orange.hoverBorder
+                    : undefined,
                 duration: 0.2,
                 ease: 'power2.out',
               });
@@ -143,20 +161,14 @@ const Pricing = () => {
             button.addEventListener('mouseleave', () => {
               gsap.to(button, {
                 scale: 1,
-                backgroundColor: button.classList.contains('bg-sky-500')
-                  ? document.documentElement.classList.contains('dark')
-                    ? '#0ea5e9'
-                    : '#0ea5e9'
-                  : undefined,
-                borderColor: button.classList.contains('text-cyan-500')
-                  ? document.documentElement.classList.contains('dark')
-                    ? '#06b6d4'
-                    : '#22d3ee'
-                  : button.classList.contains('text-orange-500')
-                  ? document.documentElement.classList.contains('dark')
-                    ? '#f97316'
-                    : '#fb923c'
-                  : undefined,
+                backgroundColor:
+                  buttonType === 'sky' ? themeStyles.button.sky.bg : undefined,
+                borderColor:
+                  buttonType === 'cyan'
+                    ? themeStyles.button.cyan.border
+                    : buttonType === 'orange'
+                    ? themeStyles.button.orange.border
+                    : undefined,
                 duration: 0.2,
                 ease: 'power2.out',
               });
@@ -167,20 +179,69 @@ const Pricing = () => {
 
       return () => ctx.revert();
     },
-    { scope: containerRef }
+    { scope: containerRef, dependencies: [theme] }
   );
-
-  const { theme } = useTheme();
 
   return (
     <div
       ref={containerRef}
       id='pricing'
       className='w-full min-h-[calc(100vh+10rem)] pt-3 text-gray-900 dark:text-gray-100 relative overflow-hidden bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900'
+      data-theme={theme}
     >
-      {/* Subtle radial gradient background */}
+      <style>
+        {`
+          [data-theme='dark'] [data-plan='blue'] {
+            background: ${themeStyles.card.blue.bg};
+            transition: background 0.3s ease, transform 0.3s ease;
+          }
+          [data-theme='dark'] [data-plan='blue']:hover {
+            background: ${themeStyles.card.blue.hoverBg};
+            transform: scale(0.98) translateY(-5px);
+          }
+          [data-theme='light'] [data-plan='blue'] {
+            background: ${themeStyles.card.blue.bg};
+            transition: background 0.3s ease, transform 0.3s ease;
+          }
+          [data-theme='light'] [data-plan='blue']:hover {
+            background: ${themeStyles.card.blue.hoverBg};
+            transform: scale(0.98) translateY(-5px);
+          }
+          [data-theme='dark'] [data-plan='teal'] {
+            background: ${themeStyles.card.teal.bg};
+            transition: background 0.3s ease, transform 0.3s ease;
+          }
+          [data-theme='dark'] [data-plan='teal']:hover {
+            background: ${themeStyles.card.teal.hoverBg};
+            transform: scale(1.05) translateY(-10px);
+          }
+          [data-theme='light'] [data-plan='teal'] {
+            background: ${themeStyles.card.teal.bg};
+            transition: background 0.3s ease, transform 0.3s ease;
+          }
+          [data-theme='light'] [data-plan='teal']:hover {
+            background: ${themeStyles.card.teal.hoverBg};
+            transform: scale(1.05) translateY(-10px);
+          }
+          [data-theme='dark'] [data-plan='orange'] {
+            background: ${themeStyles.card.orange.bg};
+            transition: background 0.3s ease, transform 0.3s ease;
+          }
+          [data-theme='dark'] [data-plan='orange']:hover {
+            background: ${themeStyles.card.orange.hoverBg};
+            transform: scale(0.98) translateY(-5px);
+          }
+          [data-theme='light'] [data-plan='orange'] {
+            background: ${themeStyles.card.orange.bg};
+            transition: background 0.3s ease, transform 0.3s ease;
+          }
+          [data-theme='light'] [data-plan='orange']:hover {
+            background: ${themeStyles.card.orange.hoverBg};
+            transform: scale(0.98) translateY(-5px);
+          }
+        `}
+      </style>
       <div className='absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.08)_0%,transparent_70%)] dark:bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.15)_0%,transparent_70%)] z-[-1]' />
-
       <section
         ref={titleRef}
         className='flex flex-col items-center justify-center text-center gap-4 mb-8 sm:mb-12 md:mb-16'
@@ -188,11 +249,9 @@ const Pricing = () => {
         {theme === 'dark' ? (
           <SectionNames sectionName='Testimonials' />
         ) : (
-          <>
-            <span className='text-cyan-700 px-4 py-1.5 rounded-full text-sm font-medium shadow-sm bg-gray-100 '>
-              Testimonials
-            </span>
-          </>
+          <span className='text-cyan-700 px-4 py-1.5 rounded-full text-sm font-medium shadow-sm bg-gray-100'>
+            Testimonials
+          </span>
         )}
         <h2 className='text-3xl sm:text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-indigo-600 to-cyan-500 dark:from-indigo-400 dark:to-cyan-300 bg-clip-text text-transparent'>
           Escolha o Plano Ideal para Sua Empresa
@@ -272,6 +331,7 @@ const Pricing = () => {
               cardRef.current[idx] = el;
             }}
             className={`${plan.bg} border border-gray-200/50 dark:border-gray-700/50 rounded-3xl shadow-[4px_4px_20px_rgba(0,0,0,0.2)] dark:shadow-[4px_4px_20px_rgba(0,0,0,0.3)] p-6 sm:p-8 flex flex-col justify-between w-full max-w-[360px] sm:max-w-md transition-all duration-200 backdrop-blur-sm`}
+            data-plan={idx === 0 ? 'blue' : idx === 1 ? 'teal' : 'orange'}
           >
             <div>
               <h4 className='text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2'>
@@ -321,6 +381,7 @@ const Pricing = () => {
             <button
               className={`w-full px-6 py-3 rounded-xl font-semibold border-2 ${plan.button.className} transition-all duration-200`}
               aria-label={`Select ${plan.title}`}
+              data-button={idx === 0 ? 'cyan' : idx === 1 ? 'sky' : 'orange'}
             >
               {plan.button.text}
             </button>

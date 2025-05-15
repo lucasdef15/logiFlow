@@ -329,7 +329,7 @@ const Hero = () => {
           ref={imageRef}
           className='w-full relative flex justify-center lg:justify-end items-center z-5'
         >
-          <div className='absolute w-[3700px] h-[90vh] bottom-[-700px] left-[-1625px] md:left-[-1600px] md:bottom-[-270px] lg:left-[-1400px] mx-auto z-5'>
+          <div className='fixed lg:-left-[1600px]  xl:left-[-1300px]  top-1/2 transform -translate-y-1/2 z-10 w-[3700px] h-[100vh]'>
             <HeroExperience />
           </div>
         </section>

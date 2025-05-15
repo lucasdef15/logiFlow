@@ -1,6 +1,6 @@
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { useRef, useEffect } from 'react';
+import { useRef } from 'react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import SectionNames from './ui/SectionNames';
 
@@ -16,21 +16,6 @@ const FreeTrial = () => {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const svgTopRef = useRef<SVGSVGElement>(null);
   const svgBottomRef = useRef<SVGSVGElement | null>(null);
-
-  // Debug refs to ensure they are assigned
-  useEffect(() => {
-    console.log({
-      containerRef: containerRef.current,
-      titleRef: titleRef.current,
-      subtitleRef: subtitleRef.current,
-      svgTopRef: svgTopRef.current,
-      svgBottomRef: svgBottomRef.current,
-      listRef: listRef.current,
-      ulRef: ulRef.current,
-      formRef: formRef.current,
-      buttonRef: buttonRef.current,
-    });
-  }, []);
 
   useGSAP(
     () => {

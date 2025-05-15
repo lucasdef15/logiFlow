@@ -125,7 +125,6 @@ const FreeTrialPage = () => {
     const hasErrors = Object.values(newErrors).some((error) => error !== '');
     if (!hasErrors) {
       console.log('Form submitted:', formData);
-      // Add backend submission logic here
     }
   };
 
