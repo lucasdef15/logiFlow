@@ -301,7 +301,8 @@ const Testimonials = () => {
       <svg
         xmlns='http://www.w3.org/2000/svg'
         viewBox='0 0 1440 120'
-        className='absolute bottom-[-2px] left-0 w-full z-10 text-[#0EA5E9] dark:text-gray-900 '
+        className='absolute bottom-[-5px]
+        px] left-0 w-full z-10 text-[#0EA5E9] dark:text-gray-900 '
       >
         <path
           fill='currentColor'

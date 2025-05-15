@@ -1,44 +1,50 @@
 import { Button } from '@/components/ui/button';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useRef, useState } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { useAuth } from '@/context/AuthContext';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const Register = () => {
+const RegistrationDetails = () => {
   const [formData, setFormData] = useState({
-    name: '',
+    companyName: '',
+    cnpj: '',
     email: '',
+    phone: '',
+    address: '',
+    companySize: '',
     password: '',
     confirmPassword: '',
     terms: false,
   });
 
   const [errors, setErrors] = useState({
-    name: '',
+    companyName: '',
+    cnpj: '',
     email: '',
+    phone: '',
+    address: '',
+    companySize: '',
     password: '',
     confirmPassword: '',
     terms: '',
-    general: '', // Added for non-field-specific errors
   });
 
-  const nameErrorRef = useRef<HTMLSpanElement>(null);
+  const companyNameErrorRef = useRef<HTMLSpanElement>(null);
+  const cnpjErrorRef = useRef<HTMLSpanElement>(null);
   const emailErrorRef = useRef<HTMLSpanElement>(null);
+  const phoneErrorRef = useRef<HTMLSpanElement>(null);
+  const addressErrorRef = useRef<HTMLSpanElement>(null);
+  const companySizeErrorRef = useRef<HTMLSpanElement>(null);
   const passwordErrorRef = useRef<HTMLSpanElement>(null);
   const confirmPasswordErrorRef = useRef<HTMLSpanElement>(null);
   const termsErrorRef = useRef<HTMLSpanElement>(null);
-  const generalErrorRef = useRef<HTMLSpanElement>(null); // Ref for general error
   const titleRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const footerRef = useRef<HTMLDivElement>(null);
   const backgroundRef = useRef<HTMLDivElement>(null);
-
-  const { login } = useAuth();
-  const navigate = useNavigate();
 
   useGSAP(() => {
     if (titleRef.current?.children) {
@@ -127,16 +133,21 @@ const Register = () => {
       }
     };
 
-    if (errors.name) animateError(nameErrorRef);
+    if (errors.companyName) animateError(companyNameErrorRef);
+    if (errors.cnpj) animateError(cnpjErrorRef);
     if (errors.email) animateError(emailErrorRef);
+    if (errors.phone) animateError(phoneErrorRef);
+    if (errors.address) animateError(addressErrorRef);
+    if (errors.companySize) animateError(companySizeErrorRef);
     if (errors.password) animateError(passwordErrorRef);
     if (errors.confirmPassword) animateError(confirmPasswordErrorRef);
     if (errors.terms) animateError(termsErrorRef);
-    if (errors.general) animateError(generalErrorRef); // Animate general error
   }, [errors]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value, type, checked } = e.target as HTMLInputElement;
     setFormData({
       ...formData,
       [name]: type === 'checkbox' ? checked : value,
@@ -145,7 +156,6 @@ const Register = () => {
     setErrors({
       ...errors,
       [name]: '',
-      general: '', // Clear general error on input change
     });
   };
 
@@ -154,18 +164,45 @@ const Register = () => {
     return emailRegex.test(email);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const validateCNPJ = (cnpj: string) => {
+    const cnpjRegex = /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/;
+    return cnpjRegex.test(cnpj);
+  };
+
+  const validatePhone = (phone: string) => {
+    const phoneRegex = /^\(\d{2}\)\s\d{4,5}-\d{4}$/;
+    return phoneRegex.test(phone);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Client-side validation
     const newErrors = {
-      name: formData.name.trim() === '' ? 'Nome é obrigatório' : '',
+      companyName:
+        formData.companyName.trim() === ''
+          ? 'Nome da empresa é obrigatório'
+          : '',
+      cnpj:
+        formData.cnpj.trim() === ''
+          ? 'CNPJ é obrigatório'
+          : !validateCNPJ(formData.cnpj)
+          ? 'Digite um CNPJ válido (ex: 12.345.678/0001-99)'
+          : '',
       email:
         formData.email.trim() === ''
           ? 'E-mail é obrigatório'
           : !validateEmail(formData.email)
           ? 'Digite um e-mail válido'
           : '',
+      phone:
+        formData.phone.trim() === ''
+          ? 'Telefone é obrigatório'
+          : !validatePhone(formData.phone)
+          ? 'Digite um telefone válido (ex: (11) 91234-5678)'
+          : '',
+      address: formData.address.trim() === '' ? 'Endereço é obrigatório' : '',
+      companySize:
+        formData.companySize === '' ? 'Porte da empresa é obrigatório' : '',
       password:
         formData.password.trim() === ''
           ? 'Senha é obrigatória'
@@ -179,63 +216,14 @@ const Register = () => {
           ? 'As senhas não coincidem'
           : '',
       terms: !formData.terms ? 'Você deve aceitar os termos' : '',
-      general: '',
     };
 
     setErrors(newErrors);
 
-    const hasClientErrors = Object.values(newErrors).some(
-      (error) => error !== ''
-    );
-    if (hasClientErrors) return;
-
-    try {
-      const response = await fetch('http://www.logiflow.io/api/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
-
-      const data = await response.json();
-
-      console.log('Response data:', data);
-
-      if (data.success) {
-        login({
-          token: data.data.token,
-          user: data.data.user,
-          company: data.data.company,
-        });
-
-        if (data.data.meta?.redirectTo) {
-          navigate(data.data.meta.redirectTo);
-        } else {
-          navigate('/dashboard');
-        }
-      } else {
-        // Handle server-side errors
-        const serverErrors = data.error || {};
-        setErrors({
-          name: serverErrors.name || '',
-          email: serverErrors.email || '',
-          password: serverErrors.password || '',
-          confirmPassword: serverErrors.confirmPassword || '',
-          terms: serverErrors.terms || '',
-          general: data.message || 'Erro ao registrar',
-        });
-      }
-    } catch (error) {
-      setErrors({
-        ...errors,
-        general: 'Erro na conexão com o servidor.',
-      });
-      console.error(error);
+    const hasErrors = Object.values(newErrors).some((error) => error !== '');
+    if (!hasErrors) {
+      console.log('Dados de registro da empresa:', formData);
+      // Backend submission logic here
     }
   };
 
@@ -249,10 +237,10 @@ const Register = () => {
       <div className='relative max-w-7xl mx-auto z-10'>
         <section ref={titleRef} className='text-center mb-12'>
           <h2 className='text-3xl sm:text-5xl lg:text-6xl font-bold text-blue-600 dark:text-[#00b7eb]'>
-            Registre-se no LogFlow
+            Cadastro Empresarial no LogFlow
           </h2>
           <p className='text-gray-600 dark:text-white/80 text-base sm:text-lg font-medium mt-4 max-w-md mx-auto'>
-            Crie sua conta para acessar o sistema inteligente de gestão de
+            Registre sua empresa para acessar o sistema inteligente de gestão de
             entregas
           </p>
         </section>
@@ -264,45 +252,61 @@ const Register = () => {
             className='w-full max-w-md bg-white/80 dark:bg-[#1a1f2b]/80 p-8 rounded-xl shadow-lg transition-all duration-300 hover:shadow-blue-300/50 dark:hover:shadow-cyan-500/50'
           >
             <h3 className='text-2xl font-semibold text-gray-900 dark:text-white mb-6'>
-              Criar Conta
+              Criar Conta Empresarial
             </h3>
-
-            {/* General Error */}
-            {errors.general && (
-              <div className='mb-5'>
-                <span
-                  ref={generalErrorRef}
-                  className='text-red-500 text-sm font-medium'
-                >
-                  {errors.general}
-                </span>
-              </div>
-            )}
 
             <div className='mb-5'>
               <label
-                htmlFor='name'
+                htmlFor='companyName'
                 className='block text-sm font-medium text-gray-700 dark:text-white/80 mb-1'
               >
-                Nome Completo
+                Nome da Empresa
               </label>
               <input
-                id='name'
-                name='name'
+                id='companyName'
+                name='companyName'
                 type='text'
-                value={formData.name}
+                value={formData.companyName}
                 onChange={handleChange}
                 className='w-full bg-gray-50 dark:bg-[#2a2f3b] border border-blue-200/50 dark:border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-[#00b7eb] focus:border-blue-500 dark:focus:border-[#00b7eb] transition-colors'
-                placeholder='Seu nome'
-                aria-describedby='name-error'
+                placeholder='Nome da sua empresa'
+                aria-describedby='companyName-error'
               />
-              {errors.name && (
+              {errors.companyName && (
                 <span
-                  ref={nameErrorRef}
-                  id='name-error'
+                  ref={companyNameErrorRef}
+                  id='companyName-error'
                   className='text-red-500 text-xs mt-1'
                 >
-                  {errors.name}
+                  {errors.companyName}
+                </span>
+              )}
+            </div>
+
+            <div className='mb-5'>
+              <label
+                htmlFor='cnpj'
+                className='block text-sm font-medium text-gray-700 dark:text-white/80 mb-1'
+              >
+                CNPJ
+              </label>
+              <input
+                id='cnpj'
+                name='cnpj'
+                type='text'
+                value={formData.cnpj}
+                onChange={handleChange}
+                className='w-full bg-gray-50 dark:bg-[#2a2f3b] border border-blue-200/50 dark:border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-[#00b7eb] focus:border-blue-500 dark:focus:border-[#00b7eb] transition-colors'
+                placeholder='12.345.678/0001-99'
+                aria-describedby='cnpj-error'
+              />
+              {errors.cnpj && (
+                <span
+                  ref={cnpjErrorRef}
+                  id='cnpj-error'
+                  className='text-red-500 text-xs mt-1'
+                >
+                  {errors.cnpj}
                 </span>
               )}
             </div>
@@ -312,7 +316,7 @@ const Register = () => {
                 htmlFor='email'
                 className='block text-sm font-medium text-gray-700 dark:text-white/80 mb-1'
               >
-                Email
+                Email Corporativo
               </label>
               <input
                 id='email'
@@ -321,7 +325,7 @@ const Register = () => {
                 value={formData.email}
                 onChange={handleChange}
                 className='w-full bg-gray-50 dark:bg-[#2a2f3b] border border-blue-200/50 dark:border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-[#00b7eb] focus:border-blue-500 dark:focus:border-[#00b7eb] transition-colors'
-                placeholder='seu@email.com'
+                placeholder='email@empresa.com'
                 aria-describedby='email-error'
               />
               {errors.email && (
@@ -331,6 +335,95 @@ const Register = () => {
                   className='text-red-500 text-xs mt-1'
                 >
                   {errors.email}
+                </span>
+              )}
+            </div>
+
+            <div className='mb-5'>
+              <label
+                htmlFor='phone'
+                className='block text-sm font-medium text-gray-700 dark:text-white/80 mb-1'
+              >
+                Telefone
+              </label>
+              <input
+                id='phone'
+                name='phone'
+                type='text'
+                value={formData.phone}
+                onChange={handleChange}
+                className='w-full bg-gray-50 dark:bg-[#2a2f3b] border border-blue-200/50 dark:border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-[#00b7eb] focus:border-blue-500 dark:focus:border-[#00b7eb] transition-colors'
+                placeholder='(11) 91234-5678'
+                aria-describedby='phone-error'
+              />
+              {errors.phone && (
+                <span
+                  ref={phoneErrorRef}
+                  id='phone-error'
+                  className='text-red-500 text-xs mt-1'
+                >
+                  {errors.phone}
+                </span>
+              )}
+            </div>
+
+            <div className='mb-5'>
+              <label
+                htmlFor='address'
+                className='block text-sm font-medium text-gray-700 dark:text-white/80 mb-1'
+              >
+                Endereço
+              </label>
+              <input
+                id='address'
+                name='address'
+                type='text'
+                value={formData.address}
+                onChange={handleChange}
+                className='w-full bg-gray-50 dark:bg-[#2a2f3b] border border-blue-200/50 dark:border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-[#00b7eb] focus:border-blue-500 dark:focus:border-[#00b7eb] transition-colors'
+                placeholder='Rua, número, cidade, estado'
+                aria-describedby='address-error'
+              />
+              {errors.address && (
+                <span
+                  ref={addressErrorRef}
+                  id='address-error'
+                  className='text-red-500 text-xs mt-1'
+                >
+                  {errors.address}
+                </span>
+              )}
+            </div>
+
+            <div className='mb-5'>
+              <label
+                htmlFor='companySize'
+                className='block text-sm font-medium text-gray-700 dark:text-white/80 mb-1'
+              >
+                Porte da Empresa
+              </label>
+              <select
+                id='companySize'
+                name='companySize'
+                value={formData.companySize}
+                onChange={handleChange}
+                className='w-full bg-gray-50 dark:bg-[#2a2f3b] border border-blue-200/50 dark:border-[#00b7eb]/30 rounded-lg px-4 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-[#00b7eb] focus:border-blue-500 dark:focus:border-[#00b7eb] transition-colors'
+                aria-describedby='companySize-error'
+              >
+                <option value='' disabled>
+                  Selecione o porte
+                </option>
+                <option value='small'>Pequena (até 50 funcionários)</option>
+                <option value='medium'>Média (51-250 funcionários)</option>
+                <option value='large'>Grande (mais de 250 funcionários)</option>
+              </select>
+              {errors.companySize && (
+                <span
+                  ref={companySizeErrorRef}
+                  id='companySize-error'
+                  className='text-red-500 text-xs mt-1'
+                >
+                  {errors.companySize}
                 </span>
               )}
             </div>
@@ -426,9 +519,9 @@ const Register = () => {
             <Button
               type='submit'
               className='w-full bg-blue-500 dark:bg-[#00b7eb] hover:bg-blue-600 dark:hover:bg-[#0084ff] cursor-pointer text-white font-semibold py-3 rounded-lg transition-all duration-300'
-              aria-label='Criar conta'
+              aria-label='Criar conta empresarial'
             >
-              Criar Conta
+              Criar Conta Empresarial
             </Button>
 
             <div
@@ -452,4 +545,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default RegistrationDetails;

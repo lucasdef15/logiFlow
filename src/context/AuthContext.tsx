@@ -3,31 +3,60 @@ import { createContext, useContext, useState, type ReactNode } from 'react';
 interface AuthContextType {
   isAuthenticated: boolean;
   token: string | null;
-  login: (token: string) => void;
+  user: any;
+  company: any;
+  login: (data: { token: string; user: any; company: any }) => void;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [token, setToken] = useState<string | null>(() => {
-    return localStorage.getItem('token');
+  const [token, setToken] = useState<string | null>(() =>
+    sessionStorage.getItem('token')
+  );
+
+  const [user, setUser] = useState(() => {
+    const stored = sessionStorage.getItem('user');
+    return stored ? JSON.parse(stored) : null;
   });
 
-  const login = (newToken: string) => {
-    localStorage.setItem('token', newToken);
-    setToken(newToken);
+  const [company, setCompany] = useState(() => {
+    const stored = sessionStorage.getItem('company');
+    return stored ? JSON.parse(stored) : null;
+  });
+
+  const login = ({
+    token,
+    user,
+    company,
+  }: {
+    token: string;
+    user: any;
+    company: any;
+  }) => {
+    sessionStorage.setItem('token', token);
+    sessionStorage.setItem('user', JSON.stringify(user));
+    sessionStorage.setItem('company', JSON.stringify(company));
+
+    setToken(token);
+    setUser(user);
+    setCompany(company);
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    sessionStorage.clear();
     setToken(null);
+    setUser(null);
+    setCompany(null);
   };
 
   const isAuthenticated = !!token;
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, token, login, logout }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, token, user, company, login, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );

@@ -1,15 +1,23 @@
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState, useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useAuth } from '@/context/AuthContext.tsx';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
-  const [errors, setErrors] = useState({ email: '', password: '' });
+  const [errors, setErrors] = useState({
+    email: '',
+    password: '',
+    general: '',
+  });
+
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
   const titleRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
@@ -17,6 +25,15 @@ const Login = () => {
   const backgroundRef = useRef<HTMLDivElement>(null);
   const emailErrorRef = useRef<HTMLSpanElement>(null);
   const passwordErrorRef = useRef<HTMLSpanElement>(null);
+  const generalErrorRef = useRef<HTMLSpanElement>(null);
+
+  const friendlyMessage = (msg: string) => {
+    if (msg === 'Internal server Error' || msg === 'Internal server error') {
+      return 'Invalid credentials';
+    }
+
+    return msg || 'Falha no login.';
+  };
 
   useGSAP(() => {
     const animations = [
@@ -65,26 +82,33 @@ const Login = () => {
     }
   }, []);
 
-  const animateError = (ref: React.RefObject<HTMLSpanElement | null>) => {
-    if (ref.current) {
-      gsap.fromTo(
-        ref.current,
-        { opacity: 0, y: 5 },
-        { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' }
-      );
-    }
-  };
+  useGSAP(() => {
+    const animateError = (ref: React.RefObject<HTMLSpanElement | null>) => {
+      if (ref.current) {
+        gsap.fromTo(
+          ref.current,
+          { opacity: 0, y: 5 },
+          { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' }
+        );
+      }
+    };
+
+    if (errors.email) animateError(emailErrorRef);
+    if (errors.password) animateError(passwordErrorRef);
+    if (errors.general) animateError(generalErrorRef);
+  }, [errors]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: '' });
+    setErrors({ ...errors, [e.target.name]: '', general: '' });
   };
 
   const validateEmail = (email: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     const newErrors = {
       email: !formData.email.trim()
         ? 'E-mail é obrigatório'
@@ -96,28 +120,48 @@ const Login = () => {
         : formData.password.length < 6
         ? 'A senha deve ter pelo menos 6 caracteres'
         : '',
+      general: '',
     };
     setErrors(newErrors);
 
-    if (newErrors.email) animateError(emailErrorRef);
-    if (newErrors.password) animateError(passwordErrorRef);
+    if (Object.values(newErrors).some(Boolean)) return;
 
-    if (!Object.values(newErrors).some(Boolean)) {
-      console.log('Dados de login:', formData);
+    try {
+      const response = await fetch('http://www.logiflow.io/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        login(result.data);
+        navigate(result.data.meta.redirectTo || '/dashboard');
+      } else {
+        const serverErrors = result.error || {};
+        setErrors({
+          email: serverErrors.email || '',
+          password: serverErrors.password || '',
+          general: friendlyMessage(result.message),
+        });
+      }
+    } catch (error) {
+      setErrors({
+        ...errors,
+        general: 'Erro de conexão. Tente novamente mais tarde.',
+      });
+      console.error('Erro na requisição:', error);
     }
   };
 
   return (
     <div className='relative w-full min-h-screen bg-white dark:bg-[#0d111c] text-[#0d111c] dark:text-white py-20 px-4 overflow-hidden'>
-      {/* Background Effect */}
       <div
         ref={backgroundRef}
         className='absolute inset-0 w-full h-full z-0 opacity-50 bg-gradient-to-r from-[#00b7eb]/20 to-transparent'
       />
-
       <div className='absolute bottom-0 left-0 w-full h-32 bg-gradient-to-b from-transparent dark:to-[#0d111c] to-white z-10 pointer-events-none' />
-
-      {/* Main Content */}
       <div className='relative max-w-7xl mx-auto z-10'>
         <section ref={titleRef} className='text-center mb-12'>
           <h2 className='text-3xl sm:text-5xl lg:text-6xl font-bold text-[#00b7eb]'>
@@ -138,7 +182,17 @@ const Login = () => {
               Entrar
             </h3>
 
-            {/* Email */}
+            {errors.general && (
+              <div className='mb-5'>
+                <span
+                  ref={generalErrorRef}
+                  className='text-red-500 text-sm font-medium'
+                >
+                  {errors.general}
+                </span>
+              </div>
+            )}
+
             <div className='mb-5'>
               <label
                 htmlFor='email'
@@ -167,7 +221,6 @@ const Login = () => {
               )}
             </div>
 
-            {/* Password */}
             <div className='mb-5'>
               <label
                 htmlFor='password'
@@ -225,7 +278,6 @@ const Login = () => {
               Entrar
             </Button>
 
-            {/* Footer */}
             <div
               ref={footerRef}
               className='mt-6 text-center text-sm text-black/70 dark:text-white/80'

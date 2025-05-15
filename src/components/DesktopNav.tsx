@@ -13,6 +13,14 @@ import { LogIn } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTheme } from '@/context/Theme-provider';
 import { Moon, Sun } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 type Notification = {
   id: React.Key | null | undefined;
@@ -78,49 +86,57 @@ const DesktopNav = ({
     }
   };
 
+  const { isAuthenticated, user, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   return (
     <>
-      <nav className='hidden sm:flex flex-row'>
-        <ul
-          className={`flex flex-row justify-center items-center gap-4 sm:gap-6 text-sm sm:text-base font-medium text-gray-700 dark:text-gray-200 ${className}`}
-        >
-          <li
-            onClick={handleClick}
-            className='relative group cursor-pointer transition-transform duration-300 hover:scale-105'
+      <TooltipProvider>
+        <nav className='hidden sm:flex flex-row'>
+          <ul
+            className={`flex flex-row justify-center items-center gap-4 sm:gap-6 text-sm sm:text-base font-medium text-gray-700 dark:text-gray-200 ${className}`}
           >
-            Home
-            <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
-          </li>
-          <a href='#features'>
-            <li className='relative group cursor-pointer transition-transform duration-300 hover:scale-105'>
-              Features
+            <li
+              onClick={handleClick}
+              className='relative group cursor-pointer transition-transform duration-300 hover:scale-105'
+            >
+              Home
               <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
             </li>
-          </a>
-          <a href='#pricing'>
-            <li className='relative group cursor-pointer transition-transform duration-300 hover:scale-105'>
-              Pricing
-              <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
-            </li>
-          </a>
-          <Link to={'contact'}>
-            <li className='relative group cursor-pointer transition-transform duration-300 hover:scale-105'>
-              Contact
-              <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
-            </li>
-          </Link>
-          <Link to={'about'}>
-            <li className='relative group cursor-pointer transition-transform duration-300 hover:scale-105'>
-              About
-              <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
-            </li>
-          </Link>
-        </ul>
-      </nav>
+            <a href='#features'>
+              <li className='relative group cursor-pointer transition-transform duration-300 hover:scale-105'>
+                Features
+                <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
+              </li>
+            </a>
+            <a href='#pricing'>
+              <li className='relative group cursor-pointer transition-transform duration-300 hover:scale-105'>
+                Pricing
+                <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
+              </li>
+            </a>
+            <Link to={'contact'}>
+              <li className='relative group cursor-pointer transition-transform duration-300 hover:scale-105'>
+                Contact
+                <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
+              </li>
+            </Link>
+            <Link to={'about'}>
+              <li className='relative group cursor-pointer transition-transform duration-300 hover:scale-105'>
+                About
+                <span className='absolute left-0 -bottom-[2px] w-full h-[2px] bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out origin-left'></span>
+              </li>
+            </Link>
+          </ul>
+        </nav>
 
-      <section className='hidden sm:flex items-center justify-center gap-5'>
-        {/* Notification Popover */}
-        {/* <PopOverComp
+        <section className='hidden sm:flex items-center justify-center gap-5'>
+          {/* Notification Popover */}
+          {/* <PopOverComp
           notifications={notifications}
           isDialogOpen={isDialogOpen}
           setIsDialogOpen={setIsDialogOpen}
@@ -131,8 +147,8 @@ const DesktopNav = ({
           className='bg-[#0f0f1b] border-blue-500/30 text-gray-200 shadow-[0_0_8px_rgba(59,130,246,0.3)]'
         /> */}
 
-        {/* Notification Dialog */}
-        {/* <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          {/* Notification Dialog */}
+          {/* <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogContent className='bg-[#0f0f1b] border-blue-500/30 text-gray-200 p-2 sm:p-4 shadow-[0_0_8px_rgba(59,130,246,0.3)]'>
             <DialogHeader>
               <DialogTitle className='text-blue-300 text-sm sm:text-base'>
@@ -152,8 +168,7 @@ const DesktopNav = ({
           </DialogContent>
         </Dialog> */}
 
-        <section className='flex items-center justify-center gap-5'>
-          <div>
+          <section className='flex items-center justify-center gap-5'>
             {/* Theme toggle */}
             <button
               onClick={toggleTheme}
@@ -166,15 +181,45 @@ const DesktopNav = ({
                 <Moon className='w-5 h-5' />
               )}
             </button>
-          </div>
-          <Button
-            onClick={() => navigate('/login')}
-            className='cursor-pointer bg-[#00b7eb] text-white hover:bg-[#0084ff] shadow-[0_0_6px_rgba(59,130,246,0.5)] hover:shadow-[0_0_10px_rgba(59,130,246,0.7)] transition-all duration-300 ease-in-out hover:scale-105'
-          >
-            <LogIn className='w-4 h-4 mr-2' /> Login
-          </Button>
+
+            {!isAuthenticated ? (
+              <Button
+                onClick={() => navigate('/login')}
+                className='cursor-pointer bg-[#00b7eb] text-white hover:bg-[#0084ff] shadow-[0_0_6px_rgba(59,130,246,0.5)] hover:shadow-[0_0_10px_rgba(59,130,246,0.7)] transition-all duration-300 ease-in-out hover:scale-105'
+              >
+                <LogIn className='w-4 h-4 mr-2' /> Login
+              </Button>
+            ) : (
+              <div className='flex items-center gap-4'>
+                <div className='text-sm text-gray-700 dark:text-gray-200'>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Avatar className='w-10 h-10'>
+                        <AvatarFallback>
+                          {(
+                            user?.name?.slice(0, 2) || user?.email?.slice(0, 2)
+                          )?.toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                    </TooltipTrigger>
+                    <TooltipContent>{user?.name || user?.email}</TooltipContent>
+                  </Tooltip>
+                  {/* <div>{user?.name || user?.email}</div>
+                <div className='text-xs text-gray-500'>
+                  {company?.name || 'Company'}
+                </div> */}
+                </div>
+                <Button
+                  onClick={handleLogout}
+                  className='cursor-pointer bg-red-500 text-white hover:bg-red-600 shadow-md transition-all duration-300 ease-in-out hover:scale-105'
+                >
+                  Logout
+                </Button>
+              </div>
+            )}
+          </section>
         </section>
-      </section>
+      </TooltipProvider>
     </>
   );
 };

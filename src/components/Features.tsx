@@ -293,7 +293,7 @@ const Features = () => {
       <svg
         xmlns='http://www.w3.org/2000/svg'
         viewBox='0 0 1440 120'
-        className='absolute bottom-[-5px] left-0 w-full text-white dark:text-[#101828]'
+        className='absolute bottom-[-10px] left-0 w-full text-white dark:text-[#101828]'
         aria-hidden='true'
       >
         <path

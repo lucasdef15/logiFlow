@@ -10,10 +10,10 @@ import FreeTrialPage from './pages/FreeTrialPage.tsx';
 import Login from './pages/Login.tsx';
 import Register from './pages/Register.tsx';
 import Dashboard from './pages/Dashboard.tsx';
-// import ProtectedRoute from './components/ProtectedRoute';
+import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext.tsx';
-import DashboardHome from './pages/DashboardHome.tsx';
 import { ThemeProvider } from './context/Theme-provider.tsx';
+import RegistrationDetails from './pages/RegistrationDetails.tsx';
 
 const router = createBrowserRouter([
   {
@@ -26,21 +26,17 @@ const router = createBrowserRouter([
       { path: 'free-trial', Component: FreeTrialPage },
       { path: 'login', Component: Login },
       { path: 'register', Component: Register },
-      { path: 'dashboard', Component: Dashboard },
 
-      // {
-      //   element: <ProtectedRoute />,
-      //   children: [{ path: 'dashboard', Component: Dashboard }],
-      // },
-    ],
-  },
-  {
-    path: '/dashboard',
-    Component: Dashboard,
-    children: [
+      // Rotas protegidas
       {
-        path: '/dashboard',
-        element: <DashboardHome />,
+        path: 'dashboard',
+        element: <ProtectedRoute />,
+        children: [{ path: '', element: <Dashboard /> }],
+      },
+      {
+        path: 'registrationDetails',
+        element: <ProtectedRoute />,
+        children: [{ path: '', element: <RegistrationDetails /> }],
       },
     ],
   },
