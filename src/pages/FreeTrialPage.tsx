@@ -297,11 +297,10 @@ const FreeTrialPage = () => {
             your logistics operations.
           </p>
           <form onSubmit={handleSubmit} className='space-y-6'>
-            {/* geral error */}
             {errors.general && (
-              <div className='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-sm flex items-start gap-2'>
+              <div className='bg-red-100 dark:bg-red-900/80 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-300 px-4 py-3 rounded mb-4 text-sm flex items-start gap-2'>
                 <svg
-                  className='w-5 h-5 mt-0.5 flex-shrink-0 text-red-500'
+                  className='w-5 h-5 mt-0.5 flex-shrink-0 text-red-500 dark:text-red-400'
                   fill='none'
                   stroke='currentColor'
                   viewBox='0 0 24 24'

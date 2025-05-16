@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import SectionNames from './ui/SectionNames';
 import { cn } from '@/lib/utils';
+import { Eye, EyeOff } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -19,16 +20,22 @@ const FreeTrial = () => {
   const svgBottomRef = useRef<SVGSVGElement | null>(null);
   const emailErrorRef = useRef<HTMLSpanElement>(null);
   const companyErrorRef = useRef<HTMLSpanElement>(null);
+  const passwordErrorRef = useRef<HTMLSpanElement>(null);
+  const confirmPasswordErrorRef = useRef<HTMLSpanElement>(null);
   const generalErrorRef = useRef<HTMLDivElement>(null);
 
   const [formData, setFormData] = useState({
     email: '',
     company: '',
+    password: '',
+    confirmPassword: '',
   });
 
   const [errors, setErrors] = useState({
     email: '',
     company: '',
+    password: '',
+    confirmPassword: '',
     general: '',
   });
 
@@ -218,6 +225,8 @@ const FreeTrial = () => {
 
     if (errors.email) animateError(emailErrorRef);
     if (errors.company) animateError(companyErrorRef);
+    if (errors.password) animateError(passwordErrorRef);
+    if (errors.confirmPassword) animateError(confirmPasswordErrorRef);
     if (errors.general) animateError(generalErrorRef);
   }, [errors]);
 
@@ -234,10 +243,15 @@ const FreeTrial = () => {
       general: '',
     });
   };
+  const [showPassword, setShowPassword] = useState(false);
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
+  };
+
+  const validatePassword = (password: string) => {
+    return password.length >= 8;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -253,6 +267,18 @@ const FreeTrial = () => {
           : '',
       company:
         formData.company.trim() === '' ? 'Nome da empresa é obrigatório' : '',
+      password:
+        formData.password.trim() === ''
+          ? 'Senha é obrigatória'
+          : !validatePassword(formData.password)
+          ? 'A senha deve ter pelo menos 8 caracteres'
+          : '',
+      confirmPassword:
+        formData.confirmPassword.trim() === ''
+          ? 'Confirmação de senha é obrigatória'
+          : formData.confirmPassword !== formData.password
+          ? 'As senhas não coincidem'
+          : '',
       general: '',
     };
 
@@ -272,6 +298,7 @@ const FreeTrial = () => {
         body: JSON.stringify({
           email: formData.email,
           company: formData.company,
+          password: formData.password,
         }),
       });
 
@@ -286,6 +313,8 @@ const FreeTrial = () => {
         setErrors({
           email: serverErrors.email || '',
           company: serverErrors.company || '',
+          password: serverErrors.password || '',
+          confirmPassword: serverErrors.confirmPassword || '',
           general: data.message || 'Erro ao iniciar o teste gratuito',
         });
       }
@@ -388,10 +417,10 @@ const FreeTrial = () => {
               {errors.general && (
                 <div
                   ref={generalErrorRef}
-                  className='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-sm flex items-start gap-2'
+                  className='bg-red-100 dark:bg-red-900/80 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-300 px-4 py-3 rounded mb-4 text-sm flex items-start gap-2'
                 >
                   <svg
-                    className='w-5 h-5 mt-0.5 flex-shrink-0 text-red-500'
+                    className='w-5 h-5 mt-0.5 flex-shrink-0 text-red-500 dark:text-red-400'
                     fill='none'
                     stroke='currentColor'
                     viewBox='0 0 24 24'
@@ -474,6 +503,80 @@ const FreeTrial = () => {
                 )}
               </div>
 
+              <div className='mb-5 relative'>
+                <label
+                  htmlFor='password'
+                  className='block text-sm text-white dark:text-gray-200 mb-1'
+                >
+                  Senha
+                </label>
+                <input
+                  id='password'
+                  name='password'
+                  type={showPassword ? 'text' : 'password'}
+                  value={formData.password}
+                  onChange={handleChange}
+                  className={cn(
+                    'w-full bg-white dark:bg-[#2a2f3b] border rounded-lg px-4 py-2 text-sm text-black dark:text-white focus:ring-2 transition-colors pr-10', // Adiciona padding à direita
+                    errors.password || errors.general
+                      ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
+                      : 'border-[#00b7eb]/30 focus:ring-[#00b7eb] focus:border-[#00b7eb]'
+                  )}
+                  placeholder='Sua senha'
+                  aria-describedby='password-error'
+                />
+                <button
+                  type='button'
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className='absolute right-3 top-9 text-gray-500 hover:text-[#00b7eb] focus:outline-none'
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+                {errors.password && (
+                  <span
+                    ref={passwordErrorRef}
+                    id='password-error'
+                    className='text-red-500 text-xs mt-1 block'
+                  >
+                    {errors.password}
+                  </span>
+                )}
+              </div>
+
+              <div className='flex flex-col'>
+                <label
+                  htmlFor='confirmPassword'
+                  className='text-white dark:text-gray-200 text-sm mb-1'
+                >
+                  Confirm Password
+                </label>
+                <input
+                  type='password'
+                  id='confirmPassword'
+                  name='confirmPassword'
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  className={cn(
+                    'px-4 py-2 rounded-lg bg-white/80 dark:bg-gray-700/80 text-black dark:text-gray-200 focus:outline-none focus:ring-2 transition-colors',
+                    errors.confirmPassword || errors.general
+                      ? 'border-red-600 focus:ring-red-600 focus:border-red-600'
+                      : 'focus:ring-sky-400 dark:focus:ring-cyan-400'
+                  )}
+                  placeholder='Confirm your password'
+                  aria-describedby='confirmPassword-error'
+                />
+                {errors.confirmPassword && (
+                  <span
+                    ref={confirmPasswordErrorRef}
+                    id='confirmPassword-error'
+                    className='text-red-600 text-xs mt-1'
+                  >
+                    {errors.confirmPassword}
+                  </span>
+                )}
+              </div>
+
               <button
                 ref={buttonRef}
                 type='submit'
@@ -499,16 +602,6 @@ const FreeTrial = () => {
           />
         </svg>
       </div>
-      {/* <svg
-        xmlns='http://www.w3.org/2000/svg'
-        viewBox='0 0 1440 120'
-        className='absolute bottom-[-2px] left-0 w-full z-10 text-[#F9FAFC] dark:text-gray-800'
-      >
-        <path
-          d='M0,40 C200,20 400,80 720,60 C1040,40 1240,80 1440,60 L1440,120 L0,120 Z'
-          fill='currentColor'
-        />
-      </svg> */}
     </div>
   );
 };
